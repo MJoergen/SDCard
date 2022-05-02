@@ -109,11 +109,11 @@ begin
    -- Connect I/O buffers
    ---------------------------------------------------------
 
-   sdClk <= sd_clk;
-   cmd <= sd_cmd_out when sd_cmd_oe = '1' else 'Z';
-   dat <= sd_dat_out when sd_dat_oe = '1' else (others => 'Z');
+   sdClk     <= sd_clk;
    sd_cmd_in <= cmd;
    sd_dat_in <= dat;
+   cmd <= sd_cmd_out when sd_cmd_oe = '1' else 'Z';
+   dat <= sd_dat_out when sd_dat_oe = '1' else (others => 'Z');
 
 
    ---------------------------------------------------------

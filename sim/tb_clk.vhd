@@ -14,7 +14,7 @@ end entity tb_clk;
 
 architecture simulation of tb_clk is
 
-   constant C_CLK_PERIOD : time := 10 ns; -- 100 MHz
+   constant C_CLK_PERIOD : time := 40 ns; -- 25 MHz
 
 begin
 
