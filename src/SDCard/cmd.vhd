@@ -65,6 +65,7 @@ architecture synthesis of cmd is
 
 begin
 
+   resp_o <= (others => '0');
    sd_cmd_out <= '1' when state = INIT_ST or state = IDLE_ST else cmd_with_crc(47);
    sd_cmd_oe  <= '1' when state = INIT_ST or state = IDLE_ST or state = WRITING_ST else '0';
 
