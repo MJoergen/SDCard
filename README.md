@@ -1,11 +1,17 @@
 # SDCard
 
-This repository contains a portable OpenSource SDCard controller for FPGAs written in VHDL.
-I'm writing my own implementation because I've looked at several other implementations, and
-they all seemed lacking in various regards (features, stability, portability, simplicity, etc.).
+This repository contains a portable OpenSource SDCard controller for FPGAs
+written in VHDL.  I'm writing my own implementation because I've looked at
+several other implementations, and they all seemed lacking in various regards
+(features, stability, portability, simplicity, etc.).
 
 The SDCard controller in this repository is a complete rewrite from scratch,
 and is provided with a [MIT license](LICENSE).
+
+This implementation only supports the 4-bit SD mode, i.e. it doesn't support
+the 1-bit SD mode, nor does it support the SPI mode. There are plenty of
+open-source implementations that support SPI mode. It is aimed at being
+fast (high-speed), small, and portable.
 
 ## Resources
 The [doc](doc) folder contains useful resources, including

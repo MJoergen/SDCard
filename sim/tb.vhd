@@ -13,37 +13,31 @@ end entity tb;
 
 architecture simulation of tb is
 
-   -- SDCard controller interface
-   signal clk                  : std_logic;
-   signal rst                  : std_logic;
-   signal ctrl_rd              : std_logic;  -- active-high read block request.
-   signal ctrl_wr              : std_logic;  -- active-high write block request.
-   signal ctrl_wr_multi        : std_logic;  -- for all but last block of multi-block write
-   signal ctrl_wr_multi_first  : std_logic;  -- for first block of multi-block write
-   signal ctrl_wr_multi_last   : std_logic;  -- for last block of multi-block write
-   signal ctrl_addr            : std_logic_vector(31 downto 0);   -- Block address.
-   signal ctrl_data            : std_logic_vector(7 downto 0);    -- Data to write to block.
-   signal ctrl_busy            : std_logic;  -- High when controller is busy performing some operation.
-   signal ctrl_hndShk_in       : std_logic;  -- High when host has data to give or has taken data.
-   signal ctrl_hndShk_out      : std_logic;  -- High when controller has taken data or has data to give.
-   signal ctrl_error           : std_logic_vector(15 downto 0);
-   signal ctrl_last_state      : std_logic_vector(7 downto 0);
-   signal ctrl_last_sd_rxbyte  : std_logic_vector(7 downto 0);
-   signal ctrl_clear_error     : std_logic;
+   -- Avalon Memory Map
+   signal avm_clk           : std_logic;
+   signal avm_rst           : std_logic;  -- Synchronous reset, active high
+   signal avm_write         : std_logic;
+   signal avm_read          : std_logic;
+   signal avm_address       : std_logic_vector(31 downto 0);
+   signal avm_writedata     : std_logic_vector(7 downto 0);
+   signal avm_burstcount    : std_logic_vector(8 downto 0);
+   signal avm_readdata      : std_logic_vector(7 downto 0);
+   signal avm_readdatavalid : std_logic;
+   signal avm_waitrequest   : std_logic;
 
    -- SDCard device interface
-   signal sd_clk          : std_logic;
-   signal sd_cmd_in       : std_logic;
-   signal sd_cmd_out      : std_logic;
-   signal sd_cmd_oe       : std_logic;
-   signal sd_dat_in       : std_logic_vector(3 downto 0);
-   signal sd_dat_out      : std_logic_vector(3 downto 0);
-   signal sd_dat_oe       : std_logic;
+   signal sd_clk            : std_logic;
+   signal sd_cmd_in         : std_logic;
+   signal sd_cmd_out        : std_logic;
+   signal sd_cmd_oe         : std_logic;
+   signal sd_dat_in         : std_logic_vector(3 downto 0);
+   signal sd_dat_out        : std_logic_vector(3 downto 0);
+   signal sd_dat_oe         : std_logic;
 
    -- Tristate
-   signal sdClk : std_logic;
-   signal cmd   : std_logic;
-   signal dat   : std_logic_vector(3 downto 0);
+   signal sdClk             : std_logic;
+   signal cmd               : std_logic;
+   signal dat               : std_logic_vector(3 downto 0);
 
    component sdModel is
       port (
@@ -61,9 +55,28 @@ begin
 
    i_tb_clk : entity work.tb_clk
       port map (
-         clk_o => clk,
-         rst_o => rst
+         clk_o => avm_clk,
+         rst_o => avm_rst
       ); -- i_tb_clk
+
+
+   ---------------------------------------------------------
+   -- Instantiate jost emulator
+   ---------------------------------------------------------
+
+   i_host : entity work.host
+      port map (
+         avm_clk_i           => avm_clk,
+         avm_rst_i           => avm_rst,
+         avm_write_o         => avm_write,
+         avm_read_o          => avm_read,
+         avm_address_o       => avm_address,
+         avm_writedata_o     => avm_writedata,
+         avm_burstcount_o    => avm_burstcount,
+         avm_readdata_i      => avm_readdata,
+         avm_readdatavalid_i => avm_readdatavalid,
+         avm_waitrequest_i   => avm_waitrequest
+      ); -- i_host
 
 
    ---------------------------------------------------------
@@ -72,34 +85,28 @@ begin
 
    i_sdcard : entity work.sdcard
       port map (
-         clk_i              => clk,
-         rst_i              => rst,
-         rd_i               => ctrl_rd,
-         wr_i               => ctrl_wr,
-         wr_multi           => ctrl_wr_multi,
-         wr_multi_first     => ctrl_wr_multi_first,
-         wr_multi_last      => ctrl_wr_multi_last,
-         addr_i             => ctrl_addr,
-         data_i             => ctrl_data,
-         busy_o             => ctrl_busy,
-         hndShk_in_i        => ctrl_hndShk_in,
-         hndShk_out_o       => ctrl_hndShk_out,
-         error_o            => ctrl_error,
-         last_state_o       => ctrl_last_state,
-         last_sd_rxbyte_o   => ctrl_last_sd_rxbyte,
-         clear_error_i      => ctrl_clear_error,
-         sd_clk_o           => sd_clk,
-         sd_cmd_in_i        => sd_cmd_in,
-         sd_cmd_out_o       => sd_cmd_out,
-         sd_cmd_oe_o        => sd_cmd_oe,
-         sd_dat_in_i        => sd_dat_in,
-         sd_dat_out_o       => sd_dat_out,
-         sd_dat_oe_o        => sd_dat_oe
+         avm_clk_i           => avm_clk,
+         avm_rst_i           => avm_rst,
+         avm_write_i         => avm_write,
+         avm_read_i          => avm_read,
+         avm_address_i       => avm_address,
+         avm_writedata_i     => avm_writedata,
+         avm_burstcount_i    => avm_burstcount,
+         avm_readdata_o      => avm_readdata,
+         avm_readdatavalid_o => avm_readdatavalid,
+         avm_waitrequest_o   => avm_waitrequest,
+         sd_clk_o            => sd_clk,
+         sd_cmd_in_i         => sd_cmd_in,
+         sd_cmd_out_o        => sd_cmd_out,
+         sd_cmd_oe_o         => sd_cmd_oe,
+         sd_dat_in_i         => sd_dat_in,
+         sd_dat_out_o        => sd_dat_out,
+         sd_dat_oe_o         => sd_dat_oe
       ); -- i_sdcard
 
 
    ---------------------------------------------------------
-   -- Connect tri-state buffers
+   -- Connect I/O buffers
    ---------------------------------------------------------
 
    sdClk <= sd_clk;
