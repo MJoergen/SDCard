@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="250011584fs"></ZoomStartTime>
-      <ZoomEndTime time="250216585fs"></ZoomEndTime>
-      <Cursor1Time time="250095084fs"></Cursor1Time>
+      <ZoomStartTime time="1090480000fs"></ZoomStartTime>
+      <ZoomEndTime time="1132480001fs"></ZoomEndTime>
+      <Cursor1Time time="1148160000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="139"></ValueColumnWidth>
+      <ValueColumnWidth column_width="129"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/tb/avm_clk">
       <obj_property name="ElementShortName">avm_clk</obj_property>
       <obj_property name="ObjectShortName">avm_clk</obj_property>
@@ -101,8 +101,8 @@
       <obj_property name="ObjectShortName">dat[3:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb/i_sdcard/counter_slow">
-      <obj_property name="ElementShortName">counter_slow[5:0]</obj_property>
-      <obj_property name="ObjectShortName">counter_slow[5:0]</obj_property>
+      <obj_property name="ElementShortName">counter_slow[6:0]</obj_property>
+      <obj_property name="ObjectShortName">counter_slow[6:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb/i_sdcard/cmd">
       <obj_property name="ElementShortName">cmd[37:0]</obj_property>
@@ -124,12 +124,97 @@
       <obj_property name="ElementShortName">resp_valid</obj_property>
       <obj_property name="ObjectShortName">resp_valid</obj_property>
    </wvobject>
-   <wvobject type="other" fp_name="/tb/i_sdcard/idle_count">
-      <obj_property name="ElementShortName">idle_count</obj_property>
-      <obj_property name="ObjectShortName">idle_count</obj_property>
-   </wvobject>
    <wvobject type="other" fp_name="/tb/i_sdcard/state">
       <obj_property name="ElementShortName">state</obj_property>
       <obj_property name="ObjectShortName">state</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group250">
+      <obj_property name="label">cmd</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/idle_count">
+         <obj_property name="ElementShortName">idle_count</obj_property>
+         <obj_property name="ObjectShortName">idle_count</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/cmd_with_crc">
+         <obj_property name="ElementShortName">cmd_with_crc[47:0]</obj_property>
+         <obj_property name="ObjectShortName">cmd_with_crc[47:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group64">
+      <obj_property name="label">sdModel</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb/i_sdModel/state">
+         <obj_property name="ElementShortName">state[9:0]</obj_property>
+         <obj_property name="ObjectShortName">state[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/inCmd">
+         <obj_property name="ElementShortName">inCmd[46:0]</obj_property>
+         <obj_property name="ObjectShortName">inCmd[46:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/ValidCmd">
+         <obj_property name="ElementShortName">ValidCmd</obj_property>
+         <obj_property name="ObjectShortName">ValidCmd</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/outDelayCnt">
+         <obj_property name="ElementShortName">outDelayCnt[2:0]</obj_property>
+         <obj_property name="ObjectShortName">outDelayCnt[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/inValidCmd">
+         <obj_property name="ElementShortName">inValidCmd</obj_property>
+         <obj_property name="ObjectShortName">inValidCmd</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/response_S">
+         <obj_property name="ElementShortName">response_S[7:0]</obj_property>
+         <obj_property name="ObjectShortName">response_S[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/crcCnt">
+         <obj_property name="ElementShortName">crcCnt[2:0]</obj_property>
+         <obj_property name="ObjectShortName">crcCnt[2:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crcDat_en">
+         <obj_property name="ElementShortName">crcDat_en</obj_property>
+         <obj_property name="ObjectShortName">crcDat_en</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/crcDat_in">
+         <obj_property name="ElementShortName">crcDat_in[3:0]</obj_property>
+         <obj_property name="ObjectShortName">crcDat_in[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/crcDat_out">
+         <obj_property name="ElementShortName">crcDat_out[3:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">crcDat_out[3:0][15:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crcDat_rst">
+         <obj_property name="ElementShortName">crcDat_rst</obj_property>
+         <obj_property name="ObjectShortName">crcDat_rst</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crcEn">
+         <obj_property name="ElementShortName">crcEn</obj_property>
+         <obj_property name="ObjectShortName">crcEn</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crcIn">
+         <obj_property name="ElementShortName">crcIn</obj_property>
+         <obj_property name="ObjectShortName">crcIn</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/crcOut">
+         <obj_property name="ElementShortName">crcOut[6:0]</obj_property>
+         <obj_property name="ObjectShortName">crcOut[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crcRst">
+         <obj_property name="ElementShortName">crcRst</obj_property>
+         <obj_property name="ObjectShortName">crcRst</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/crc_c">
+         <obj_property name="ElementShortName">crc_c[4:0]</obj_property>
+         <obj_property name="ObjectShortName">crc_c[4:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/crc_ok">
+         <obj_property name="ElementShortName">crc_ok</obj_property>
+         <obj_property name="ObjectShortName">crc_ok</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>

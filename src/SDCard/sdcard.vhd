@@ -13,6 +13,8 @@
 -- Output is changed on falling edge of sd_clk_o. The SDCard samples on rising clock edge.
 -- Input is sampled on rising edge of sd_clk_o. The SDCard outputs on falling clock edge.
 
+-- Page 73 ...
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -44,14 +46,15 @@ end entity sdcard;
 
 architecture synthesis of sdcard is
 
-   signal counter_slow  : std_logic_vector(5 downto 0) := "000000";
+   constant CMD55  : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(55, 6));
+   constant ACMD41 : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(41, 6));
+
+   signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
    signal cmd           : std_logic_vector(37 downto 0);
    signal cmd_valid     : std_logic;
    signal cmd_ready     : std_logic;
    signal resp          : std_logic_vector(135 downto 0);
    signal resp_valid    : std_logic;
-
-   signal idle_count    : natural range 0 to 74;
 
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
@@ -67,7 +70,7 @@ architecture synthesis of sdcard is
 
 begin
 
-   sd_clk_o <= counter_slow(5) when state = IDLE_ST or state = ACMD41_ST or state = CMD2_ST else
+   sd_clk_o <= counter_slow(6) when state = IDLE_ST or state = ACMD41_ST or state = CMD2_ST else
                avm_clk_i;
 
    p_counter : process (avm_clk_i)
@@ -90,6 +93,7 @@ begin
          cmd_ready_o  => cmd_ready,
          resp_o       => resp,
          resp_valid_o => resp_valid,
+         sd_clk_i     => sd_clk_o,
          sd_cmd_in_i  => sd_cmd_in_i,
          sd_cmd_out_o => sd_cmd_out_o,
          sd_cmd_oe_o  => sd_cmd_oe_o
@@ -98,15 +102,24 @@ begin
    p_fsm : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
+         if cmd_ready = '1' then
+            cmd_valid <= '0';
+         end if;
+
          case state is
             when IDLE_ST =>
-               cmd       <= (others => '0');
+               cmd       <= CMD55 & X"00000000";
                cmd_valid <= '1';
                state     <= ACMD41_ST;
 
             when ACMD41_ST =>
                if cmd_ready = '1' then
-                  state <= CMD2_ST;
+                  if cmd(37 downto 32) = CMD55 then
+                     cmd       <= ACMD41 & X"00000000";
+                     cmd_valid <= '1';
+                  else
+                     state <= CMD2_ST;
+                  end if;
                end if;
 
             when CMD2_ST =>
@@ -119,7 +132,6 @@ begin
          end case;
 
          if avm_rst_i = '1' then
-            idle_count          <= 74;
             state               <= IDLE_ST;
             cmd_valid           <= '0';
             sd_dat_out_o        <= "0000";
