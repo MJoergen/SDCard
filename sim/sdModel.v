@@ -1,5 +1,10 @@
  //`include "timescale.v"
-`include "sd_defines.v"
+//`include "sd_defines.v"
+`define BIT_BLOCK 1044
+`define CRC_OFF 19
+`define BIT_BLOCK_REC 1024
+`define BIT_CRC_CYCLE 16
+
 `define tTLH 10 //Clock rise time
 `define tHL 10 //Clock fall time
 `define tISU 6 //Input setup time
@@ -898,7 +903,7 @@ integer sdModel_file_desc;
 
 initial
 begin
-  sdModel_file_desc = $fopen("../log/sd_model.log");
+  sdModel_file_desc = $fopen("sd_model.log");
   if (sdModel_file_desc < 2)
   begin
     $display("*E Could not open/create testbench log file in /log/ directory!");
