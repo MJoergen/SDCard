@@ -15,7 +15,7 @@ entity sdcard is
       avm_read_i          : in  std_logic;
       avm_address_i       : in  std_logic_vector(31 downto 0);
       avm_writedata_i     : in  std_logic_vector(7 downto 0);
-      avm_burstcount_i    : in  std_logic_vector(8 downto 0);
+      avm_burstcount_i    : in  std_logic_vector(15 downto 0); -- Must be a multiple of 512 bytes
       avm_readdata_o      : out std_logic_vector(7 downto 0);
       avm_readdatavalid_o : out std_logic;
       avm_waitrequest_o   : out std_logic;
@@ -34,19 +34,35 @@ end entity sdcard;
 architecture synthesis of sdcard is
 
    type state_t is (
-      IDLE_ST
+      IDLE_ST,
+      READING_ST
    );
 
-   signal state : state_t;
+   signal state : state_t := IDLE_ST;
 
 begin
 
    p_fsm : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
+         case state is
+            when IDLE_ST =>
+               if avm_read_i = '1' then
+                  state <= READING_ST;
+               end if;
+            when others =>
+               null;
+         end case;
 
          if avm_rst_i = '1' then
-            state <= IDLE_ST;
+            state               <= IDLE_ST;
+            sd_clk_o            <= '0';
+            sd_cmd_out_o        <= '0';
+            sd_cmd_oe_o         <= '0';
+            sd_dat_out_o        <= "0000";
+            sd_dat_oe_o         <= '0';
+            avm_readdatavalid_o <= '0';
+            avm_waitrequest_o   <= '1';
          end if;
       end if;
    end process p_fsm;

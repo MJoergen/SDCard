@@ -20,7 +20,7 @@ architecture simulation of tb is
    signal avm_read          : std_logic;
    signal avm_address       : std_logic_vector(31 downto 0);
    signal avm_writedata     : std_logic_vector(7 downto 0);
-   signal avm_burstcount    : std_logic_vector(8 downto 0);
+   signal avm_burstcount    : std_logic_vector(15 downto 0);
    signal avm_readdata      : std_logic_vector(7 downto 0);
    signal avm_readdatavalid : std_logic;
    signal avm_waitrequest   : std_logic;
