@@ -1,4 +1,5 @@
 -- This is the CMD controller for the complete SDCard controller.
+-- This block includes generation of the 7-bit CRC checksum.
 
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
@@ -6,13 +7,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
--- This block includes generation of the 7-bit CRC checksum.
--- Output is changed on falling edge of sd_clk_o. The SDCard samples on rising clock edge.
--- Input is sampled on rising edge of sd_clk_o. The SDCard outputs on falling clock edge.
-
 entity cmd is
    port (
-      clk_i           : in  std_logic;
+      clk_i           : in  std_logic; -- 50 MHz
       rst_i           : in  std_logic;
       cmd_i           : in  std_logic_vector(37 downto 0);
       cmd_valid_i     : in  std_logic;
@@ -21,7 +18,7 @@ entity cmd is
       resp_valid_o    : out std_logic;
 
       -- SDCard device interface
-      sd_clk_i        : in  std_logic;
+      sd_clk_i        : in  std_logic; -- 25 MHz or 400 kHz
       sd_cmd_in_i     : in  std_logic;
       sd_cmd_out_o    : out std_logic;
       sd_cmd_oe_o     : out std_logic
@@ -66,8 +63,93 @@ architecture synthesis of cmd is
 
 begin
 
-   sd_cmd_out <= '1' when state = INIT_ST or state = IDLE_ST else send_dat(39);
-   sd_cmd_oe  <= '1' when state = INIT_ST or state = IDLE_ST or state = WRITING_ST or state = SEND_CRC_ST else '0';
+   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' else '0';
+
+   p_fsm : process (clk_i)
+   begin
+      if rising_edge(clk_i) then
+         resp_valid_o <= '0';
+
+         if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk_i
+            case state is
+               when INIT_ST =>
+                  if idle_count > 0 then
+                     idle_count <= idle_count - 1;
+                  else
+                     state <= IDLE_ST;
+                  end if;
+
+               when IDLE_ST =>
+                  if cmd_valid_i = '1' then
+                     send_dat   <= "01" & cmd_i;
+                     send_count <= 39;
+                     crc        <= (others => '0');
+                     state      <= WRITING_ST;
+                  end if;
+
+               when WRITING_ST =>
+                  if send_count > 0 then
+                     send_dat   <= send_dat(38 downto 0) & "0";
+                     send_count <= send_count - 1;
+                     crc        <= new_crc(crc, send_dat(39));
+                  else
+                     send_dat(39 downto 32) <= new_crc(crc, send_dat(39)) & "1";
+                     send_count             <= 7;
+                     state                  <= SEND_CRC_ST;
+                  end if;
+
+               when SEND_CRC_ST =>
+                  if send_count > 0 then
+                     send_dat   <= send_dat(38 downto 0) & "0";
+                     send_count <= send_count - 1;
+                  else
+                     resp_count <= 47;
+                     crc        <= (others => '0');
+                     state      <= WAIT_RESPONSE_ST;
+                  end if;
+
+               when WAIT_RESPONSE_ST =>
+                  if sd_cmd_in_i = '0' then
+                     state   <= GET_RESPONSE_ST;
+                  end if;
+
+               when GET_RESPONSE_ST =>
+                  if resp_count > 8 then
+                     crc <= new_crc(crc, sd_cmd_in_i);
+                  end if;
+
+                  if resp_count > 0 then
+                     resp_dat   <= resp_dat(38 downto 0) & sd_cmd_in_i;
+                     resp_count <= resp_count - 1;
+                  else
+                     if resp_dat(7 downto 0) = crc & "1" then
+                        resp_o              <= (others => '0');
+                        resp_o(31 downto 0) <= resp_dat(39 downto 8);
+                        resp_valid_o        <= '1';
+                        report "Received response 0x" & to_hstring(resp_dat(39 downto 8))
+                           & " with valid CRC";
+                     end if;
+                     state <= IDLE_ST;
+                  end if;
+            end case;
+         end if;
+
+         if rst_i = '1' then
+            idle_count <= 400;
+            state      <= INIT_ST;
+         end if;
+      end if;
+   end process p_fsm;
+
+   -- Make sure sd_cmd_oe is clear when receiving response
+   sd_cmd_out <= '1' when state = INIT_ST
+                       or state = IDLE_ST
+            else send_dat(39);
+   sd_cmd_oe  <= '1' when state = INIT_ST
+                       or state = IDLE_ST
+                       or state = WRITING_ST
+                       or state = SEND_CRC_ST
+            else '0';
 
    -- Output is changed on falling edge of clk. The SDCard samples on rising clock edge.
    p_out : process (clk_i)
@@ -84,84 +166,6 @@ begin
          end if;
       end if;
    end process p_out;
-
-   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' else '0';
-
-   p_fsm : process (clk_i)
-      variable inv : std_logic;
-   begin
-      if rising_edge(clk_i) then
-         resp_valid_o <= '0';
-
-         if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk_i
-            case state is
-               when INIT_ST =>
-                  if idle_count = 1 then
-                     state <= IDLE_ST;
-                  end if;
-                  idle_count <= idle_count - 1;
-
-               when IDLE_ST =>
-                  if cmd_valid_i = '1' then
-                     send_dat   <= "01" & cmd_i;
-                     send_count <= 39;
-                     crc        <= (others => '0');
-                     state      <= WRITING_ST;
-                  end if;
-
-               when WRITING_ST =>
-                  if send_count = 0 then
-                     send_dat(39 downto 32) <= new_crc(crc, send_dat(39)) & "1";
-                     send_count             <= 7;
-                     state                  <= SEND_CRC_ST;
-                  else
-                     crc        <= new_crc(crc, send_dat(39));
-                     send_dat   <= send_dat(38 downto 0) & "0";
-                     send_count <= send_count - 1;
-                  end if;
-
-               when SEND_CRC_ST =>
-                  if send_count = 0 then
-                     resp_count <= 47;
-                     crc        <= (others => '0');
-                     state      <= WAIT_RESPONSE_ST;
-                  else
-                     send_dat   <= send_dat(38 downto 0) & "0";
-                     send_count <= send_count - 1;
-                  end if;
-
-               when WAIT_RESPONSE_ST =>
-                  if sd_cmd_in_i = '0' then
-                     state   <= GET_RESPONSE_ST;
-                  end if;
-
-               when GET_RESPONSE_ST =>
-                  if resp_count = 0 then
-                     if resp_dat(7 downto 0) = crc & "1" then
-                        resp_o              <= (others => '0');
-                        resp_o(31 downto 0) <= resp_dat(39 downto 8);
-                        resp_valid_o        <= '1';
-                     end if;
-                     state        <= IDLE_ST;
-                  else
-                     resp_dat   <= resp_dat(38 downto 0) & sd_cmd_in_i;
-                     resp_count <= resp_count - 1;
-                  end if;
-                  if resp_count > 8 then
-                     crc <= new_crc(crc, sd_cmd_in_i);
-                  end if;
-
-               when others =>
-                  null;
-            end case;
-         end if;
-
-         if rst_i = '1' then
-            idle_count <= 400;
-            state      <= INIT_ST;
-         end if;
-      end if;
-   end process p_fsm;
 
 end architecture synthesis;
 
