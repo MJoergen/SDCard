@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1090480000fs"></ZoomStartTime>
-      <ZoomEndTime time="1132480001fs"></ZoomEndTime>
-      <Cursor1Time time="1148160000fs"></Cursor1Time>
+      <ZoomStartTime time="814160000fs"></ZoomStartTime>
+      <ZoomEndTime time="1026660001fs"></ZoomEndTime>
+      <Cursor1Time time="1136660000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="129"></ValueColumnWidth>
+      <ValueColumnWidth column_width="124"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/tb/avm_clk">
@@ -131,13 +131,22 @@
    <wvobject type="group" fp_name="group250">
       <obj_property name="label">cmd</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/idle_count">
          <obj_property name="ElementShortName">idle_count</obj_property>
          <obj_property name="ObjectShortName">idle_count</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/cmd_with_crc">
-         <obj_property name="ElementShortName">cmd_with_crc[47:0]</obj_property>
-         <obj_property name="ObjectShortName">cmd_with_crc[47:0]</obj_property>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/send_dat">
+         <obj_property name="ElementShortName">send_dat[39:0]</obj_property>
+         <obj_property name="ObjectShortName">send_dat[39:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/send_count">
+         <obj_property name="ElementShortName">send_count</obj_property>
+         <obj_property name="ObjectShortName">send_count</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/crc">
+         <obj_property name="ElementShortName">crc[6:0]</obj_property>
+         <obj_property name="ObjectShortName">crc[6:0]</obj_property>
       </wvobject>
       <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/state">
          <obj_property name="ElementShortName">state</obj_property>
