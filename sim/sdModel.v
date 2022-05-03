@@ -359,279 +359,276 @@ always @ (posedge sdClk) begin
             response_S<=0;
             outDelayCnt<=0;
             responseType=0;
-        end
+        end // IDLE
+
         READ_CMD: begin //read cmd
-        crcEn<=1;
-        crcRst<=0;
-        crcIn <= #`tIH qCmd;
-        inCmd[47-cmdRead]  <= #`tIH qCmd;
-        cmdRead <= #1 cmdRead+1;
-        if (cmdRead >= 40)
-            crcEn<=0;
+            crcEn<=1;
+            crcRst<=0;
+            crcIn <= #`tIH qCmd;
+            inCmd[47-cmdRead]  <= #`tIH qCmd;
+            cmdRead <= #1 cmdRead+1;
+            if (cmdRead >= 40)
+                crcEn<=0;
 
-        if (cmdRead == 46) begin
-            oeCmd<=1;
-            cmdOut<=1;
-        end
-    end
+            if (cmdRead == 46) begin
+                oeCmd<=1;
+                cmdOut<=1;
+            end
+        end // READ_CMD
 
-    ANALYZE_CMD: begin//check for valid cmd
-        //Wrong CRC go idle
-        if (inCmd[46] == 0) //start
-            inValidCmd=1;
-        else if (inCmd[7:1] != crcOut) begin
-            inValidCmd=1;
-            $fdisplay(sdModel_file_desc, "**sd_Model Commando CRC Error") ;
-            $display(sdModel_file_desc, "**sd_Model Commando CRC Error") ;
-        end
-        else if  (inCmd[0] != 1)  begin//stop
-            inValidCmd=1;
-            $fdisplay(sdModel_file_desc, "**sd_Model Commando No Stop Bit Error") ;
-            $display(sdModel_file_desc, "**sd_Model Commando No Stop Bit Error") ;
-        end
-        else begin
-            if(outDelayCnt ==0)
-                CardStatus[3]<=0;
-            case(inCmd[45:40])
-                0 : response_S <= 0;
-                2 : response_S <= 136;
-                3 : response_S <= 48;
-                7 : response_S <= 48;
-                8 : response_S <= 0;
-                9 : response_S <= 136;
-                14 : response_S <= 0;
-                16 : response_S <= 48;
-                17 : response_S <= 48;
-                18 : response_S <= 48;
-                24 : response_S <= 48;
-                25 : response_S <= 48;
-                33 : response_S <= 48;
-                55 : response_S <= 48;
-                41 : response_S <= 48;
-            endcase
-            case(inCmd[45:40])
-                0 : begin
-                    response_CMD <= 0;
-                    cardIdentificationState<=1;
-                    ResetCard;
-                end
-                2 : begin
-                    if (lastCMD != 41 && outDelayCnt==0) begin
-                        $fdisplay(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
-                        //$display(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
-                        CardStatus[3]<=1;
-                    end
-                    response_CMD[127:8] <= CID;
-                    appendCrc<=0;
-                    CardStatus[12:9] <=2;
-                end
-                3 :  begin
-                    if (lastCMD != 2 && outDelayCnt==0 ) begin
-                        $fdisplay(sdModel_file_desc, "**Error in sequnce, CMD 2 should precede 3 in Startup state") ;
-                        //$display(sdModel_file_desc, "**Error in sequnce, CMD 2 should precede 3 in Startup state") ;
-                        CardStatus[3]<=1;
-                    end
-                    response_CMD[127:112] <= RCA[15:0] ;
-                    response_CMD[111:96] <= CardStatus[15:0] ;
-                    appendCrc<=1;
-                    CardStatus[12:9] <=3;
-                    cardIdentificationState<=0;
-                end
-                6 : begin
-                    if (lastCMD == 55 && outDelayCnt==0) begin
-                        if (inCmd[9:8] == 2'b10) begin
-                            BusWidth <=4;
-                            $display(sdModel_file_desc, "**BUS WIDTH 4 ") ;
-                        end
-                        else
-                            BusWidth <=1;
-
-                        response_S<=48;
-                        response_CMD[127:96] <= CardStatus;
-                    end
-                    else if (outDelayCnt==0)begin
+        ANALYZE_CMD: begin//check for valid cmd
+            //Wrong CRC go idle
+            if (inCmd[46] == 0) //start
+                inValidCmd=1;
+            else if (inCmd[7:1] != crcOut) begin
+                inValidCmd=1;
+                $fdisplay(sdModel_file_desc, "**sd_Model Commando CRC Error") ;
+                $display(sdModel_file_desc, "**sd_Model Commando CRC Error") ;
+            end
+            else if  (inCmd[0] != 1)  begin//stop
+                inValidCmd=1;
+                $fdisplay(sdModel_file_desc, "**sd_Model Commando No Stop Bit Error") ;
+                $display(sdModel_file_desc, "**sd_Model Commando No Stop Bit Error") ;
+            end
+            else begin
+                if(outDelayCnt ==0)
+                    CardStatus[3]<=0;
+                case(inCmd[45:40])
+                    0 : response_S <= 0;
+                    2 : response_S <= 136;
+                    3 : response_S <= 48;
+                    7 : response_S <= 48;
+                    8 : response_S <= 0;
+                    9 : response_S <= 136;
+                    14 : response_S <= 0;
+                    16 : response_S <= 48;
+                    17 : response_S <= 48;
+                    18 : response_S <= 48;
+                    24 : response_S <= 48;
+                    25 : response_S <= 48;
+                    33 : response_S <= 48;
+                    55 : response_S <= 48;
+                    41 : response_S <= 48;
+                endcase
+                case(inCmd[45:40])
+                    0 : begin
                         response_CMD <= 0;
-                        response_S<=0;
-                        $fdisplay(sdModel_file_desc, "**Error Invalid CMD, %h",inCmd[45:40]) ;
-                        //  $display(sdModel_file_desc, "**Error Invalid CMD, %h",inCmd[45:40]) ;
+                        cardIdentificationState<=1;
+                        ResetCard;
                     end
-                end
-                7: begin
-                    if (outDelayCnt==0) begin
-                        if (inCmd[39:24]== RCA[15:0]) begin
-                            CardTransferActive <= 1;
-                            response_CMD[127:96] <= CardStatus ;
-                            CardStatus[12:9] <=`TRAN;
-                        end
-                        else begin
-                            CardTransferActive <= 0;
-                            response_CMD[127:96] <= CardStatus ;
-                            CardStatus[12:9] <=3;
-                        end
-                    end
-                end
-                8 : response_CMD[127:96] <= 0; //V1.0 card
-
-                9 : begin
-                    if (lastCMD != 41 && outDelayCnt==0) begin
-                        $fdisplay(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
-                        //$display(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
-                        CardStatus[3]<=1;
-                    end
-                    response_CMD[127:8] <= CSD;
-                    appendCrc<=0;
-                    CardStatus[12:9] <=2;
-                end
-
-                12: begin
-                    response_CMD[127:96] <= CardStatus ;
-                    stop<=1;
-                    mult_write <= 0;
-                    mult_read <=0;
-                    CardStatus[12:9] <= `TRAN;
-                end
-
-
-                16 : begin
-                    response_CMD[127:96] <= CardStatus ;
-
-                end
-
-
-
-
-
-                17 :  begin
-                    if (outDelayCnt==0) begin
-                        if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
-                            CardStatus[12:9] <=`DATAS;//Put card in data state
-                            response_CMD[127:96] <= CardStatus ;
-                            BlockAddr = inCmd[39:8];
-                            if (BlockAddr%512 !=0)
-                                $display("**Block Misalign Error");
-                        end
-                        else begin
-                            response_S <= 0;
-                            response_CMD[127:96] <= 0;
-                        end
-                    end
-
-                end
-
-                18 :  begin
-                    if (outDelayCnt==0) begin
-                        if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
-                            CardStatus[12:9] <=`DATAS;//Put card in data state
-                            response_CMD[127:96] <= CardStatus ;
-                            mult_read <= 1;
-                            BlockAddr = inCmd[39:8];
-                            if (BlockAddr%512 !=0)
-                                $display("**Block Misalign Error");
-                        end
-                        else begin
-                            response_S <= 0;
-                            response_CMD[127:96] <= 0;
-
-                        end
-                    end
-
-                end
-
-                24 : begin
-                    if (outDelayCnt==0) begin
-                        if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
-                            if (CardStatus[8]) begin //If Free write buffer
-                                CardStatus[12:9] <=`RCV;//Put card in Rcv state
-                                response_CMD[127:96] <= CardStatus ;
-                                BlockAddr = inCmd[39:8];
-                                if (BlockAddr%512 !=0)
-                                    $display("**Block Misalign Error");
-                            end
-                            else begin
-                                response_CMD[127:96] <= CardStatus;
-                                $fdisplay(sdModel_file_desc, "**Error Try to blockwrite when No Free Writebuffer") ;
-                                $display("**Error Try to blockwrite when No Free Writebuffer") ;
-                            end
-                        end
-                        else begin
-                            response_S <= 0;
-                            response_CMD[127:96] <= 0;
-                        end
-                    end
-                end
-                25 : begin
-                    if (outDelayCnt==0) begin
-                        if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
-                            if (CardStatus[8]) begin //If Free write buffer
-                                CardStatus[12:9] <=`RCV;//Put card in Rcv state
-                                response_CMD[127:96] <= CardStatus ;
-                                BlockAddr = inCmd[39:8];
-                                mult_write <= 1;
-                                if (BlockAddr%512 !=0)
-                                    $display("**Block Misalign Error");
-                            end
-                            else begin
-                                response_CMD[127:96] <= CardStatus;
-                                $fdisplay(sdModel_file_desc, "**Error Try to blockwrite when No Free Writebuffer") ;
-                                $display("**Error Try to blockwrite when No Free Writebuffer") ;
-                            end
-                        end
-                        else begin
-                            response_S <= 0;
-                            response_CMD[127:96] <= 0;
-                        end
-                    end
-                end
-
-                33 : response_CMD[127:96] <= 48;
-                55 :
-                begin
-                    response_CMD[127:96] <= CardStatus ;
-                    CardStatus[5] <=1;      //Next CMD is AP specific CMD
-                    appendCrc<=1;
-                end
-                41 :
-                begin
-                    if (cardIdentificationState) begin
-                        if (lastCMD != 55 && outDelayCnt==0) begin
-                            $fdisplay(sdModel_file_desc, "**Error in sequnce, CMD 55 should precede 41 in Startup state") ;
-                            $display( "**Error in sequnce, CMD 55 should precede 41 in Startup state") ;
+                    2 : begin
+                        if (lastCMD != 41 && outDelayCnt==0) begin
+                            $fdisplay(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
+                            //$display(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
                             CardStatus[3]<=1;
                         end
-                        else begin
-                            responseType=3;
-                            response_CMD[127:96] <= OCR;
-                            appendCrc<=0;
-                            CardStatus[5] <=0;
-                            if (Busy==1)
-                                CardStatus[12:9] <=1;
+                        response_CMD[127:8] <= CID;
+                        appendCrc<=0;
+                        CardStatus[12:9] <=2;
+                    end
+                    3 :  begin
+                        if (lastCMD != 2 && outDelayCnt==0 ) begin
+                            $fdisplay(sdModel_file_desc, "**Error in sequnce, CMD 2 should precede 3 in Startup state") ;
+                            //$display(sdModel_file_desc, "**Error in sequnce, CMD 2 should precede 3 in Startup state") ;
+                            CardStatus[3]<=1;
+                        end
+                        response_CMD[127:112] <= RCA[15:0] ;
+                        response_CMD[111:96] <= CardStatus[15:0] ;
+                        appendCrc<=1;
+                        CardStatus[12:9] <=3;
+                        cardIdentificationState<=0;
+                    end
+                    6 : begin
+                        if (lastCMD == 55 && outDelayCnt==0) begin
+                            if (inCmd[9:8] == 2'b10) begin
+                                BusWidth <=4;
+                                $display(sdModel_file_desc, "**BUS WIDTH 4 ") ;
+                            end
+                            else
+                                BusWidth <=1;
+
+                            response_S<=48;
+                            response_CMD[127:96] <= CardStatus;
+                        end
+                        else if (outDelayCnt==0)begin
+                            response_CMD <= 0;
+                            response_S<=0;
+                            $fdisplay(sdModel_file_desc, "**Error Invalid CMD, %h",inCmd[45:40]) ;
+                            //  $display(sdModel_file_desc, "**Error Invalid CMD, %h",inCmd[45:40]) ;
                         end
                     end
-                end
+                    7: begin
+                        if (outDelayCnt==0) begin
+                            if (inCmd[39:24]== RCA[15:0]) begin
+                                CardTransferActive <= 1;
+                                response_CMD[127:96] <= CardStatus ;
+                                CardStatus[12:9] <=`TRAN;
+                            end
+                            else begin
+                                CardTransferActive <= 0;
+                                response_CMD[127:96] <= CardStatus ;
+                                CardStatus[12:9] <=3;
+                            end
+                        end
+                    end
+                    8 : response_CMD[127:96] <= 0; //V1.0 card
 
-            endcase
-            ValidCmd<=1;
-            crcIn<=0;
+                    9 : begin
+                        if (lastCMD != 41 && outDelayCnt==0) begin
+                            $fdisplay(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
+                            //$display(sdModel_file_desc, "**Error in sequnce, ACMD 41 should precede 2 in Startup state") ;
+                            CardStatus[3]<=1;
+                        end
+                        response_CMD[127:8] <= CSD;
+                        appendCrc<=0;
+                        CardStatus[12:9] <=2;
+                    end
 
-            outDelayCnt<=outDelayCnt+1;
-            if (outDelayCnt==`outDelay)
-                crcRst<=1;
-            oeCmd<=1;
-            cmdOut<=1;
-            response_CMD[135:134] <=0;
+                    12: begin
+                        response_CMD[127:96] <= CardStatus ;
+                        stop<=1;
+                        mult_write <= 0;
+                        mult_read <=0;
+                        CardStatus[12:9] <= `TRAN;
+                    end
 
-            if (responseType != 3)
-                if (!add_wrong_cmd_indx)
-                    response_CMD[133:128] <=inCmd[45:40];
-                else
-                    response_CMD[133:128] <=0;
+                    16 : begin
+                        response_CMD[127:96] <= CardStatus ;
+
+                    end
+
+                    17 :  begin
+                        if (outDelayCnt==0) begin
+                            if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
+                                CardStatus[12:9] <=`DATAS;//Put card in data state
+                                response_CMD[127:96] <= CardStatus ;
+                                BlockAddr = inCmd[39:8];
+                                if (BlockAddr%512 !=0)
+                                    $display("**Block Misalign Error");
+                            end
+                            else begin
+                                response_S <= 0;
+                                response_CMD[127:96] <= 0;
+                            end
+                        end
+
+                    end
+
+                    18 :  begin
+                        if (outDelayCnt==0) begin
+                            if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
+                                CardStatus[12:9] <=`DATAS;//Put card in data state
+                                response_CMD[127:96] <= CardStatus ;
+                                mult_read <= 1;
+                                BlockAddr = inCmd[39:8];
+                                if (BlockAddr%512 !=0)
+                                    $display("**Block Misalign Error");
+                            end
+                            else begin
+                                response_S <= 0;
+                                response_CMD[127:96] <= 0;
+
+                            end
+                        end
+
+                    end
+
+                    24 : begin
+                        if (outDelayCnt==0) begin
+                            if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
+                                if (CardStatus[8]) begin //If Free write buffer
+                                    CardStatus[12:9] <=`RCV;//Put card in Rcv state
+                                    response_CMD[127:96] <= CardStatus ;
+                                    BlockAddr = inCmd[39:8];
+                                    if (BlockAddr%512 !=0)
+                                        $display("**Block Misalign Error");
+                                end
+                                else begin
+                                    response_CMD[127:96] <= CardStatus;
+                                    $fdisplay(sdModel_file_desc, "**Error Try to blockwrite when No Free Writebuffer") ;
+                                    $display("**Error Try to blockwrite when No Free Writebuffer") ;
+                                end
+                            end
+                            else begin
+                                response_S <= 0;
+                                response_CMD[127:96] <= 0;
+                            end
+                        end
+                    end
+                    25 : begin
+                        if (outDelayCnt==0) begin
+                            if (CardStatus[12:9] == `TRAN) begin //If card is in transferstate
+                                if (CardStatus[8]) begin //If Free write buffer
+                                    CardStatus[12:9] <=`RCV;//Put card in Rcv state
+                                    response_CMD[127:96] <= CardStatus ;
+                                    BlockAddr = inCmd[39:8];
+                                    mult_write <= 1;
+                                    if (BlockAddr%512 !=0)
+                                        $display("**Block Misalign Error");
+                                end
+                                else begin
+                                    response_CMD[127:96] <= CardStatus;
+                                    $fdisplay(sdModel_file_desc, "**Error Try to blockwrite when No Free Writebuffer") ;
+                                    $display("**Error Try to blockwrite when No Free Writebuffer") ;
+                                end
+                            end
+                            else begin
+                                response_S <= 0;
+                                response_CMD[127:96] <= 0;
+                            end
+                        end
+                    end
+
+                    33 : response_CMD[127:96] <= 48;
+                    55 :
+                    begin
+                        response_CMD[127:96] <= CardStatus ;
+                        CardStatus[5] <=1;      //Next CMD is AP specific CMD
+                        appendCrc<=1;
+                    end
+                    41 :
+                    begin
+                        if (cardIdentificationState) begin
+                            if (lastCMD != 55 && outDelayCnt==0) begin
+                                $fdisplay(sdModel_file_desc, "**Error in sequnce, CMD 55 should precede 41 in Startup state") ;
+                                $display( "**Error in sequnce, CMD 55 should precede 41 in Startup state") ;
+                                CardStatus[3]<=1;
+                            end
+                            else begin
+                                responseType=3;
+                                response_CMD[127:96] <= OCR;
+                                appendCrc<=0;
+                                CardStatus[5] <=0;
+                                if (Busy==1)
+                                    CardStatus[12:9] <=1;
+                            end
+                        end
+                    end
+
+                endcase
+
+                ValidCmd<=1;
+                crcIn<=0;
+
+                outDelayCnt<=outDelayCnt+1;
+                if (outDelayCnt==`outDelay)
+                    crcRst<=1;
+                oeCmd<=1;
+                cmdOut<=1;
+                response_CMD[135:134] <=0;
+
+                if (responseType != 3)
+                    if (!add_wrong_cmd_indx)
+                        response_CMD[133:128] <=inCmd[45:40];
+                    else
+                        response_CMD[133:128] <=0;
 
                 if (responseType == 3)
                     response_CMD[133:128] <=6'b111111;
 
                 lastCMD <=inCmd[45:40];
-            end
-        end
+            end // else begin
+        end // ANALYZE_CMD
     endcase
 end
 
