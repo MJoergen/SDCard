@@ -39,12 +39,16 @@ architecture synthesis of cmd is
    signal send_dat   : std_logic_vector(39 downto 0);
    signal send_count : natural range 0 to 39;
    signal crc        : std_logic_vector(6 downto 0);
+   signal resp_dat   : std_logic_vector(39 downto 0);
+   signal resp_count : natural range 0 to 39;
 
    type state_t is (
       INIT_ST,
       IDLE_ST,
       WRITING_ST,
-      SEND_CRC_ST
+      SEND_CRC_ST,
+      WAIT_RESPONSE_ST,
+      GET_RESPONSE_ST
    );
 
    signal state : state_t := INIT_ST;
@@ -62,9 +66,8 @@ architecture synthesis of cmd is
 
 begin
 
-   resp_o <= (others => '0');
    sd_cmd_out <= '1' when state = INIT_ST or state = IDLE_ST else send_dat(39);
-   sd_cmd_oe  <= '1' when state = INIT_ST or state = IDLE_ST or state = WRITING_ST else '0';
+   sd_cmd_oe  <= '1' when state = INIT_ST or state = IDLE_ST or state = WRITING_ST or state = SEND_CRC_ST else '0';
 
    -- Output is changed on falling edge of clk. The SDCard samples on rising clock edge.
    p_out : process (clk_i)
@@ -90,18 +93,6 @@ begin
       if rising_edge(clk_i) then
          resp_valid_o <= '0';
 
-         crc <= new_crc(crc, send_dat(39));
---         -- This calculates the 7-bit CRC using the polynomial x^7 + x^3 + x^0.
---         -- See this link: http://www.ghsi.de/pages/subpages/Online%20CRC%20Calculation/indexDetails.php?Polynom=10001001&Message=7700000000
---         inv := send_dat(39) xor crc(6);
---         crc(6) <= crc(5);
---         crc(5) <= crc(4);
---         crc(4) <= crc(3);
---         crc(3) <= crc(2) xor inv;
---         crc(2) <= crc(1);
---         crc(1) <= crc(0);
---         crc(0) <= inv;
-
          if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk_i
             case state is
                when INIT_ST =>
@@ -120,21 +111,44 @@ begin
 
                when WRITING_ST =>
                   if send_count = 0 then
-                     send_dat(39 downto 32) <= crc & "1";
-                     send_count             <= 8;
+                     send_dat(39 downto 32) <= new_crc(crc, send_dat(39)) & "1";
+                     send_count             <= 7;
                      state                  <= SEND_CRC_ST;
                   else
+                     crc        <= new_crc(crc, send_dat(39));
                      send_dat   <= send_dat(38 downto 0) & "0";
                      send_count <= send_count - 1;
                   end if;
 
                when SEND_CRC_ST =>
                   if send_count = 0 then
-                     resp_valid_o <= '1';
-                     state        <= IDLE_ST;
+                     resp_count <= 47;
+                     crc        <= (others => '0');
+                     state      <= WAIT_RESPONSE_ST;
                   else
                      send_dat   <= send_dat(38 downto 0) & "0";
                      send_count <= send_count - 1;
+                  end if;
+
+               when WAIT_RESPONSE_ST =>
+                  if sd_cmd_in_i = '0' then
+                     state   <= GET_RESPONSE_ST;
+                  end if;
+
+               when GET_RESPONSE_ST =>
+                  if resp_count = 0 then
+                     if resp_dat(7 downto 0) = crc & "1" then
+                        resp_o              <= (others => '0');
+                        resp_o(31 downto 0) <= resp_dat(39 downto 8);
+                        resp_valid_o        <= '1';
+                     end if;
+                     state        <= IDLE_ST;
+                  else
+                     resp_dat   <= resp_dat(38 downto 0) & sd_cmd_in_i;
+                     resp_count <= resp_count - 1;
+                  end if;
+                  if resp_count > 8 then
+                     crc <= new_crc(crc, sd_cmd_in_i);
                   end if;
 
                when others =>

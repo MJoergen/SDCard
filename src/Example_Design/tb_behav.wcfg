@@ -11,13 +11,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="814160000fs"></ZoomStartTime>
-      <ZoomEndTime time="1026660001fs"></ZoomEndTime>
-      <Cursor1Time time="1136660000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2001000001fs"></ZoomEndTime>
+      <Cursor1Time time="1263360000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="124"></ValueColumnWidth>
+      <ValueColumnWidth column_width="109"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/tb/avm_clk">
@@ -148,6 +148,14 @@
          <obj_property name="ElementShortName">crc[6:0]</obj_property>
          <obj_property name="ObjectShortName">crc[6:0]</obj_property>
       </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/resp_dat">
+         <obj_property name="ElementShortName">resp_dat[54:0]</obj_property>
+         <obj_property name="ObjectShortName">resp_dat[54:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/resp_count">
+         <obj_property name="ElementShortName">resp_count</obj_property>
+         <obj_property name="ObjectShortName">resp_count</obj_property>
+      </wvobject>
       <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/state">
          <obj_property name="ElementShortName">state</obj_property>
          <obj_property name="ObjectShortName">state</obj_property>
@@ -217,13 +225,9 @@
          <obj_property name="ElementShortName">crcRst</obj_property>
          <obj_property name="ObjectShortName">crcRst</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/crc_c">
-         <obj_property name="ElementShortName">crc_c[4:0]</obj_property>
-         <obj_property name="ObjectShortName">crc_c[4:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crc_ok">
-         <obj_property name="ElementShortName">crc_ok</obj_property>
-         <obj_property name="ObjectShortName">crc_ok</obj_property>
+      <wvobject type="array" fp_name="/tb/i_sdModel/response_CMD">
+         <obj_property name="ElementShortName">response_CMD[135:0]</obj_property>
+         <obj_property name="ObjectShortName">response_CMD[135:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

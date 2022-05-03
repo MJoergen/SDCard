@@ -634,7 +634,6 @@ end
 
 always @ ( negedge sdClk) begin
     case(state)
-
         SEND_CMD: begin
             crcRst<=0;
             crcEn<=1;
@@ -665,24 +664,20 @@ always @ ( negedge sdClk) begin
             end
             if (cmdWrite == response_S-1)
                 cmdOut<=1;
-
-        end
+        end // SEND_CMD
     endcase
 end
 
 
 integer outdly_cnt;
 
-
 always @ (posedge sdClk) begin
 
     case (dataState)
         DATA_IDLE: begin
-
             crcDat_rst<=1;
             crcDat_en<=0;
             crcDat_in<=0;
-
         end
 
         READ_WAITS: begin
