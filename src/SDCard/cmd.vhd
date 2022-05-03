@@ -40,7 +40,7 @@ architecture synthesis of cmd is
    signal send_count : natural range 0 to 39;
    signal crc        : std_logic_vector(6 downto 0);
    signal resp_dat   : std_logic_vector(39 downto 0);
-   signal resp_count : natural range 0 to 39;
+   signal resp_count : natural range 0 to 47;
 
    type state_t is (
       INIT_ST,
