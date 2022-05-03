@@ -7,11 +7,15 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
+library work;
+use work.sdcard_globals.all;
+
 entity cmd is
    port (
       clk_i           : in  std_logic; -- 50 MHz
       rst_i           : in  std_logic;
-      cmd_i           : in  std_logic_vector(37 downto 0);
+      cmd_index_i     : in  natural range 0 to 63;
+      cmd_dat_i       : in  std_logic_vector(31 downto 0);
       cmd_valid_i     : in  std_logic;
       cmd_ready_o     : out std_logic;
       resp_o          : out std_logic_vector(135 downto 0);
@@ -81,7 +85,7 @@ begin
 
                when IDLE_ST =>
                   if cmd_valid_i = '1' then
-                     send_dat   <= "01" & cmd_i;
+                     send_dat   <= "01" & std_logic_vector(to_unsigned(cmd_index_i, 6)) & cmd_dat_i;
                      send_count <= 39;
                      crc        <= (others => '0');
                      state      <= WRITING_ST;
@@ -122,7 +126,8 @@ begin
                      resp_dat   <= resp_dat(38 downto 0) & sd_cmd_in_i;
                      resp_count <= resp_count - 1;
                   else
-                     if resp_dat(7 downto 0) = crc & "1" then
+                     if resp_dat(7 downto 0) = crc & "1" or
+                        (resp_dat(7 downto 0) = X"FF" and cmd_index_i = ACMD_SD_SEND_OP_COND) then
                         resp_o              <= (others => '0');
                         resp_o(31 downto 0) <= resp_dat(39 downto 8);
                         resp_valid_o        <= '1';

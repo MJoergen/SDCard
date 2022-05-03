@@ -49,11 +49,9 @@ end entity sdcard;
 
 architecture synthesis of sdcard is
 
-   constant CMD55  : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(55, 6));
-   constant ACMD41 : std_logic_vector(5 downto 0) := std_logic_vector(to_unsigned(41, 6));
-
    signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
-   signal cmd           : std_logic_vector(37 downto 0);
+   signal cmd_index     : natural range 0 to 63;
+   signal cmd_dat       : std_logic_vector(31 downto 0);
    signal cmd_valid     : std_logic;
    signal cmd_ready     : std_logic;
    signal resp          : std_logic_vector(135 downto 0);
@@ -62,9 +60,10 @@ architecture synthesis of sdcard is
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
       IDLE_ST,
-      ACMD41_ST,
-      CMD2_ST,
-      CMD3_ST,
+      SEND_IF_COND_ST,
+      SD_SEND_OP_COND_ST,
+      ALL_SEND_CID_ST,
+      SEND_RELATIVE_ADDR_ST,
       CMD15_ST,
       CMD0_ST
    );
@@ -73,8 +72,11 @@ architecture synthesis of sdcard is
 
 begin
 
-   sd_clk_o <= counter_slow(6) when state = IDLE_ST or state = ACMD41_ST or state = CMD2_ST else
-               avm_clk_i;
+   sd_clk_o <= counter_slow(6) when state = IDLE_ST
+                                 or state = SEND_IF_COND_ST
+                                 or state = SD_SEND_OP_COND_ST
+                                 or state = ALL_SEND_CID_ST
+          else avm_clk_i;
 
    p_counter : process (avm_clk_i)
    begin
@@ -91,7 +93,8 @@ begin
       port map (
          clk_i        => avm_clk_i,
          rst_i        => avm_rst_i,
-         cmd_i        => cmd,
+         cmd_index_i  => cmd_index,
+         cmd_dat_i    => cmd_dat,
          cmd_valid_i  => cmd_valid,
          cmd_ready_o  => cmd_ready,
          resp_o       => resp,
@@ -102,6 +105,9 @@ begin
          sd_cmd_oe_o  => sd_cmd_oe_o
       ); -- i_cmd
 
+   -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
+   -- Section 4.8 Card State Transition Table, Page 128.
+
    p_fsm : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
@@ -111,23 +117,33 @@ begin
 
          case state is
             when IDLE_ST =>
-               cmd       <= CMD55 & X"00000000";
+               cmd_index <= CMD_SEND_IF_COND;
+               cmd_dat   <= X"00000000";
                cmd_valid <= '1';
-               state     <= ACMD41_ST;
+               state     <= SEND_IF_COND_ST;
 
-            when ACMD41_ST =>
-               if cmd_ready = '1' then
-                  if cmd(37 downto 32) = CMD55 then
-                     cmd       <= ACMD41 & X"00000000";
+            when SEND_IF_COND_ST =>
+               if resp_valid = '1' then
+                  cmd_index <= CMD_APP_CMD;
+                  cmd_dat   <= X"00000000";
+                  cmd_valid <= '1';
+                  state     <= SD_SEND_OP_COND_ST;
+               end if;
+
+            when SD_SEND_OP_COND_ST =>
+               if resp_valid = '1' then
+                  if cmd_index = CMD_APP_CMD then
+                     cmd_index <= ACMD_SD_SEND_OP_COND;
+                     cmd_dat   <= X"00000000";
                      cmd_valid <= '1';
                   else
-                     state <= CMD2_ST;
+                     state <= ALL_SEND_CID_ST;
                   end if;
                end if;
 
-            when CMD2_ST =>
-               if cmd_ready = '1' then
-                  state <= CMD3_ST;
+            when ALL_SEND_CID_ST =>
+               if resp_valid = '1' then
+                  state <= SEND_RELATIVE_ADDR_ST;
                end if;
 
             when others =>

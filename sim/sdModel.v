@@ -398,7 +398,7 @@ always @ (posedge sdClk) begin
                     2 : response_S <= 136;
                     3 : response_S <= 48;
                     7 : response_S <= 48;
-                    8 : response_S <= 0;
+                    8 : response_S <= 48;
                     9 : response_S <= 136;
                     14 : response_S <= 0;
                     16 : response_S <= 48;
