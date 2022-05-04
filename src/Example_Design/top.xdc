@@ -5,7 +5,7 @@
 
 ## External clock signal (100 MHz)
 set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports clk_i]
-create_clock -period 10.000 -name clk [get_ports clk]
+create_clock -period 10.000 -name clk [get_ports clk_i]
 
 ## Reset button
 set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports reset_n_i]

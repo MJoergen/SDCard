@@ -25,7 +25,7 @@ use work.sdcard_globals.all;
 entity sdcard is
    port (
       -- Avalon Memory Map
-      avm_clk_i           : in  std_logic;   -- 25 Mhz
+      avm_clk_i           : in  std_logic;   -- 50 Mhz
       avm_rst_i           : in  std_logic;   -- Synchronous reset, active high
       avm_write_i         : in  std_logic;
       avm_read_i          : in  std_logic;
@@ -72,11 +72,11 @@ architecture synthesis of sdcard is
 
 begin
 
-   sd_clk_o <= counter_slow(6) when state = IDLE_ST
+   sd_clk_o <= counter_slow(6) when state = IDLE_ST   -- 50 MHz / 64 / 2 = 391 kHz
                                  or state = SEND_IF_COND_ST
                                  or state = SD_SEND_OP_COND_ST
                                  or state = ALL_SEND_CID_ST
-          else avm_clk_i;
+          else counter_slow(0);                       -- 50 MHz / 2 = 25 MHz
 
    p_counter : process (avm_clk_i)
    begin
