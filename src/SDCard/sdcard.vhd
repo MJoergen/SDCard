@@ -70,6 +70,9 @@ architecture synthesis of sdcard is
 
    signal state : state_t := IDLE_ST;
 
+   attribute mark_debug          : boolean;
+   attribute mark_debug of state : signal is true;
+
 begin
 
    sd_clk_o <= counter_slow(6) when state = IDLE_ST   -- 50 MHz / 64 / 2 = 391 kHz

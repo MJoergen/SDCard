@@ -65,6 +65,25 @@ architecture synthesis of cmd is
       return (crc(5 downto 0) & "0") xor upd;
    end function new_crc;
 
+   attribute mark_debug                 : boolean;
+   attribute mark_debug of rst_i        : signal is true;
+   attribute mark_debug of cmd_index_i  : signal is true;
+   attribute mark_debug of cmd_dat_i    : signal is true;
+   attribute mark_debug of cmd_valid_i  : signal is true;
+   attribute mark_debug of cmd_ready_o  : signal is true;
+   attribute mark_debug of resp_o       : signal is true;
+   attribute mark_debug of resp_valid_o : signal is true;
+   attribute mark_debug of sd_clk_i     : signal is true;
+   attribute mark_debug of sd_cmd_in_i  : signal is true;
+   attribute mark_debug of sd_cmd_out_o : signal is true;
+   attribute mark_debug of sd_cmd_oe_o  : signal is true;
+   attribute mark_debug of state        : signal is true;
+   attribute mark_debug of send_dat     : signal is true;
+   attribute mark_debug of send_count   : signal is true;
+   attribute mark_debug of crc          : signal is true;
+   attribute mark_debug of resp_dat     : signal is true;
+   attribute mark_debug of resp_count   : signal is true;
+
 begin
 
    cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' else '0';
