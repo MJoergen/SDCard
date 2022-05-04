@@ -71,7 +71,7 @@ architecture synthesis of cmd is
    attribute mark_debug of cmd_dat_i    : signal is true;
    attribute mark_debug of cmd_valid_i  : signal is true;
    attribute mark_debug of cmd_ready_o  : signal is true;
-   attribute mark_debug of resp_o       : signal is true;
+   --attribute mark_debug of resp_o       : signal is true;
    attribute mark_debug of resp_valid_o : signal is true;
    attribute mark_debug of sd_clk_i     : signal is true;
    attribute mark_debug of sd_cmd_in_i  : signal is true;

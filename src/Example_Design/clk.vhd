@@ -77,7 +77,7 @@ begin
          CLKINSTOPPED        => open,
          CLKFBSTOPPED        => open,
          PWRDWN              => '0',
-         RST                 => not sys_rstn_i
+         RST                 => '0'
       ); -- i_clk_mmcm
 
 

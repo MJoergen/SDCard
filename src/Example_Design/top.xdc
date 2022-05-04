@@ -7,9 +7,6 @@
 set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports clk_i]
 create_clock -period 10.000 -name clk [get_ports clk_i]
 
-## Reset button
-set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS33} [get_ports reset_n_i]
-
 ## Micro SD Connector (external slot at back of the cover)
 set_property -dict {PACKAGE_PIN K1 IOSTANDARD LVCMOS33} [get_ports sd_cd_i]
 set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports sd_clk_o]
@@ -18,6 +15,11 @@ set_property -dict {PACKAGE_PIN H2 IOSTANDARD LVCMOS33} [get_ports sd_dat_io[0]]
 set_property -dict {PACKAGE_PIN H3 IOSTANDARD LVCMOS33} [get_ports sd_dat_io[1]]
 set_property -dict {PACKAGE_PIN J1 IOSTANDARD LVCMOS33} [get_ports sd_dat_io[2]]
 set_property -dict {PACKAGE_PIN K2 IOSTANDARD LVCMOS33} [get_ports sd_dat_io[3]]
+
+## MEGA65 smart keyboard controller
+set_property -dict {PACKAGE_PIN A14 IOSTANDARD LVCMOS33} [get_ports kb_io0_o]
+set_property -dict {PACKAGE_PIN A13 IOSTANDARD LVCMOS33} [get_ports kb_io1_o]
+set_property -dict {PACKAGE_PIN C13 IOSTANDARD LVCMOS33} [get_ports kb_io2_i]
 
 ## Configuration and Bitstream properties
 set_property CONFIG_VOLTAGE 3.3 [current_design]
