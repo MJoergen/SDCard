@@ -3,6 +3,20 @@
 # Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 
+# Place SD close to I/O pins
+startgroup
+create_pblock pblock_i_sd
+resize_pblock pblock_i_sd -add {SLICE_X156Y175:SLICE_X163Y187}
+add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard/i_cmd]]
+endgroup
+
+# Place KBD close to I/O pins
+startgroup
+create_pblock pblock_i_kbd
+resize_pblock pblock_i_kbd -add {SLICE_X0Y225:SLICE_X7Y237}
+add_cells_to_pblock pblock_i_kbd [get_cells [list i_m2m_keyb/m65driver]]
+endgroup
+
 ## External clock signal (100 MHz)
 set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports clk_i]
 create_clock -period 10.000 -name clk [get_ports clk_i]

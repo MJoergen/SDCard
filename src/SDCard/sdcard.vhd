@@ -118,6 +118,7 @@ begin
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.8 Card State Transition Table, Page 128.
+   -- Section 4.2 Card Identification Mode, Page 59.
 
    p_fsm : process (avm_clk_i)
    begin
@@ -176,6 +177,9 @@ begin
                if resp_valid = '1' then
                   state <= SEND_RELATIVE_ADDR_ST;
                end if;
+
+            when SEND_RELATIVE_ADDR_ST =>
+               null;
 
             when ERROR_ST =>
                null;
