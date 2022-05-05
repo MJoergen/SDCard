@@ -16,9 +16,11 @@ entity cmd is
       rst_i           : in  std_logic;
       cmd_index_i     : in  natural range 0 to 63;
       cmd_dat_i       : in  std_logic_vector(31 downto 0);
+      cmd_resp_i      : in  natural range 0 to 255;
       cmd_valid_i     : in  std_logic;
       cmd_ready_o     : out std_logic;
-      resp_o          : out std_logic_vector(135 downto 0);
+      resp_dat_o      : out std_logic_vector(135 downto 0);
+      resp_timeout_o  : out std_logic;
       resp_valid_o    : out std_logic;
 
       -- SDCard device interface
@@ -31,6 +33,8 @@ end entity cmd;
 
 architecture synthesis of cmd is
 
+   constant COUNTER_MAX : natural := 1000;
+
    signal sd_clk_d   : std_logic;
    signal sd_cmd_oe  : std_logic;
    signal sd_cmd_out : std_logic;
@@ -41,7 +45,8 @@ architecture synthesis of cmd is
    signal send_count : natural range 0 to 39;
    signal crc        : std_logic_vector(6 downto 0);
    signal resp_dat   : std_logic_vector(39 downto 0);
-   signal resp_count : natural range 0 to 47;
+   signal resp_count : natural range 0 to 255;
+   signal counter    : natural range 0 to COUNTER_MAX;
 
    type state_t is (
       INIT_ST,
@@ -65,24 +70,25 @@ architecture synthesis of cmd is
       return (crc(5 downto 0) & "0") xor upd;
    end function new_crc;
 
-   attribute mark_debug                 : boolean;
-   attribute mark_debug of rst_i        : signal is true;
-   attribute mark_debug of cmd_index_i  : signal is true;
-   attribute mark_debug of cmd_dat_i    : signal is true;
-   attribute mark_debug of cmd_valid_i  : signal is true;
-   attribute mark_debug of cmd_ready_o  : signal is true;
+   --attribute mark_debug                 : boolean;
+--   attribute mark_debug of rst_i        : signal is true;
+--   attribute mark_debug of cmd_index_i  : signal is true;
+--   attribute mark_debug of cmd_dat_i    : signal is true;
+--   attribute mark_debug of cmd_valid_i  : signal is true;
+--   attribute mark_debug of cmd_ready_o  : signal is true;
    --attribute mark_debug of resp_o       : signal is true;
-   attribute mark_debug of resp_valid_o : signal is true;
-   attribute mark_debug of sd_clk_i     : signal is true;
-   attribute mark_debug of sd_cmd_in_i  : signal is true;
-   attribute mark_debug of sd_cmd_out_o : signal is true;
-   attribute mark_debug of sd_cmd_oe_o  : signal is true;
-   attribute mark_debug of state        : signal is true;
-   attribute mark_debug of send_dat     : signal is true;
-   attribute mark_debug of send_count   : signal is true;
-   attribute mark_debug of crc          : signal is true;
-   attribute mark_debug of resp_dat     : signal is true;
-   attribute mark_debug of resp_count   : signal is true;
+--   attribute mark_debug of resp_valid_o : signal is true;
+--   attribute mark_debug of sd_clk_i     : signal is true;
+--   attribute mark_debug of sd_cmd_in_i  : signal is true;
+--   attribute mark_debug of sd_cmd_out_o : signal is true;
+--   attribute mark_debug of sd_cmd_oe_o  : signal is true;
+--   attribute mark_debug of state        : signal is true;
+   --attribute mark_debug of send_dat     : signal is true;
+   --attribute mark_debug of send_count   : signal is true;
+   --attribute mark_debug of crc          : signal is true;
+--   attribute mark_debug of resp_dat     : signal is true;
+--   attribute mark_debug of resp_count   : signal is true;
+--   attribute mark_debug of counter      : signal is true;
 
 begin
 
@@ -104,10 +110,12 @@ begin
 
                when IDLE_ST =>
                   if cmd_valid_i = '1' then
-                     send_dat   <= "01" & std_logic_vector(to_unsigned(cmd_index_i, 6)) & cmd_dat_i;
-                     send_count <= 39;
-                     crc        <= (others => '0');
-                     state      <= WRITING_ST;
+                     resp_timeout_o <= '0';
+                     send_dat       <= "01" & std_logic_vector(to_unsigned(cmd_index_i, 6)) & cmd_dat_i;
+                     send_count     <= 39;
+                     resp_count     <= cmd_resp_i;
+                     crc            <= (others => '0');
+                     state          <= WRITING_ST;
                   end if;
 
                when WRITING_ST =>
@@ -126,14 +134,25 @@ begin
                      send_dat   <= send_dat(38 downto 0) & "0";
                      send_count <= send_count - 1;
                   else
-                     resp_count <= 47;
-                     crc        <= (others => '0');
-                     state      <= WAIT_RESPONSE_ST;
+                     if resp_count > 0 then
+                        resp_count <= resp_count - 1;
+                        crc        <= (others => '0');
+                        counter    <= COUNTER_MAX;
+                        state      <= WAIT_RESPONSE_ST;
+                     else
+                        state      <= IDLE_ST;
+                     end if;
                   end if;
 
                when WAIT_RESPONSE_ST =>
                   if sd_cmd_in_i = '0' then
                      state   <= GET_RESPONSE_ST;
+                  elsif counter > 0 then
+                     counter <= counter - 1;
+                  else
+                     resp_timeout_o <= '1';
+                     resp_valid_o   <= '1';
+                     state          <= IDLE_ST;
                   end if;
 
                when GET_RESPONSE_ST =>
@@ -147,8 +166,8 @@ begin
                   else
                      if resp_dat(7 downto 0) = crc & "1" or
                         (resp_dat(7 downto 0) = X"FF" and cmd_index_i = ACMD_SD_SEND_OP_COND) then
-                        resp_o              <= (others => '0');
-                        resp_o(31 downto 0) <= resp_dat(39 downto 8);
+                        resp_dat_o              <= (others => '0');
+                        resp_dat_o(31 downto 0) <= resp_dat(39 downto 8);
                         resp_valid_o        <= '1';
                         report "Received response 0x" & to_hstring(resp_dat(39 downto 8))
                            & " with valid CRC";

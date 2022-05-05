@@ -35,6 +35,7 @@ architecture simulation of tb is
    signal sd_dat_oe         : std_logic;
 
    -- Tristate
+   signal sd_cd             : std_logic;
    signal sdClk             : std_logic;
    signal cmd               : std_logic;
    signal dat               : std_logic_vector(3 downto 0);
@@ -95,6 +96,7 @@ begin
          avm_readdata_o      => avm_readdata,
          avm_readdatavalid_o => avm_readdatavalid,
          avm_waitrequest_o   => avm_waitrequest,
+         sd_cd_i             => sd_cd,
          sd_clk_o            => sd_clk,
          sd_cmd_in_i         => sd_cmd_in,
          sd_cmd_out_o        => sd_cmd_out,
@@ -120,6 +122,7 @@ begin
    -- Instantiate SDCard simulation model
    ---------------------------------------------------------
 
+   sd_cd <= '0';
    i_sdModel : sdModel
       port map (
          sdClk => sdClk,

@@ -48,9 +48,6 @@ architecture synthesis of top is
    signal keys_n            : std_logic_vector(15 downto 0);
    signal reset_n           : std_logic;
 
-   attribute mark_debug           : boolean;
-   attribute mark_debug of keys_n : signal is true;
-
 begin
 
    ---------------------------------------------------------
@@ -122,6 +119,7 @@ begin
          avm_readdata_o      => avm_readdata,
          avm_readdatavalid_o => avm_readdatavalid,
          avm_waitrequest_o   => avm_waitrequest,
+         sd_cd_i             => sd_cd_i,
          sd_clk_o            => sd_clk,
          sd_cmd_in_i         => sd_cmd_in,
          sd_cmd_out_o        => sd_cmd_out,
