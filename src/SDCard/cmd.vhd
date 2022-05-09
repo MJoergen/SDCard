@@ -1,5 +1,7 @@
 -- This is the CMD controller for the complete SDCard controller.
 -- This block includes generation of the 7-bit CRC checksum.
+-- For each command sent, this block will always return a response, i.e. resp_valid_o is
+-- guaranteed to be asserted after some time.
 
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
@@ -33,7 +35,7 @@ end entity cmd;
 
 architecture synthesis of cmd is
 
-   constant COUNTER_MAX : natural := 1000;
+   constant COUNTER_MAX : natural := 3000;
 
    signal sd_clk_d   : std_logic;
    signal sd_cmd_oe  : std_logic;
@@ -140,7 +142,8 @@ begin
                         counter    <= COUNTER_MAX;
                         state      <= WAIT_RESPONSE_ST;
                      else
-                        state      <= IDLE_ST;
+                        idle_count <= 5;
+                        state      <= INIT_ST;
                      end if;
                   end if;
 
@@ -152,7 +155,8 @@ begin
                   else
                      resp_timeout_o <= '1';
                      resp_valid_o   <= '1';
-                     state          <= IDLE_ST;
+                     idle_count     <= 5;
+                     state          <= INIT_ST;
                   end if;
 
                when GET_RESPONSE_ST =>
@@ -172,7 +176,8 @@ begin
                         report "Received response 0x" & to_hstring(resp_dat(39 downto 8))
                            & " with valid CRC";
                      end if;
-                     state <= IDLE_ST;
+                     idle_count <= 5;
+                     state      <= INIT_ST;
                   end if;
             end case;
          end if;

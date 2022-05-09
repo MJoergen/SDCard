@@ -7,21 +7,21 @@ package sdcard_globals is
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.7.4 Detail Command Description, Page 117
 
-   -- Class 0 Basic Commands
-   constant CMD_GO_IDLE_STATE            : natural :=  0; -- N/A
+   -- Class 0 Basic Commands                              -- Expected response:
+   constant CMD_GO_IDLE_STATE            : natural :=  0; -- none
    constant CMD_ALL_SEND_CID             : natural :=  2; -- R2
    constant CMD_SEND_RELATIVE_ADDR       : natural :=  3; -- R6
-   constant CMD_SET_DSR                  : natural :=  4; -- N/A
+   constant CMD_SET_DSR                  : natural :=  4; -- none
    constant CMD_SELECT_CARD              : natural :=  7; -- R1b
-   constant CMD_SEND_IF_COND             : natural :=  8; -- R7
+   constant CMD_SEND_IF_COND             : natural :=  8; -- R7 or none
    constant CMD_SEND_CSD                 : natural :=  9; -- R2
    constant CMD_SEND_CID                 : natural := 10; -- R2
    constant CMD_VOLTAGE_SWITCH           : natural := 11; -- R1
    constant CMD_STOP_TRANSMISSION        : natural := 12; -- R1b
    constant CMD_SEND_STATUS              : natural := 13; -- R1
-   constant CMD_GO_INACTIVE_STATE        : natural := 15; -- N/A
+   constant CMD_GO_INACTIVE_STATE        : natural := 15; -- none
 
-   -- Class 2 and 4 Block Commands
+   -- Class 2 and 4 Block Commands                        -- Expected response:
    constant CMD_SET_BLOCKLEN             : natural := 16; -- R1
    constant CMD_READ_SINGLE_BLOCK        : natural := 17; -- R1
    constant CMD_READ_MULTIPLE_BLOCK      : natural := 18; -- R1
@@ -33,24 +33,24 @@ package sdcard_globals is
    constant CMD_WRITE_MULTIPLE_BLOCK     : natural := 25; -- R1
    constant CMD_PROGRAM_CSD              : natural := 27; -- R1
 
-   -- Class 6 Write Protection Commands
+   -- Class 6 Write Protection Commands                   -- Expected response:
    constant CMD_SET_WRITE_PROT           : natural := 28; -- R1b
    constant CMD_CLR_WRITE_PROT           : natural := 29; -- R1b
    constant CMD_SEND_WRITE_PROT          : natural := 30; -- R1
 
-   -- Class 5 Erase Commands
+   -- Class 5 Erase Commands                              -- Expected response:
    constant CMD_ERASE_WR_BLK_START       : natural := 32; -- R1
    constant CMD_ERASE_WR_BLK_END         : natural := 33; -- R1
    constant CMD_ERASE                    : natural := 38; -- R1b
 
-   -- Class 8 Application Specific Commands
+   -- Class 8 Application Specific Commands               -- Expected response:
    constant CMD_APP_CMD                  : natural := 55; -- R1
    constant CMD_GEN_CMD                  : natural := 56; -- R1
 
-   -- Class 10 Switch Function Commands
+   -- Class 10 Switch Function Commands                   -- Expected response:
    constant CMD_SWITCH_FUNC              : natural :=  6; -- R1
 
-   -- Application Specific Commands
+   -- Application Specific Commands                       -- Expected response:
    constant ACMD_SET_BUS_WIDTH           : natural :=  6; -- R1
    constant ACMD_SD_STATUS               : natural := 13; -- R1
    constant ACMD_SET_NUM_WR_BLOCKS       : natural := 22; -- R1
@@ -62,7 +62,6 @@ package sdcard_globals is
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.9 Responses, Page 131
-
    constant RESP_R1_LEN                  : natural :=  48;  -- Normal response
    constant RESP_R2_LEN                  : natural := 136;  -- CID, CSD register
    constant RESP_R3_LEN                  : natural :=  48;  -- OCR register

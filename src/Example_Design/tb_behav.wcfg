@@ -12,13 +12,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1560076000fs"></ZoomStartTime>
-      <ZoomEndTime time="1560267001fs"></ZoomEndTime>
-      <Cursor1Time time="1560345500fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="15000000001fs"></ZoomEndTime>
+      <Cursor1Time time="9886039886fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="167"></ValueColumnWidth>
+      <ValueColumnWidth column_width="157"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="31" />
    <wvobject type="logic" fp_name="/tb/avm_clk">
@@ -140,9 +140,14 @@
    <wvobject type="group" fp_name="group250">
       <obj_property name="label">cmd</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/idle_count">
          <obj_property name="ElementShortName">idle_count</obj_property>
          <obj_property name="ObjectShortName">idle_count</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/counter">
+         <obj_property name="ElementShortName">counter</obj_property>
+         <obj_property name="ObjectShortName">counter</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/send_dat">
          <obj_property name="ElementShortName">send_dat[39:0]</obj_property>
@@ -177,9 +182,22 @@
          <obj_property name="ElementShortName">state[9:0]</obj_property>
          <obj_property name="ObjectShortName">state[9:0]</obj_property>
       </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/oeCmd">
+         <obj_property name="ElementShortName">oeCmd</obj_property>
+         <obj_property name="ObjectShortName">oeCmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdModel/cmdOut">
+         <obj_property name="ElementShortName">cmdOut</obj_property>
+         <obj_property name="ObjectShortName">cmdOut</obj_property>
+      </wvobject>
       <wvobject type="array" fp_name="/tb/i_sdModel/inCmd">
          <obj_property name="ElementShortName">inCmd[46:0]</obj_property>
          <obj_property name="ObjectShortName">inCmd[46:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdModel/cmdRead">
+         <obj_property name="ElementShortName">cmdRead[5:0]</obj_property>
+         <obj_property name="ObjectShortName">cmdRead[5:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/tb/i_sdModel/ValidCmd">
          <obj_property name="ElementShortName">ValidCmd</obj_property>
