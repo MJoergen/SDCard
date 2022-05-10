@@ -154,7 +154,9 @@ begin
    -- Serialize response
    -----------------------------------------------------
 
-   resp_data <= (others => '1') when resp_timeout_o = '1' or resp_error_o = '1' else resp_data_o;
+   resp_data <= X"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" when resp_timeout_o = '1' else
+                X"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" when resp_error_o = '1' else
+                resp_data_o;
 
    i_hexifier_resp : entity work.hexifier
       generic map (

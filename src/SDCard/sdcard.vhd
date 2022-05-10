@@ -126,7 +126,7 @@ begin
                if cmd_ready = '1' then
                   -- Send ACMD8.
                   cmd_index <= CMD_SEND_IF_COND;  -- CMD8
-                  cmd_data  <= X"00000000";  -- No additional data
+                  cmd_data  <= X"000001AA";  -- Voltage is 1, Check pattern is AA
                   cmd_resp  <= RESP_R7_LEN;  -- Expect response R7
                   cmd_valid <= '1';
                   state     <= SEND_IF_COND_ST;
@@ -136,7 +136,7 @@ begin
                if resp_valid = '1' then      -- Wait for response or timeout
                   -- Send ACMD41. This requires first sending CMD55
                   cmd_index <= CMD_APP_CMD;  -- CMD55
-                  cmd_data  <= X"00000000";  -- No additional data
+                  cmd_data  <= X"00000000";  -- RCA default value of all zeros
                   cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
                   cmd_valid <= '1';
                   state     <= SD_SEND_OP_COND_APP_ST;

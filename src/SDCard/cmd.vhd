@@ -1,6 +1,6 @@
--- This block sends command to the SDCard and receives responses.
--- Only one out-standing command is allowed at any time.
--- This module checks for timeout, and always generates a response.
+-- This block sends commands to the SDCard and receives responses.
+-- Only one outstanding command is allowed at any time.
+-- This module checks for timeout, and always generates a response, when a response is expected.
 -- CRC generation is performed on all commands.
 
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
