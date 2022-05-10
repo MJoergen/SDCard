@@ -13,163 +13,130 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="15000000001fs"></ZoomEndTime>
-      <Cursor1Time time="9886039886fs"></Cursor1Time>
+      <ZoomEndTime time="49351535839fs"></ZoomEndTime>
+      <Cursor1Time time="17747440274fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="157"></ValueColumnWidth>
+      <ValueColumnWidth column_width="127"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="31" />
-   <wvobject type="logic" fp_name="/tb/avm_clk">
-      <obj_property name="ElementShortName">avm_clk</obj_property>
-      <obj_property name="ObjectShortName">avm_clk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/avm_rst">
-      <obj_property name="ElementShortName">avm_rst</obj_property>
-      <obj_property name="ObjectShortName">avm_rst</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/avm_write">
-      <obj_property name="ElementShortName">avm_write</obj_property>
-      <obj_property name="ObjectShortName">avm_write</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/avm_read">
-      <obj_property name="ElementShortName">avm_read</obj_property>
-      <obj_property name="ObjectShortName">avm_read</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/avm_address">
-      <obj_property name="ElementShortName">avm_address[31:0]</obj_property>
-      <obj_property name="ObjectShortName">avm_address[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/avm_writedata">
-      <obj_property name="ElementShortName">avm_writedata[7:0]</obj_property>
-      <obj_property name="ObjectShortName">avm_writedata[7:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/avm_burstcount">
-      <obj_property name="ElementShortName">avm_burstcount[15:0]</obj_property>
-      <obj_property name="ObjectShortName">avm_burstcount[15:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/avm_readdata">
-      <obj_property name="ElementShortName">avm_readdata[7:0]</obj_property>
-      <obj_property name="ObjectShortName">avm_readdata[7:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/avm_readdatavalid">
-      <obj_property name="ElementShortName">avm_readdatavalid</obj_property>
-      <obj_property name="ObjectShortName">avm_readdatavalid</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/avm_waitrequest">
-      <obj_property name="ElementShortName">avm_waitrequest</obj_property>
-      <obj_property name="ObjectShortName">avm_waitrequest</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sd_clk">
-      <obj_property name="ElementShortName">sd_clk</obj_property>
-      <obj_property name="ObjectShortName">sd_clk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sd_cmd_in">
-      <obj_property name="ElementShortName">sd_cmd_in</obj_property>
-      <obj_property name="ObjectShortName">sd_cmd_in</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sd_cmd_out">
-      <obj_property name="ElementShortName">sd_cmd_out</obj_property>
-      <obj_property name="ObjectShortName">sd_cmd_out</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sd_cmd_oe">
-      <obj_property name="ElementShortName">sd_cmd_oe</obj_property>
-      <obj_property name="ObjectShortName">sd_cmd_oe</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/sd_dat_in">
-      <obj_property name="ElementShortName">sd_dat_in[3:0]</obj_property>
-      <obj_property name="ObjectShortName">sd_dat_in[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/sd_dat_out">
-      <obj_property name="ElementShortName">sd_dat_out[3:0]</obj_property>
-      <obj_property name="ObjectShortName">sd_dat_out[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sd_dat_oe">
-      <obj_property name="ElementShortName">sd_dat_oe</obj_property>
-      <obj_property name="ObjectShortName">sd_dat_oe</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/sdClk">
-      <obj_property name="ElementShortName">sdClk</obj_property>
-      <obj_property name="ObjectShortName">sdClk</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/cmd">
-      <obj_property name="ElementShortName">cmd</obj_property>
-      <obj_property name="ObjectShortName">cmd</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/dat">
-      <obj_property name="ElementShortName">dat[3:0]</obj_property>
-      <obj_property name="ObjectShortName">dat[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/i_sdcard/counter_slow">
-      <obj_property name="ElementShortName">counter_slow[6:0]</obj_property>
-      <obj_property name="ObjectShortName">counter_slow[6:0]</obj_property>
-   </wvobject>
-   <wvobject type="other" fp_name="/tb/i_sdcard/cmd_index">
-      <obj_property name="ElementShortName">cmd_index</obj_property>
-      <obj_property name="ObjectShortName">cmd_index</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/i_sdcard/cmd_dat">
-      <obj_property name="ElementShortName">cmd_dat[31:0]</obj_property>
-      <obj_property name="ObjectShortName">cmd_dat[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/i_sdcard/cmd_valid">
-      <obj_property name="ElementShortName">cmd_valid</obj_property>
-      <obj_property name="ObjectShortName">cmd_valid</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/i_sdcard/cmd_ready">
-      <obj_property name="ElementShortName">cmd_ready</obj_property>
-      <obj_property name="ObjectShortName">cmd_ready</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb/i_sdcard/resp_dat">
-      <obj_property name="ElementShortName">resp_dat[135:0]</obj_property>
-      <obj_property name="ObjectShortName">resp_dat[135:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/i_sdcard/resp_timeout">
-      <obj_property name="ElementShortName">resp_timeout</obj_property>
-      <obj_property name="ObjectShortName">resp_timeout</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb/i_sdcard/resp_valid">
-      <obj_property name="ElementShortName">resp_valid</obj_property>
-      <obj_property name="ObjectShortName">resp_valid</obj_property>
-   </wvobject>
-   <wvobject type="other" fp_name="/tb/i_sdcard/state">
-      <obj_property name="ElementShortName">state</obj_property>
-      <obj_property name="ObjectShortName">state</obj_property>
-   </wvobject>
-   <wvobject type="group" fp_name="group250">
-      <obj_property name="label">cmd</obj_property>
+   <WVObjectSize size="8" />
+   <wvobject type="group" fp_name="group417">
+      <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/idle_count">
-         <obj_property name="ElementShortName">idle_count</obj_property>
-         <obj_property name="ObjectShortName">idle_count</obj_property>
+      <wvobject type="logic" fp_name="/tb/avm_clk">
+         <obj_property name="ElementShortName">avm_clk</obj_property>
+         <obj_property name="ObjectShortName">avm_clk</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/counter">
-         <obj_property name="ElementShortName">counter</obj_property>
-         <obj_property name="ObjectShortName">counter</obj_property>
+      <wvobject type="logic" fp_name="/tb/avm_rst">
+         <obj_property name="ElementShortName">avm_rst</obj_property>
+         <obj_property name="ObjectShortName">avm_rst</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/send_dat">
-         <obj_property name="ElementShortName">send_dat[39:0]</obj_property>
-         <obj_property name="ObjectShortName">send_dat[39:0]</obj_property>
+      <wvobject type="logic" fp_name="/tb/avm_write">
+         <obj_property name="ElementShortName">avm_write</obj_property>
+         <obj_property name="ObjectShortName">avm_write</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/send_count">
-         <obj_property name="ElementShortName">send_count</obj_property>
-         <obj_property name="ObjectShortName">send_count</obj_property>
+      <wvobject type="logic" fp_name="/tb/avm_read">
+         <obj_property name="ElementShortName">avm_read</obj_property>
+         <obj_property name="ObjectShortName">avm_read</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/crc">
-         <obj_property name="ElementShortName">crc[6:0]</obj_property>
-         <obj_property name="ObjectShortName">crc[6:0]</obj_property>
+      <wvobject type="array" fp_name="/tb/avm_address">
+         <obj_property name="ElementShortName">avm_address[31:0]</obj_property>
+         <obj_property name="ObjectShortName">avm_address[31:0]</obj_property>
       </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd/resp_dat">
-         <obj_property name="ElementShortName">resp_dat[39:0]</obj_property>
-         <obj_property name="ObjectShortName">resp_dat[39:0]</obj_property>
+      <wvobject type="array" fp_name="/tb/avm_writedata">
+         <obj_property name="ElementShortName">avm_writedata[7:0]</obj_property>
+         <obj_property name="ObjectShortName">avm_writedata[7:0]</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/resp_count">
-         <obj_property name="ElementShortName">resp_count</obj_property>
-         <obj_property name="ObjectShortName">resp_count</obj_property>
+      <wvobject type="array" fp_name="/tb/avm_burstcount">
+         <obj_property name="ElementShortName">avm_burstcount[15:0]</obj_property>
+         <obj_property name="ObjectShortName">avm_burstcount[15:0]</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd/state">
+      <wvobject type="array" fp_name="/tb/avm_readdata">
+         <obj_property name="ElementShortName">avm_readdata[7:0]</obj_property>
+         <obj_property name="ObjectShortName">avm_readdata[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/avm_readdatavalid">
+         <obj_property name="ElementShortName">avm_readdatavalid</obj_property>
+         <obj_property name="ObjectShortName">avm_readdatavalid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/avm_waitrequest">
+         <obj_property name="ElementShortName">avm_waitrequest</obj_property>
+         <obj_property name="ObjectShortName">avm_waitrequest</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sd_clk">
+         <obj_property name="ElementShortName">sd_clk</obj_property>
+         <obj_property name="ObjectShortName">sd_clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sd_cmd_in">
+         <obj_property name="ElementShortName">sd_cmd_in</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_in</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sd_cmd_out">
+         <obj_property name="ElementShortName">sd_cmd_out</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_out</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sd_cmd_oe">
+         <obj_property name="ElementShortName">sd_cmd_oe</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_oe</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sd_dat_in">
+         <obj_property name="ElementShortName">sd_dat_in[3:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_in[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sd_dat_out">
+         <obj_property name="ElementShortName">sd_dat_out[3:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_out[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sd_dat_oe">
+         <obj_property name="ElementShortName">sd_dat_oe</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_oe</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/uart_tx">
+         <obj_property name="ElementShortName">uart_tx</obj_property>
+         <obj_property name="ObjectShortName">uart_tx</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdClk">
+         <obj_property name="ElementShortName">sdClk</obj_property>
+         <obj_property name="ObjectShortName">sdClk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/cmd">
+         <obj_property name="ElementShortName">cmd</obj_property>
+         <obj_property name="ObjectShortName">cmd</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/dat">
+         <obj_property name="ElementShortName">dat[3:0]</obj_property>
+         <obj_property name="ObjectShortName">dat[3:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group416">
+      <obj_property name="label">sdcard</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/tb/i_sdcard/counter_slow">
+         <obj_property name="ElementShortName">counter_slow[6:0]</obj_property>
+         <obj_property name="ObjectShortName">counter_slow[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/cmd_index">
+         <obj_property name="ElementShortName">cmd_index</obj_property>
+         <obj_property name="ObjectShortName">cmd_index</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/cmd_valid">
+         <obj_property name="ElementShortName">cmd_valid</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/cmd_ready">
+         <obj_property name="ElementShortName">cmd_ready</obj_property>
+         <obj_property name="ObjectShortName">cmd_ready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/resp_timeout">
+         <obj_property name="ElementShortName">resp_timeout</obj_property>
+         <obj_property name="ObjectShortName">resp_timeout</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/resp_valid">
+         <obj_property name="ElementShortName">resp_valid</obj_property>
+         <obj_property name="ObjectShortName">resp_valid</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/state">
          <obj_property name="ElementShortName">state</obj_property>
          <obj_property name="ObjectShortName">state</obj_property>
       </wvobject>
@@ -177,7 +144,6 @@
    <wvobject type="group" fp_name="group64">
       <obj_property name="label">sdModel</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/tb/i_sdModel/state">
          <obj_property name="ElementShortName">state[9:0]</obj_property>
          <obj_property name="ObjectShortName">state[9:0]</obj_property>
@@ -254,6 +220,359 @@
       <wvobject type="array" fp_name="/tb/i_sdModel/response_CMD">
          <obj_property name="ElementShortName">response_CMD[135:0]</obj_property>
          <obj_property name="ObjectShortName">response_CMD[135:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group440">
+      <obj_property name="label">cmd_logger</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_index_i">
+         <obj_property name="ElementShortName">cmd_index_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_index_i</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_resp_i">
+         <obj_property name="ElementShortName">cmd_resp_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_resp_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_valid_i">
+         <obj_property name="ElementShortName">cmd_valid_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_ready_o">
+         <obj_property name="ElementShortName">cmd_ready_o</obj_property>
+         <obj_property name="ObjectShortName">cmd_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_timeout_o">
+         <obj_property name="ElementShortName">resp_timeout_o</obj_property>
+         <obj_property name="ObjectShortName">resp_timeout_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_error_o">
+         <obj_property name="ElementShortName">resp_error_o</obj_property>
+         <obj_property name="ObjectShortName">resp_error_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_valid_o">
+         <obj_property name="ElementShortName">resp_valid_o</obj_property>
+         <obj_property name="ObjectShortName">resp_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/sd_clk_i">
+         <obj_property name="ElementShortName">sd_clk_i</obj_property>
+         <obj_property name="ObjectShortName">sd_clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/sd_cmd_in_i">
+         <obj_property name="ElementShortName">sd_cmd_in_i</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_in_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/sd_cmd_out_o">
+         <obj_property name="ElementShortName">sd_cmd_out_o</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_out_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/sd_cmd_oe_o">
+         <obj_property name="ElementShortName">sd_cmd_oe_o</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_oe_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/uart_tx_o">
+         <obj_property name="ElementShortName">uart_tx_o</obj_property>
+         <obj_property name="ObjectShortName">uart_tx_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_valid_cmd">
+         <obj_property name="ElementShortName">cmd_valid_cmd</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_ready_cmd">
+         <obj_property name="ElementShortName">cmd_ready_cmd</obj_property>
+         <obj_property name="ObjectShortName">cmd_ready_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_valid_ser">
+         <obj_property name="ElementShortName">cmd_valid_ser</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid_ser</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/cmd_ready_ser">
+         <obj_property name="ElementShortName">cmd_ready_ser</obj_property>
+         <obj_property name="ObjectShortName">cmd_ready_ser</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_valid_cmd">
+         <obj_property name="ElementShortName">resp_valid_cmd</obj_property>
+         <obj_property name="ObjectShortName">resp_valid_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_ready_cmd">
+         <obj_property name="ElementShortName">resp_ready_cmd</obj_property>
+         <obj_property name="ObjectShortName">resp_ready_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_valid_ser">
+         <obj_property name="ElementShortName">resp_valid_ser</obj_property>
+         <obj_property name="ObjectShortName">resp_valid_ser</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/resp_ready_ser">
+         <obj_property name="ElementShortName">resp_ready_ser</obj_property>
+         <obj_property name="ObjectShortName">resp_ready_ser</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/ser_valid_cmd">
+         <obj_property name="ElementShortName">ser_valid_cmd</obj_property>
+         <obj_property name="ObjectShortName">ser_valid_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/ser_ready_cmd">
+         <obj_property name="ElementShortName">ser_ready_cmd</obj_property>
+         <obj_property name="ObjectShortName">ser_ready_cmd</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/ser_data_cmd">
+         <obj_property name="ElementShortName">ser_data_cmd[7:0]</obj_property>
+         <obj_property name="ObjectShortName">ser_data_cmd[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/ser_valid_resp">
+         <obj_property name="ElementShortName">ser_valid_resp</obj_property>
+         <obj_property name="ObjectShortName">ser_valid_resp</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/ser_ready_resp">
+         <obj_property name="ElementShortName">ser_ready_resp</obj_property>
+         <obj_property name="ObjectShortName">ser_ready_resp</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/ser_data_resp">
+         <obj_property name="ElementShortName">ser_data_resp[7:0]</obj_property>
+         <obj_property name="ObjectShortName">ser_data_resp[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/uart_valid">
+         <obj_property name="ElementShortName">uart_valid</obj_property>
+         <obj_property name="ObjectShortName">uart_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/uart_ready">
+         <obj_property name="ElementShortName">uart_ready</obj_property>
+         <obj_property name="ObjectShortName">uart_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/uart_data">
+         <obj_property name="ElementShortName">uart_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">uart_data[7:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group374">
+      <obj_property name="label">serializer_resp</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/s_valid_i">
+         <obj_property name="ElementShortName">s_valid_i</obj_property>
+         <obj_property name="ObjectShortName">s_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/s_ready_o">
+         <obj_property name="ElementShortName">s_ready_o</obj_property>
+         <obj_property name="ObjectShortName">s_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/s_data_i">
+         <obj_property name="ElementShortName">s_data_i[287:0]</obj_property>
+         <obj_property name="ObjectShortName">s_data_i[287:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/m_valid_o">
+         <obj_property name="ElementShortName">m_valid_o</obj_property>
+         <obj_property name="ObjectShortName">m_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/m_ready_i">
+         <obj_property name="ElementShortName">m_ready_i</obj_property>
+         <obj_property name="ObjectShortName">m_ready_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/m_data_o">
+         <obj_property name="ElementShortName">m_data_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">m_data_o[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/count">
+         <obj_property name="ElementShortName">count</obj_property>
+         <obj_property name="ObjectShortName">count</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/data">
+         <obj_property name="ElementShortName">data[287:0]</obj_property>
+         <obj_property name="ObjectShortName">data[287:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_serializer_resp/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group467">
+      <obj_property name="label">cmd</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/cmd_index_i">
+         <obj_property name="ElementShortName">cmd_index_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_index_i</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/cmd_resp_i">
+         <obj_property name="ElementShortName">cmd_resp_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_resp_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/cmd_valid_i">
+         <obj_property name="ElementShortName">cmd_valid_i</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/cmd_ready_o">
+         <obj_property name="ElementShortName">cmd_ready_o</obj_property>
+         <obj_property name="ObjectShortName">cmd_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/resp_timeout_o">
+         <obj_property name="ElementShortName">resp_timeout_o</obj_property>
+         <obj_property name="ObjectShortName">resp_timeout_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/resp_valid_o">
+         <obj_property name="ElementShortName">resp_valid_o</obj_property>
+         <obj_property name="ObjectShortName">resp_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_clk_i">
+         <obj_property name="ElementShortName">sd_clk_i</obj_property>
+         <obj_property name="ObjectShortName">sd_clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_cmd_in_i">
+         <obj_property name="ElementShortName">sd_cmd_in_i</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_in_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_cmd_out_o">
+         <obj_property name="ElementShortName">sd_cmd_out_o</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_out_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_cmd_oe_o">
+         <obj_property name="ElementShortName">sd_cmd_oe_o</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_oe_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_clk_d">
+         <obj_property name="ElementShortName">sd_clk_d</obj_property>
+         <obj_property name="ObjectShortName">sd_clk_d</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_cmd_oe">
+         <obj_property name="ElementShortName">sd_cmd_oe</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_oe</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/sd_cmd_out">
+         <obj_property name="ElementShortName">sd_cmd_out</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd_out</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/idle_count">
+         <obj_property name="ElementShortName">idle_count</obj_property>
+         <obj_property name="ObjectShortName">idle_count</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/send_count">
+         <obj_property name="ElementShortName">send_count</obj_property>
+         <obj_property name="ObjectShortName">send_count</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/crc">
+         <obj_property name="ElementShortName">crc[6:0]</obj_property>
+         <obj_property name="ObjectShortName">crc[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/resp_count">
+         <obj_property name="ElementShortName">resp_count</obj_property>
+         <obj_property name="ObjectShortName">resp_count</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_cmd/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group658">
+      <obj_property name="label">merginator</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s1_valid_i">
+         <obj_property name="ElementShortName">s1_valid_i</obj_property>
+         <obj_property name="ObjectShortName">s1_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s1_ready_o">
+         <obj_property name="ElementShortName">s1_ready_o</obj_property>
+         <obj_property name="ObjectShortName">s1_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s1_data_i">
+         <obj_property name="ElementShortName">s1_data_i[7:0]</obj_property>
+         <obj_property name="ObjectShortName">s1_data_i[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s2_valid_i">
+         <obj_property name="ElementShortName">s2_valid_i</obj_property>
+         <obj_property name="ObjectShortName">s2_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s2_ready_o">
+         <obj_property name="ElementShortName">s2_ready_o</obj_property>
+         <obj_property name="ObjectShortName">s2_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/s2_data_i">
+         <obj_property name="ElementShortName">s2_data_i[7:0]</obj_property>
+         <obj_property name="ObjectShortName">s2_data_i[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/m_valid_o">
+         <obj_property name="ElementShortName">m_valid_o</obj_property>
+         <obj_property name="ObjectShortName">m_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/m_ready_i">
+         <obj_property name="ElementShortName">m_ready_i</obj_property>
+         <obj_property name="ObjectShortName">m_ready_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/m_data_o">
+         <obj_property name="ElementShortName">m_data_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">m_data_o[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_merginator/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group134">
+      <obj_property name="label">uart</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/s_valid_i">
+         <obj_property name="ElementShortName">s_valid_i</obj_property>
+         <obj_property name="ObjectShortName">s_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/s_ready_o">
+         <obj_property name="ElementShortName">s_ready_o</obj_property>
+         <obj_property name="ObjectShortName">s_ready_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/s_data_i">
+         <obj_property name="ElementShortName">s_data_i[7:0]</obj_property>
+         <obj_property name="ObjectShortName">s_data_i[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/uart_tx_o">
+         <obj_property name="ElementShortName">uart_tx_o</obj_property>
+         <obj_property name="ObjectShortName">uart_tx_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/data">
+         <obj_property name="ElementShortName">data[9:0]</obj_property>
+         <obj_property name="ObjectShortName">data[9:0]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_sdcard/i_cmd_logger/i_uart/counter">
+         <obj_property name="ElementShortName">counter</obj_property>
+         <obj_property name="ObjectShortName">counter</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

@@ -48,6 +48,8 @@ architecture simulation of tb is
       );
    end component sdModel;
 
+   signal uart_tx           : std_logic;
+
 begin
 
    ---------------------------------------------------------
@@ -103,7 +105,8 @@ begin
          sd_cmd_oe_o         => sd_cmd_oe,
          sd_dat_in_i         => sd_dat_in,
          sd_dat_out_o        => sd_dat_out,
-         sd_dat_oe_o         => sd_dat_oe
+         sd_dat_oe_o         => sd_dat_oe,
+         uart_tx_o           => uart_tx
       ); -- i_sdcard
 
 

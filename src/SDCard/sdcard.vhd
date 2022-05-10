@@ -31,7 +31,9 @@ entity sdcard is
       sd_cmd_oe_o         : out std_logic;
       sd_dat_in_i         : in  std_logic_vector(3 downto 0);
       sd_dat_out_o        : out std_logic_vector(3 downto 0);
-      sd_dat_oe_o         : out std_logic
+      sd_dat_oe_o         : out std_logic;
+
+      uart_tx_o           : out std_logic
    );
 end entity sdcard;
 
@@ -39,14 +41,16 @@ architecture synthesis of sdcard is
 
    signal sd_cd         : std_logic;
    signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
-   signal cmd_index     : natural range 0 to 63;
-   signal cmd_dat       : std_logic_vector(31 downto 0);
-   signal cmd_resp      : natural range 0 to 255;
    signal cmd_valid     : std_logic;
    signal cmd_ready     : std_logic;
-   signal resp_dat      : std_logic_vector(135 downto 0);
-   signal resp_timeout  : std_logic;
+   signal cmd_index     : natural range 0 to 63;
+   signal cmd_data      : std_logic_vector(31 downto 0);
+   signal cmd_resp      : natural range 0 to 255;
    signal resp_valid    : std_logic;
+   signal resp_ready    : std_logic;
+   signal resp_data     : std_logic_vector(135 downto 0);
+   signal resp_timeout  : std_logic;
+   signal resp_error    : std_logic;
 
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
@@ -63,9 +67,12 @@ architecture synthesis of sdcard is
    signal state : state_t := INIT_ST;
 
    attribute mark_debug                 : boolean;
+   attribute mark_debug of sd_clk_o     : signal is true;
+   attribute mark_debug of sd_cmd_in_i  : signal is true;
+   attribute mark_debug of sd_cmd_oe_o  : signal is true;
    attribute mark_debug of state        : signal is true;
-   attribute mark_debug of resp_dat     : signal is true;
    attribute mark_debug of resp_timeout : signal is true;
+   attribute mark_debug of resp_error   : signal is true;
    attribute mark_debug of resp_valid   : signal is true;
 
 begin
@@ -109,7 +116,7 @@ begin
                if cmd_ready = '1' then
                   -- Send CMD0.
                   cmd_index <= CMD_GO_IDLE_STATE;  -- CMD0
-                  cmd_dat   <= X"00000000";  -- No additional data
+                  cmd_data  <= X"00000000";  -- No additional data
                   cmd_resp  <= 0;            -- No response expected.
                   cmd_valid <= '1';
                   state     <= IDLE_ST;
@@ -119,7 +126,7 @@ begin
                if cmd_ready = '1' then
                   -- Send ACMD8.
                   cmd_index <= CMD_SEND_IF_COND;  -- CMD8
-                  cmd_dat   <= X"00000000";  -- No additional data
+                  cmd_data  <= X"00000000";  -- No additional data
                   cmd_resp  <= RESP_R7_LEN;  -- Expect response R7
                   cmd_valid <= '1';
                   state     <= SEND_IF_COND_ST;
@@ -129,7 +136,7 @@ begin
                if resp_valid = '1' then      -- Wait for response or timeout
                   -- Send ACMD41. This requires first sending CMD55
                   cmd_index <= CMD_APP_CMD;  -- CMD55
-                  cmd_dat   <= X"00000000";  -- No additional data
+                  cmd_data  <= X"00000000";  -- No additional data
                   cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
                   cmd_valid <= '1';
                   state     <= SD_SEND_OP_COND_APP_ST;
@@ -138,13 +145,13 @@ begin
             when SD_SEND_OP_COND_APP_ST =>
                if resp_valid = '1' then      -- Wait for response or timeout
                   -- Check response
-                  if resp_timeout = '0' and
-                     resp_dat(CARD_STAT_CURRENT_STATE)  = CARD_STATE_IDLE and
-                     resp_dat(CARD_STAT_READY_FOR_DATA) = '1' and
-                     resp_dat(CARD_STAT_APP_CMD)        = '1'
+                  if resp_timeout = '0' and resp_error = '0' and
+                     resp_data(CARD_STAT_CURRENT_STATE)  = CARD_STATE_IDLE and
+                     resp_data(CARD_STAT_READY_FOR_DATA) = '1' and
+                     resp_data(CARD_STAT_APP_CMD)        = '1'
                   then
                      cmd_index <= ACMD_SD_SEND_OP_COND;  -- ACMD41
-                     cmd_dat   <= X"00000000";           -- No additional data
+                     cmd_data  <= X"00000000";           -- No additional data
                      cmd_resp  <= RESP_R3_LEN;           -- Expect response R3
                      cmd_valid <= '1';
                      state     <= SD_SEND_OP_COND_ST;
@@ -155,11 +162,11 @@ begin
 
             when SD_SEND_OP_COND_ST =>
                if resp_valid = '1' then      -- Wait for response or timeout
-                  if resp_timeout = '0'
+                  if resp_timeout = '0' and resp_error = '0'
                      -- Ignore whatever response we got
                   then
                      cmd_index <= CMD_ALL_SEND_CID;      -- CMD2
-                     cmd_dat   <= X"00000000";           -- No additional data
+                     cmd_data  <= X"00000000";           -- No additional data
                      cmd_resp  <= RESP_R2_LEN;           -- Expect response R2
                      cmd_valid <= '1';
                      state     <= ALL_SEND_CID_ST;
@@ -199,23 +206,26 @@ begin
    -- Instantiate CMD controller
    ----------------------------------
 
-   i_cmd : entity work.cmd
+   i_cmd_logger : entity work.cmd_logger
       port map (
          clk_i          => avm_clk_i,
          rst_i          => avm_rst_i,
-         cmd_index_i    => cmd_index,
-         cmd_dat_i      => cmd_dat,
-         cmd_resp_i     => cmd_resp,
          cmd_valid_i    => cmd_valid,
          cmd_ready_o    => cmd_ready,
-         resp_dat_o     => resp_dat,
-         resp_timeout_o => resp_timeout,
+         cmd_index_i    => cmd_index,
+         cmd_data_i     => cmd_data,
+         cmd_resp_i     => cmd_resp,
          resp_valid_o   => resp_valid,
+         resp_ready_i   => '1',
+         resp_data_o    => resp_data,
+         resp_timeout_o => resp_timeout,
+         resp_error_o   => resp_error,
          sd_clk_i       => sd_clk_o,
          sd_cmd_in_i    => sd_cmd_in_i,
          sd_cmd_out_o   => sd_cmd_out_o,
-         sd_cmd_oe_o    => sd_cmd_oe_o
-      ); -- i_cmd
+         sd_cmd_oe_o    => sd_cmd_oe_o,
+         uart_tx_o      => uart_tx_o
+      ); -- i_cmd_logger
 
 end architecture synthesis;
 

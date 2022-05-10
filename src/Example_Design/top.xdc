@@ -7,7 +7,7 @@
 startgroup
 create_pblock pblock_i_sd
 resize_pblock pblock_i_sd -add {SLICE_X156Y175:SLICE_X163Y187}
-add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard/i_cmd]]
+add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard/i_cmd_logger/i_cmd]]
 endgroup
 
 # Place KBD close to I/O pins
@@ -34,6 +34,10 @@ set_property -dict {PACKAGE_PIN K2 IOSTANDARD LVCMOS33} [get_ports sd_dat_io[3]]
 set_property -dict {PACKAGE_PIN A14 IOSTANDARD LVCMOS33} [get_ports kb_io0_o]
 set_property -dict {PACKAGE_PIN A13 IOSTANDARD LVCMOS33} [get_ports kb_io1_o]
 set_property -dict {PACKAGE_PIN C13 IOSTANDARD LVCMOS33} [get_ports kb_io2_i]
+
+## USB-RS232 Interface (rxd, txd only; rts/cts are not available)
+set_property -dict {PACKAGE_PIN L14 IOSTANDARD LVCMOS33} [get_ports uart_rx_i]
+set_property -dict {PACKAGE_PIN L13 IOSTANDARD LVCMOS33} [get_ports uart_tx_o]
 
 ## Configuration and Bitstream properties
 set_property CONFIG_VOLTAGE 3.3 [current_design]

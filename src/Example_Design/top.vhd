@@ -11,7 +11,9 @@ entity top is
       sd_cd_i        : in    std_logic;
       sd_clk_o       : out   std_logic;
       sd_cmd_io      : inout std_logic;
-      sd_dat_io      : inout std_logic_vector(3 downto 0)
+      sd_dat_io      : inout std_logic_vector(3 downto 0);
+      uart_rx_i      : in    std_logic;
+      uart_tx_o      : out   std_logic
    );
 end entity top;
 
@@ -126,7 +128,8 @@ begin
          sd_cmd_oe_o         => sd_cmd_oe,
          sd_dat_in_i         => sd_dat_in,
          sd_dat_out_o        => sd_dat_out,
-         sd_dat_oe_o         => sd_dat_oe
+         sd_dat_oe_o         => sd_dat_oe,
+         uart_tx_o           => uart_tx_o
       ); -- i_sdcard
 
 
