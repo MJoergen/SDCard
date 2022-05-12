@@ -47,6 +47,7 @@ architecture synthesis of cmd_logger is
 
    -- Hexified command and response
    signal cmd_hex         : std_logic_vector(79 downto 0);
+   signal cmd_hex_ser     : std_logic_vector(95 downto 0);
    signal resp_hex        : std_logic_vector(271 downto 0);
    signal resp_data       : std_logic_vector(135 downto 0);
 
@@ -118,9 +119,12 @@ begin
          m_data_o => cmd_hex
       );
 
+   cmd_hex_ser <= cmd_hex & X"0D0A" when cmd_resp_i = 0 else
+                  cmd_hex & X"3A20";
+
    i_serializer_cmd : entity work.serializer
       generic map (
-         G_DATA_SIZE_IN  => 88,
+         G_DATA_SIZE_IN  => 96,
          G_DATA_SIZE_OUT => 8
       )
       port map (
@@ -128,7 +132,7 @@ begin
          rst_i     => rst_i,
          s_valid_i => cmd_valid_ser,
          s_ready_o => cmd_ready_ser,
-         s_data_i  => cmd_hex & X"2E",
+         s_data_i  => cmd_hex_ser,
          m_valid_o => ser_valid_cmd,
          m_ready_i => ser_ready_cmd,
          m_data_o  => ser_data_cmd
