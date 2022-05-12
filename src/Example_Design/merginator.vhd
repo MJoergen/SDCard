@@ -31,36 +31,44 @@ architecture synthesis of merginator is
       SECOND_ST
    );
 
-   signal state   : state_t := FIRST_ST;
+   signal state     : state_t := FIRST_ST;
+   signal new_state : state_t := FIRST_ST;
 
 begin
 
-   s1_ready_o <= m_ready_i when state = FIRST_ST else '0';
-   s2_ready_o <= m_ready_i when state = SECOND_ST else '0';
+   s1_ready_o <= m_ready_i when new_state = FIRST_ST  else '0';
+   s2_ready_o <= m_ready_i when new_state = SECOND_ST else '0';
+
+   m_valid_o <= s1_valid_i or s2_valid_i;
+   m_data_o  <= s1_data_i when new_state = FIRST_ST else s2_data_i;
+
+   p_newstate : process (all)
+   begin
+      new_state <= state;
+
+      case state is
+         when FIRST_ST =>
+            if s1_valid_i = '0' and s2_valid_i = '1' then
+               new_state <= SECOND_ST;
+            end if;
+
+         when SECOND_ST =>
+            if s1_valid_i = '1' and s2_valid_i = '0' then
+               new_state <= FIRST_ST;
+            end if;
+      end case;
+
+      if rst_i = '1' then
+         new_state <= FIRST_ST;
+      end if;
+   end process p_newstate;
 
    p_fsm : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         case state is
-            when FIRST_ST =>
-               if s1_valid_i = '0' and s2_valid_i = '1' then
-                  state <= SECOND_ST;
-               end if;
-
-            when SECOND_ST =>
-               if s1_valid_i = '1' and s2_valid_i = '0' then
-                  state <= FIRST_ST;
-               end if;
-         end case;
-
-         if rst_i = '1' then
-            state <= FIRST_ST;
-         end if;
+         state <= new_state;
       end if;
    end process p_fsm;
-
-   m_valid_o <= s1_valid_i or s2_valid_i;
-   m_data_o  <= s1_data_i when state = FIRST_ST else s2_data_i;
 
 end architecture synthesis;
 
