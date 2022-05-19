@@ -77,7 +77,8 @@ architecture synthesis of sdcard is
 
    signal card_ver1     : std_logic;
    signal card_ccs      : std_logic;
-   signal card_cid      : std_logic_vector(127 downto 0);
+   signal card_cid      : std_logic_vector(119 downto 0);
+   signal card_rca      : std_logic_vector(15 downto 0);
 
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
@@ -158,6 +159,8 @@ begin
                   init_count <= INIT_COUNT_MAX;
                   card_ver1  <= '1';
                   card_ccs   <= '0';
+                  card_cid   <= (others => '0');
+                  card_rca   <= (others => '0');
                end if;
 
             when GO_IDLE_STATE_ST => -- We've sent CMD0, no response expected
@@ -255,17 +258,27 @@ begin
             when ALL_SEND_CID_ST => -- We've sent CMD2
                if resp_valid = '1' then
                   if resp_timeout = '0' and resp_error = '0' and
-                     resp_data(135 downto 128) = X"3F"   -- Validate response
+                     resp_data(127 downto 120) = X"3F"      -- Validate response
                   then
-                     card_cid <= resp_data(127 downto 0);
-                     state <= SEND_RELATIVE_ADDR_ST;
+                     card_cid  <= resp_data(119 downto 0);  -- Store CID
+                     cmd_index <= CMD_SEND_RELATIVE_ADDR;   -- CMD3
+                     cmd_data  <= X"00000000";              -- No additional data
+                     cmd_resp  <= RESP_R6_LEN;              -- Expect response R6
+                     cmd_valid <= '1';
+                     state     <= SEND_RELATIVE_ADDR_ST;
                   else
                      state <= ERROR_ST;
                   end if;
                end if;
 
             when SEND_RELATIVE_ADDR_ST =>
-               null;
+               if resp_valid = '1' then
+                  if resp_timeout = '0' and resp_error = '0' then
+                     card_rca <= resp_data(31 downto 16);
+                  else
+                     state <= ERROR_ST;
+                  end if;
+               end if;
 
             when ERROR_ST =>
                if cmd_ready = '1' then

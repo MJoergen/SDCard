@@ -32,7 +32,7 @@ The SD Card I'm testing on is a 32 GB SDHC card from SanDisk with a speed class 
 <img src="sdcard.jpg" width="200">
 
 This card responds to CMD8 and therefore supports V2.X of the SD protocol.
-Additionally, it responds with CCS set.
+Additionally, it responds with CCS set (= SDHC).
 
 The CID 035344534333324780B90C4E7F0138 is decoded as follows:
 
