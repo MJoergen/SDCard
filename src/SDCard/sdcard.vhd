@@ -1,5 +1,24 @@
 -- This is the wrapper file for the complete SDCard controller.
 
+-- The SD Card is powered up in the SD mode. It will enter SPI mode if the
+-- CS (DAT3) signal is asserted (negative) during the reception of the reset
+-- command (CMD0). If the card recognizes that the SD mode is required it
+-- will not respond to the command and remain in the SD mode. If SPI mode is
+-- required, the card will switch to SPI and respond with the SPI mode R1
+-- response.
+
+-- List of used commands:
+-- CMD0  : GO_IDLE_STATE: Resets the SD Card.
+-- CMD3  : SEND_RCA
+-- CMD8  : SEND_IF_COND: Sends SD Memory Card interface condition that includes host supply voltage.
+-- ACMD41: SD_SEND_OP_COND: Sends host capacity support information and activated the card's initialization process.
+-- CMD13 : SEND_STATUS: Asks the selected card to send its status register.
+-- CMD16 : SET_BLOCKLEN: In case of non-SDHC card, this sets the block length. Block length of SDHC/SDXC cards are fixed to 512 bytes
+-- CMD17 : READ_SINGLE_BLOCK
+-- CMD24 : WRITE_BLOCK
+-- CMD55 : APP_CMD: Next command is an application specific command.
+-- CMD58 : READ_OCR: Read the OCR register of the card.
+
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 library ieee;
@@ -61,6 +80,7 @@ architecture synthesis of sdcard is
       SD_SEND_OP_COND_ST,
       ALL_SEND_CID_ST,
       SEND_RELATIVE_ADDR_ST,
+      SEND_STATUS_ST,
       ERROR_ST
    );
 
@@ -114,7 +134,7 @@ begin
          case state is
             when INIT_ST =>
                if cmd_ready = '1' then
-                  -- Send CMD0.
+                  -- Send CMD0 (see section 4.2.1)
                   cmd_index <= CMD_GO_IDLE_STATE;  -- CMD0
                   cmd_data  <= X"00000000";  -- No additional data
                   cmd_resp  <= 0;            -- No response expected.
@@ -124,7 +144,7 @@ begin
 
             when IDLE_ST =>
                if cmd_ready = '1' then
-                  -- Send ACMD8.
+                  -- Send CMD8 (see sections 4.2.2 and 4.3.13)
                   cmd_index <= CMD_SEND_IF_COND;  -- CMD8
                   cmd_data  <= X"000001AA";  -- Voltage is 1, Check pattern is AA
                   cmd_resp  <= RESP_R7_LEN;  -- Expect response R7
@@ -134,12 +154,19 @@ begin
 
             when SEND_IF_COND_ST =>
                if resp_valid = '1' then      -- Wait for response or timeout
-                  -- Send ACMD41. This requires first sending CMD55
-                  cmd_index <= CMD_APP_CMD;  -- CMD55
-                  cmd_data  <= X"00000000";  -- RCA default value of all zeros
-                  cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
-                  cmd_valid <= '1';
-                  state     <= SD_SEND_OP_COND_APP_ST;
+                  -- Check response
+                  if resp_timeout = '0' and resp_error = '0' then
+                     -- TBD: Here we should check the contents of the response
+
+                     -- Send ACMD41 (see section 5.1)
+                     cmd_index <= CMD_APP_CMD;  -- First send CMD55
+                     cmd_data  <= X"00000000";  -- RCA default value of all zeros
+                     cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
+                     cmd_valid <= '1';
+                     state     <= SD_SEND_OP_COND_APP_ST;
+                  else
+                     state <= SEND_STATUS_ST;
+                  end if;
                end if;
 
             when SD_SEND_OP_COND_APP_ST =>
@@ -156,7 +183,7 @@ begin
                      cmd_valid <= '1';
                      state     <= SD_SEND_OP_COND_ST;
                   else
-                     state <= ERROR_ST;
+                     state <= SEND_STATUS_ST;
                   end if;
                end if;
 
@@ -171,17 +198,32 @@ begin
                      cmd_valid <= '1';
                      state     <= ALL_SEND_CID_ST;
                   else
-                     state <= ERROR_ST;
+                     state <= SEND_STATUS_ST;
                   end if;
                end if;
 
             when ALL_SEND_CID_ST =>
                if resp_valid = '1' then
-                  state <= SEND_RELATIVE_ADDR_ST;
+                  if resp_timeout = '0' and resp_error = '0'
+                     -- Ignore whatever response we got
+                  then
+                     state <= SEND_RELATIVE_ADDR_ST;
+                  else
+                     state <= SEND_STATUS_ST;
+                  end if;
                end if;
 
             when SEND_RELATIVE_ADDR_ST =>
                null;
+
+            when SEND_STATUS_ST =>
+               if cmd_ready = '1' then
+                  cmd_index <= CMD_SEND_STATUS;  -- CMD13
+                  cmd_data  <= X"00000000";  -- No arguments
+                  cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
+                  cmd_valid <= '1';
+                  state     <= ERROR_ST;
+               end if;
 
             when ERROR_ST =>
                null;
