@@ -206,7 +206,10 @@ begin
                      resp_data(CARD_STAT_APP_CMD)        = '1'
                   then
                      cmd_index <= ACMD_SD_SEND_OP_COND;  -- ACMD41
-                     cmd_data  <= X"00000000";           -- No additional data
+                     cmd_data  <= (others => '0');
+                     if card_ver1 = '0' then
+                        cmd_data(OCR_CCS) <= '1';        -- Indicate host support for SDHC or SDXC
+                     end if;
                      cmd_resp  <= RESP_R3_LEN;           -- Expect response R3
                      cmd_valid <= '1';
                      state     <= SD_SEND_OP_COND_ST;
