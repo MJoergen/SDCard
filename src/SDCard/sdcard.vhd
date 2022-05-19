@@ -59,7 +59,7 @@ end entity sdcard;
 architecture synthesis of sdcard is
 
    -- Number of attempts at initiliazing card (ACMD41)
-   constant INIT_COUNT_MAX : natural := 100;
+   constant INIT_COUNT_MAX : natural := 100; -- Approximately one second
 
    signal sd_cd         : std_logic;
    signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
@@ -149,22 +149,24 @@ begin
             when INIT_ST =>
                if cmd_ready = '1' then
                   -- Send CMD0 (see section 4.2.1)
-                  cmd_index <= CMD_GO_IDLE_STATE;  -- CMD0
-                  cmd_data  <= X"00000000";  -- No additional data
-                  cmd_resp  <= 0;            -- No response expected.
-                  cmd_valid <= '1';
-                  state     <= GO_IDLE_STATE_ST;
+                  cmd_index  <= CMD_GO_IDLE_STATE;  -- CMD0
+                  cmd_data   <= X"00000000";  -- No additional data
+                  cmd_resp   <= 0;            -- No response expected.
+                  cmd_valid  <= '1';
+                  state      <= GO_IDLE_STATE_ST;
+                  init_count <= INIT_COUNT_MAX;
+                  card_ver1  <= '1';
+                  card_ccs   <= '0';
                end if;
 
-            when GO_IDLE_STATE_ST => -- We've sent CMD0
+            when GO_IDLE_STATE_ST => -- We've sent CMD0, no response expected
                if cmd_ready = '1' then
                   -- Send CMD8 (see sections 4.2.2 and 4.3.13)
-                  cmd_index  <= CMD_SEND_IF_COND;  -- CMD8
-                  cmd_data   <= X"000001AA";  -- Voltage is 1, Check pattern is AA
-                  cmd_resp   <= RESP_R7_LEN;  -- Expect response R7
-                  cmd_valid  <= '1';
-                  state      <= SEND_IF_COND_ST;
-                  init_count <= INIT_COUNT_MAX;
+                  cmd_index <= CMD_SEND_IF_COND;  -- CMD8
+                  cmd_data  <= X"000001AA";  -- Voltage is 1, Check pattern is AA
+                  cmd_resp  <= RESP_R7_LEN;  -- Expect response R7
+                  cmd_valid <= '1';
+                  state     <= SEND_IF_COND_ST;
                end if;
 
             when SEND_IF_COND_ST => -- We've sent CMD8
@@ -207,6 +209,7 @@ begin
                   then
                      cmd_index <= ACMD_SD_SEND_OP_COND;  -- ACMD41
                      cmd_data  <= (others => '0');
+                     cmd_data(OCR_33X) <= '1';           -- Indicate host support for 3.3 V
                      if card_ver1 = '0' then
                         cmd_data(OCR_CCS) <= '1';        -- Indicate host support for SDHC or SDXC
                      end if;
@@ -223,7 +226,9 @@ begin
                   if resp_timeout = '0' and resp_error = '0' then
                      -- Wait for BUSY bit to be set (de-asserted)
                      if resp_data(OCR_BUSY) = '1' then
-                        card_ccs  <= resp_data(OCR_CCS);    -- Card Capacity Status
+                        if card_ver1 = '0' then
+                           card_ccs <= resp_data(OCR_CCS);  -- Card Capacity Status
+                        end if;
                         cmd_index <= CMD_ALL_SEND_CID;      -- CMD2
                         cmd_data  <= X"00000000";           -- No additional data
                         cmd_resp  <= RESP_R2_LEN;           -- Expect response R2
