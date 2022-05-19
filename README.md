@@ -25,3 +25,23 @@ The [doc](doc) folder contains useful resources, including
 The [sim](sim) folder contains the files needed for testing in simulation
 * [sdModel.v](sim/sdModel.v). This is an SDCard simulation model copied from
   [opencores.org/projects/sdcard_mass_storage_controller](https://opencores.org/projects/sdcard_mass_storage_controller).
+
+## Testing
+The SD Card I'm testing on is a 32 GB SDHC card from SanDisk with a speed class of 10 MB/s.
+
+<img src="sdcard.jpg" width="200">
+
+This card responds to CMD8 and therefore supports V2.X of the SD protocol.
+Additionally, it responds with CCS set.
+
+The CID 035344534333324780B90C4E7F0138 is decoded as follows:
+
+| field | value      | interpretation |
+| ----- | ---------- | -------------- |
+| MID   | 03         | SanDisk        |
+| OID   | 5344       | SD             |
+| PNM   | 5343333247 | SC32G          |
+| PRV   | 80         | 8.0            |
+| PSN   | B90C4E7F   | Serial Number  |
+| MDT   | 138        | August 2019    |
+
