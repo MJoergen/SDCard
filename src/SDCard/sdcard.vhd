@@ -58,6 +58,9 @@ end entity sdcard;
 
 architecture synthesis of sdcard is
 
+   -- Number of attempts at initiliazing card (ACMD41)
+   constant INIT_COUNT_MAX : natural := 100;
+
    signal sd_cd         : std_logic;
    signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
    signal cmd_valid     : std_logic;
@@ -70,18 +73,22 @@ architecture synthesis of sdcard is
    signal resp_data     : std_logic_vector(135 downto 0);
    signal resp_timeout  : std_logic;
    signal resp_error    : std_logic;
+   signal init_count    : natural range 0 to INIT_COUNT_MAX;
+
+   signal card_ver1     : std_logic;
+   signal card_ccs      : std_logic;
 
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
       INIT_ST,
-      IDLE_ST,
+      GO_IDLE_STATE_ST,
       SEND_IF_COND_ST,
       SD_SEND_OP_COND_APP_ST,
       SD_SEND_OP_COND_ST,
       ALL_SEND_CID_ST,
       SEND_RELATIVE_ADDR_ST,
-      SEND_STATUS_ST,
-      ERROR_ST
+      ERROR_ST,
+      SEND_STATUS_ST
    );
 
    signal state : state_t := INIT_ST;
@@ -94,6 +101,9 @@ architecture synthesis of sdcard is
    attribute mark_debug of resp_timeout : signal is true;
    attribute mark_debug of resp_error   : signal is true;
    attribute mark_debug of resp_valid   : signal is true;
+
+   attribute mark_debug of card_ver1    : signal is true;
+   attribute mark_debug of card_ccs     : signal is true;
 
 begin
 
@@ -110,17 +120,21 @@ begin
    end process p_counter;
 
    sd_clk_o <= counter_slow(6) when state = INIT_ST   -- 50 MHz / 64 / 2 = 391 kHz
-                                 or state = IDLE_ST
+                                 or state = GO_IDLE_STATE_ST
                                  or state = SEND_IF_COND_ST
                                  or state = SD_SEND_OP_COND_APP_ST
                                  or state = SD_SEND_OP_COND_ST
                                  or state = ALL_SEND_CID_ST
+                                 or state = SEND_RELATIVE_ADDR_ST
+                                 or state = ERROR_ST
+                                 or state = SEND_STATUS_ST
           else counter_slow(0);                       -- 50 MHz / 2 = 25 MHz
 
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.8 Card State Transition Table, Page 128.
    -- Section 4.2 Card Identification Mode, Page 59.
+   -- State Machine shown in Figure 4-2, Page 62.
 
    p_fsm : process (avm_clk_i)
    begin
@@ -139,24 +153,38 @@ begin
                   cmd_data  <= X"00000000";  -- No additional data
                   cmd_resp  <= 0;            -- No response expected.
                   cmd_valid <= '1';
-                  state     <= IDLE_ST;
+                  state     <= GO_IDLE_STATE_ST;
                end if;
 
-            when IDLE_ST =>
+            when GO_IDLE_STATE_ST => -- We've sent CMD0
                if cmd_ready = '1' then
                   -- Send CMD8 (see sections 4.2.2 and 4.3.13)
-                  cmd_index <= CMD_SEND_IF_COND;  -- CMD8
-                  cmd_data  <= X"000001AA";  -- Voltage is 1, Check pattern is AA
-                  cmd_resp  <= RESP_R7_LEN;  -- Expect response R7
-                  cmd_valid <= '1';
-                  state     <= SEND_IF_COND_ST;
+                  cmd_index  <= CMD_SEND_IF_COND;  -- CMD8
+                  cmd_data   <= X"000001AA";  -- Voltage is 1, Check pattern is AA
+                  cmd_resp   <= RESP_R7_LEN;  -- Expect response R7
+                  cmd_valid  <= '1';
+                  state      <= SEND_IF_COND_ST;
+                  init_count <= INIT_COUNT_MAX;
                end if;
 
-            when SEND_IF_COND_ST =>
+            when SEND_IF_COND_ST => -- We've sent CMD8
                if resp_valid = '1' then      -- Wait for response or timeout
                   -- Check response
                   if resp_timeout = '0' and resp_error = '0' then
                      -- TBD: Here we should check the contents of the response
+
+                     card_ver1 <= '0'; -- Valid response means card is Ver 2.X
+
+                     -- Send ACMD41 (see section 5.1)
+                     cmd_index <= CMD_APP_CMD;  -- First send CMD55
+                     cmd_data  <= X"00000000";  -- RCA default value of all zeros
+                     cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
+                     cmd_valid <= '1';
+                     state     <= SD_SEND_OP_COND_APP_ST;
+                  elsif resp_timeout = '1' then
+                     -- Timeout means the card did not respond to our CMD8.
+                     -- Most likely, it is a "Ver 1.X Standard Capacity SD Memory Card".
+                     card_ver1 <= '1';
 
                      -- Send ACMD41 (see section 5.1)
                      cmd_index <= CMD_APP_CMD;  -- First send CMD55
@@ -165,11 +193,11 @@ begin
                      cmd_valid <= '1';
                      state     <= SD_SEND_OP_COND_APP_ST;
                   else
-                     state <= SEND_STATUS_ST;
+                     state <= ERROR_ST;
                   end if;
                end if;
 
-            when SD_SEND_OP_COND_APP_ST =>
+            when SD_SEND_OP_COND_APP_ST => -- We've sent CMD55
                if resp_valid = '1' then      -- Wait for response or timeout
                   -- Check response
                   if resp_timeout = '0' and resp_error = '0' and
@@ -183,49 +211,62 @@ begin
                      cmd_valid <= '1';
                      state     <= SD_SEND_OP_COND_ST;
                   else
-                     state <= SEND_STATUS_ST;
+                     state <= ERROR_ST;
                   end if;
                end if;
 
-            when SD_SEND_OP_COND_ST =>
+            when SD_SEND_OP_COND_ST => -- We've sent ACMD41
                if resp_valid = '1' then      -- Wait for response or timeout
-                  if resp_timeout = '0' and resp_error = '0'
-                     -- Ignore whatever response we got
-                  then
-                     cmd_index <= CMD_ALL_SEND_CID;      -- CMD2
-                     cmd_data  <= X"00000000";           -- No additional data
-                     cmd_resp  <= RESP_R2_LEN;           -- Expect response R2
-                     cmd_valid <= '1';
-                     state     <= ALL_SEND_CID_ST;
+                  if resp_timeout = '0' and resp_error = '0' then
+                     -- Wait for BUSY bit to be set (de-asserted)
+                     if resp_data(OCR_BUSY) = '1' then
+                        card_ccs  <= resp_data(OCR_CCS);    -- Card Capacity Status
+                        cmd_index <= CMD_ALL_SEND_CID;      -- CMD2
+                        cmd_data  <= X"00000000";           -- No additional data
+                        cmd_resp  <= RESP_R2_LEN;           -- Expect response R2
+                        cmd_valid <= '1';
+                        state     <= ALL_SEND_CID_ST;
+                     elsif init_count > 0 then
+                        init_count <= init_count - 1;
+
+                        -- Send ACMD41 again
+                        cmd_index <= CMD_APP_CMD;  -- First send CMD55
+                        cmd_data  <= X"00000000";  -- RCA default value of all zeros
+                        cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
+                        cmd_valid <= '1';
+                        state     <= SD_SEND_OP_COND_APP_ST;
+                     else
+                        state <= ERROR_ST;
+                     end if;
                   else
-                     state <= SEND_STATUS_ST;
+                     state <= ERROR_ST;
                   end if;
                end if;
 
-            when ALL_SEND_CID_ST =>
+            when ALL_SEND_CID_ST => -- We've sent CMD2
                if resp_valid = '1' then
                   if resp_timeout = '0' and resp_error = '0'
                      -- Ignore whatever response we got
                   then
                      state <= SEND_RELATIVE_ADDR_ST;
                   else
-                     state <= SEND_STATUS_ST;
+                     state <= ERROR_ST;
                   end if;
                end if;
 
             when SEND_RELATIVE_ADDR_ST =>
                null;
 
-            when SEND_STATUS_ST =>
+            when ERROR_ST =>
                if cmd_ready = '1' then
                   cmd_index <= CMD_SEND_STATUS;  -- CMD13
                   cmd_data  <= X"00000000";  -- No arguments
                   cmd_resp  <= RESP_R1_LEN;  -- Expect response R1
                   cmd_valid <= '1';
-                  state     <= ERROR_ST;
+                  state     <= SEND_STATUS_ST;
                end if;
 
-            when ERROR_ST =>
+            when SEND_STATUS_ST => -- We've sent CMD13
                null;
 
             when others =>
