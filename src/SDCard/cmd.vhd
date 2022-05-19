@@ -68,7 +68,7 @@ architecture synthesis of cmd is
    signal send_data      : std_logic_vector(39 downto 0);
    signal send_count     : natural range 0 to 39;
    signal crc            : std_logic_vector(6 downto 0);
-   signal resp_data      : std_logic_vector(39 downto 0);
+   signal resp_data      : std_logic_vector(143 downto 0);
    signal resp_count     : natural range 0 to 255;
 
    -- This calculates the 7-bit CRC using the polynomial x^7 + x^3 + x^0.
@@ -147,7 +147,8 @@ begin
 
                when WAIT_RESPONSE_ST =>
                   if sd_cmd_in_i = '0' then
-                     state <= GET_RESPONSE_ST;
+                     resp_data <= (others => '0');
+                     state     <= GET_RESPONSE_ST;
                   elsif timeout_count > 0 then
                      timeout_count <= timeout_count - 1;
                   else
@@ -162,14 +163,18 @@ begin
                      crc <= new_crc(crc, sd_cmd_in_i);
                   end if;
 
+                  -- This is an ugly hack because the CRC of the R3 (CID) does not cover the first eight bits.
+                  if resp_count = 128 then
+                     crc <= (others => '0');
+                  end if;
+
                   if resp_count > 0 then
-                     resp_data  <= resp_data(38 downto 0) & sd_cmd_in_i;
+                     resp_data  <= resp_data(142 downto 0) & sd_cmd_in_i;
                      resp_count <= resp_count - 1;
                   else
                      if resp_data(7 downto 0) = crc & "1" or resp_data(7 downto 0) = X"FF" then
-                        resp_data_o              <= (others => '0');
-                        resp_data_o(31 downto 0) <= resp_data(39 downto 8);
-                        resp_valid_o             <= '1';
+                        resp_data_o  <= resp_data(143 downto 8);
+                        resp_valid_o <= '1';
                         report "Received response 0x" & to_hstring(resp_data(39 downto 8))
                            & " with valid CRC";
                      else

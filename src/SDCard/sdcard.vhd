@@ -77,6 +77,7 @@ architecture synthesis of sdcard is
 
    signal card_ver1     : std_logic;
    signal card_ccs      : std_logic;
+   signal card_cid      : std_logic_vector(127 downto 0);
 
    -- State diagram in Figure 4-7 page 56.
    type state_t is (
@@ -253,9 +254,10 @@ begin
 
             when ALL_SEND_CID_ST => -- We've sent CMD2
                if resp_valid = '1' then
-                  if resp_timeout = '0' and resp_error = '0'
-                     -- Ignore whatever response we got
+                  if resp_timeout = '0' and resp_error = '0' and
+                     resp_data(135 downto 128) = X"3F"   -- Validate response
                   then
+                     card_cid <= resp_data(127 downto 0);
                      state <= SEND_RELATIVE_ADDR_ST;
                   else
                      state <= ERROR_ST;
