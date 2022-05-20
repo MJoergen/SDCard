@@ -122,6 +122,9 @@ package sdcard_globals is
    constant OCR_CCS                    : natural := 30; -- Card Capacity Status
    constant OCR_BUSY                   : natural := 31; -- Card power up status bit
 
+   subtype  CMD8_VHS                   is natural range 11 downto 8;    -- Supply Voltage
+   subtype  CMD8_CHECK                 is natural range  7 downto 0;    -- Check pattern
+
    subtype  CID_MID                   is natural range 127 downto 120;  -- Manufacturer ID
    subtype  CID_OID                   is natural range 119 downto 104;  -- OEM/Application ID
    subtype  CID_PNM                   is natural range 103 downto  64;  -- Product name
