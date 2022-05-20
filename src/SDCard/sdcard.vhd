@@ -78,6 +78,7 @@ architecture synthesis of sdcard is
    signal card_ver2     : std_logic;
    signal card_ccs      : std_logic;
    signal card_cid      : std_logic_vector(119 downto 0);
+   signal card_csd      : std_logic_vector(119 downto 0);
    signal card_rca      : std_logic_vector(15 downto 0);
 
    -- State diagram in Figure 4-7 page 56.
@@ -114,6 +115,7 @@ architecture synthesis of sdcard is
    attribute mark_debug of card_ver2    : signal is true;
    attribute mark_debug of card_ccs     : signal is true;
    attribute mark_debug of card_cid     : signal is true;
+   attribute mark_debug of card_csd     : signal is true;
    attribute mark_debug of card_rca     : signal is true;
 
 begin
@@ -172,6 +174,7 @@ begin
                   card_ver2  <= '0';
                   card_ccs   <= '0';
                   card_cid   <= (others => '0');
+                  card_csd   <= (others => '0');
                   card_rca   <= (others => '0');
                end if;
 
@@ -304,7 +307,10 @@ begin
 
             when SEND_CSD_ST => -- We've sent CMD9
                if resp_valid = '1' then
-                  if resp_timeout = '0' and resp_error = '0' then
+                  if resp_timeout = '0' and resp_error = '0' and
+                     resp_data(127 downto 120) = X"3F"      -- Validate response
+                  then
+                     card_csd  <= resp_data(119 downto 0);  -- Store CSD
                      cmd_index <= CMD_SET_DSR;              -- CMD4
                      cmd_data  <= (others => '0');          -- No additional data
                      cmd_resp  <= 0;                        -- No response

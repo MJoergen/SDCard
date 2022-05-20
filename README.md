@@ -45,3 +45,31 @@ The CID 035344534333324780B90C4E7F0138 is decoded as follows:
 | PSN   | B90C4E7F   | Serial Number  |
 | MDT   | 138        | August 2019    |
 
+The CSD 400E00325B590000EDC87F800A4040 is decoded as follows:
+
+| field                  | value | interpretation                 |
+| -----                  | ------| --------------                 |
+| CSD\_STRUCTURE         |    01 | SDHC                           |
+| (TAAC)                 |    0E | 1.0 ms                         |
+| (NSAC)                 |    00 | 0 clocks                       |
+| (TRAN\_SPEED)          |    32 | 25 Mb/s                        |
+| CCC                    |   5B5 | 0, 2, 4, 5, 7, 8, 10           |
+| (READ\_BL\_LEN)        |     9 | 512 bytes                      |
+| (READ\_BL\_PARTIAL)    |     0 | No                             |
+| (WRITE\_BLK\_MISALIGN) |     0 | No                             |
+| (READ\_BLK\_MISALIGN)  |     0 | No                             |
+| DSR\_IMP               |     0 | DSR not implemented            |
+| C\_SIZE                |  EDC8 | 31 GB                          |
+| (ERASE\_BLK\_EN)       |     1 | Yes                            |
+| (SECTOR\_SIZE)         |    7F | 64 kB                          |
+| (WP\_GRP\_SIZE)        |    00 | 1 sector                       |
+| (WP\_GRP\_ENABLE)      |     0 | No                             |
+| (R2W\_FACTOR)          |     2 | factor 4                       |
+| (WRITE\_BL\_LEN)       |     9 | 512 bytes                      |
+| (WRITE\_BL\_PARTIAL)   |     0 | No                             |
+| (FILE\_FORMAT\_GRP)    |     0 | File format group              |
+| COPY                   |     1 | copy flag                      |
+| PERM\_WRITE\_PROTECT   |     0 | No                             |
+| TMP\_WRITE\_PROTECT    |     0 | No                             |
+| (FILE\_FORMAT)         |     0 | Hard disk with partition table |
+
