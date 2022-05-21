@@ -60,6 +60,24 @@ package sdcard_globals is
    constant ACMD_SEND_SCR                : natural := 51; -- R1
 
 
+   -- Section 4.3.13, Page 105
+   -- Response R7
+   subtype  CMD8_1_2V                 is natural range  13 downto  13;  -- PCIe 1.2V Support
+   subtype  CMD8_PCIE                 is natural range  12 downto  12;  -- PCIe Availability
+   subtype  CMD8_VHS                  is natural range  11 downto   8;  -- Supply Voltage
+   subtype  CMD8_CHECK                is natural range   7 downto   0;  -- Check pattern
+   constant CMD8_VHS_27_36             : std_logic_vector(3 downto 0) := "0001";
+   constant CMD8_VHS_LOW               : std_logic_vector(3 downto 0) := "0010";
+
+   subtype  CMD_RCA                   is natural range  31 downto  16;  -- RCA
+   constant CMD_RCA_DEFAULT            : std_logic_vector(31 downto 16) := (others => '0');
+
+   subtype  ACMD6_BUS_WIDTH           is natural range   1 downto   0;
+   constant ACMD6_BUS_WIDTH_1          : std_logic_vector(1 downto 0) := "00";
+   constant ACMD6_BUS_WIDTH_4          : std_logic_vector(1 downto 0) := "10";
+
+
+
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.9 Responses, Page 131
    constant RESP_R1_LEN                  : natural :=  48;  -- Normal response
@@ -71,6 +89,7 @@ package sdcard_globals is
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.10.1 Card Status, Page 134
+   subtype  R_CMD_INDEX                 is natural range 39 downto 32;
    constant CARD_STAT_OUT_OF_RANGE       : natural := 31;
    constant CARD_STAT_ADDRESS_ERROR      : natural := 30;
    constant CARD_STAT_BLOCK_LEN_ERROR    : natural := 29;
@@ -107,24 +126,9 @@ package sdcard_globals is
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 5 Card Registers, Page 204
-   constant OCR_27X                    : natural := 15;
-   constant OCR_28X                    : natural := 16;
-   constant OCR_29X                    : natural := 17;
-   constant OCR_30X                    : natural := 18;
-   constant OCR_31X                    : natural := 19;
-   constant OCR_32X                    : natural := 20;
-   constant OCR_33X                    : natural := 21;
-   constant OCR_34X                    : natural := 22;
-   constant OCR_35X                    : natural := 23;
-   constant OCR_S18A                   : natural := 24; -- Switching to 1.8V Accepted
-   constant OCR_CO2T                   : natural := 27; -- Over 2TB support Status
-   constant OCR_UHSII                  : natural := 29; -- UHS-II Card Status
-   constant OCR_CCS                    : natural := 30; -- Card Capacity Status
-   constant OCR_BUSY                   : natural := 31; -- Card power up status bit
 
-   subtype  CMD8_VHS                   is natural range 11 downto 8;    -- Supply Voltage
-   subtype  CMD8_CHECK                 is natural range  7 downto 0;    -- Check pattern
-
+   -- Response R2
+   subtype  R2_CID                    is natural range 127 downto   0;
    subtype  CID_MID                   is natural range 127 downto 120;  -- Manufacturer ID
    subtype  CID_OID                   is natural range 119 downto 104;  -- OEM/Application ID
    subtype  CID_PNM                   is natural range 103 downto  64;  -- Product name
@@ -133,6 +137,8 @@ package sdcard_globals is
    subtype  CID_MDT                   is natural range  19 downto   8;  -- Manufacturing date
    subtype  CID_CRC                   is natural range   7 downto   1;  -- CRC7 checksum
 
+   -- Response R2
+   subtype  R2_CSD                    is natural range 127 downto   0;
    subtype  CSD_CSD_STRUCTURE         is natural range 127 downto 126;  -- CSD structure
    subtype  CSD_TAAC                  is natural range 119 downto 112;  -- data read access-time-1
    subtype  CSD_NSAC                  is natural range 111 downto 104;  -- data read access-time-2
@@ -162,6 +168,33 @@ package sdcard_globals is
    subtype  CSD_TMP_WRITE_PROTECT     is natural range  12 downto  12;  -- temporary write protection
    subtype  CSD_FILE_FORMAT           is natural range  11 downto  10;  -- File format
    subtype  CSD_CRC                   is natural range   7 downto   1;  -- CRC
+
+   -- Response R3 and ACMD41
+   constant OCR_27X                    : natural := 15;
+   constant OCR_28X                    : natural := 16;
+   constant OCR_29X                    : natural := 17;
+   constant OCR_30X                    : natural := 18;
+   constant OCR_31X                    : natural := 19;
+   constant OCR_32X                    : natural := 20;
+   constant OCR_33X                    : natural := 21;
+   constant OCR_34X                    : natural := 22;
+   constant OCR_35X                    : natural := 23;
+   constant OCR_S18A                   : natural := 24; -- Switching to 1.8V Accepted
+   constant OCR_CO2T                   : natural := 27; -- Over 2TB support Status
+   constant OCR_UHSII                  : natural := 29; -- UHS-II Card Status
+   constant OCR_CCS                    : natural := 30; -- Card Capacity Status
+   constant OCR_BUSY                   : natural := 31; -- Card power up status bit
+
+   -- Response R6
+   subtype  R6_RCA                    is natural range  31 downto  16;  -- RCA
+   constant R6_STAT_COM_CRC_ERROR      : natural := 15;
+   constant R6_STAT_ILLEGAL_COMMAND    : natural := 14;
+   constant R6_STAT_ERROR              : natural := 13;
+   subtype  R6_STAT_CURRENT_STATE     is natural range 12 downto 9;
+   constant R6_STAT_READY_FOR_DATA     : natural :=  8;
+   constant R6_STAT_FX_EVENT           : natural :=  6;
+   constant R6_STAT_APP_CMD            : natural :=  5;
+   constant R6_STAT_AKE_SEQ_ERROR      : natural :=  3;
 
    subtype  SCR_SCR_STRUCTURE         is natural range  63 downto  60;  -- SCR Structure
    subtype  SCR_SD_SPEC               is natural range  59 downto  56;  -- SD Memory Card - Spec. Version
