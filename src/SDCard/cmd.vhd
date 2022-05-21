@@ -197,8 +197,9 @@ begin
          end if;
 
          if rst_i = '1' then
-            idle_count <= IDLE_MAX;
-            state      <= INIT_ST;
+            idle_count   <= IDLE_MAX;
+            state        <= INIT_ST;
+            resp_valid_o <= '0';
          end if;
       end if;
    end process p_fsm;
