@@ -62,7 +62,7 @@ architecture synthesis of sdcard is
    constant INIT_COUNT_MAX : natural := 100; -- Approximately one second
 
    signal sd_cd         : std_logic;
-   signal counter_slow  : std_logic_vector(6 downto 0) := (others => '0');
+   signal clk_counter   : std_logic_vector(6 downto 0) := (others => '0');
    signal cmd_valid     : std_logic;
    signal cmd_ready     : std_logic;
    signal cmd_index     : natural range 0 to 63;
@@ -97,7 +97,9 @@ architecture synthesis of sdcard is
       SEND_CSD_ST,
       SELECT_CARD_ST,
       SET_BUS_WIDTH_APP_ST,
-      SET_BUS_WIDTH_ST
+      SET_BUS_WIDTH_ST,
+      READY_ST,
+      READING_ST
    );
 
    signal state : state_t := INIT_ST;
@@ -127,20 +129,23 @@ begin
    p_counter : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
-         counter_slow <= std_logic_vector(unsigned(counter_slow) + 1);
+         clk_counter <= std_logic_vector(unsigned(clk_counter) + 1);
       end if;
    end process p_counter;
 
-   sd_clk_o <= counter_slow(6) when state = INIT_ST   -- 50 MHz / 64 / 2 = 391 kHz
-                                 or state = GO_IDLE_STATE_ST
-                                 or state = SEND_IF_COND_ST
-                                 or state = SD_SEND_OP_COND_APP_ST
-                                 or state = SD_SEND_OP_COND_ST
-                                 or state = ALL_SEND_CID_ST
-                                 or state = SEND_RELATIVE_ADDR_ST
-                                 or state = ERROR_ST
-                                 or state = SEND_STATUS_ST
-          else counter_slow(0);                       -- 50 MHz / 2 = 25 MHz
+   sd_clk_o <= clk_counter(6) when state = INIT_ST   -- 50 MHz / 64 / 2 = 391 kHz
+                                or state = GO_IDLE_STATE_ST
+                                or state = SEND_IF_COND_ST
+                                or state = SD_SEND_OP_COND_APP_ST
+                                or state = SD_SEND_OP_COND_ST
+                                or state = ALL_SEND_CID_ST
+                                or state = SEND_RELATIVE_ADDR_ST
+                                or state = ERROR_ST
+                                or state = SEND_STATUS_ST
+          else clk_counter(0);                       -- 50 MHz / 2 = 25 MHz
+
+
+   avm_waitrequest_o <= '0' when state = READY_ST else '1';
 
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
@@ -396,11 +401,23 @@ begin
                      resp_data(CARD_STAT_READY_FOR_DATA) = '1' and
                      resp_data(CARD_STAT_APP_CMD)        = '1'
                   then
-                     null;
+                     state <= READY_ST;
                   else
                      state <= ERROR_ST;
                   end if;
                end if;
+
+            when READY_ST =>
+               if avm_read_i = '1' then
+                  cmd_index <= CMD_READ_SINGLE_BLOCK;    -- CMD17
+                  cmd_data  <= avm_address_i;
+                  cmd_resp  <= RESP_R1_LEN;              -- Expect response R1
+                  cmd_valid <= '1';
+                  state     <= READING_ST;
+               end if;
+
+            when READING_ST =>
+               null;
 
             when ERROR_ST =>
                if cmd_ready = '1' then
@@ -424,7 +441,6 @@ begin
             state               <= INIT_ST;
             cmd_valid           <= '0';
             avm_readdatavalid_o <= '0';
-            avm_waitrequest_o   <= '1';
          end if;
       end if;
    end process p_fsm;
