@@ -423,8 +423,6 @@ begin
          if avm_rst_i = '1' then
             state               <= INIT_ST;
             cmd_valid           <= '0';
-            sd_dat_out_o        <= "1111";   -- bit 3 : CS, bit 0 : DO
-            sd_dat_oe_o         <= '0';      -- DAT pins have internal pullup => SD Mode
             avm_readdatavalid_o <= '0';
             avm_waitrequest_o   <= '1';
          end if;
@@ -456,6 +454,29 @@ begin
          sd_cmd_oe_o    => sd_cmd_oe_o,
          uart_tx_o      => uart_tx_o
       ); -- i_cmd_logger
+
+
+   ----------------------------------
+   -- Instantiate DAT controller
+   ----------------------------------
+
+   i_dat : entity work.dat
+      port map (
+         clk_i        => avm_clk_i,
+         rst_i        => avm_rst_i,
+         tx_valid_i   => '0',
+         tx_ready_o   => open,
+         tx_data_i    => (others => '0'),
+         tx_last_i    => '0',
+         rx_valid_o   => open,
+         rx_ready_i   => '1',
+         rx_data_o    => open,
+         rx_last_o    => open,
+         sd_clk_i     => sd_clk_o,
+         sd_dat_in_i  => sd_dat_in_i,
+         sd_dat_out_o => sd_dat_out_o,
+         sd_dat_oe_o  => sd_dat_oe_o
+      ); -- i_dat
 
 end architecture synthesis;
 
