@@ -233,7 +233,7 @@ begin
    begin
       if rising_edge(clk_i) then
          sd_clk_d <= sd_clk_i;
-         if sd_clk_d = '1' and sd_clk_i = '0' then -- Falling edge of sd_clk_i
+         if sd_clk_d = '0' and sd_clk_i = '1' then -- Falling edge of sd_clk_i
             sd_cmd_oe_o <= sd_cmd_oe;
             if sd_cmd_oe = '1' then
                sd_cmd_out_o <= sd_cmd_out;
