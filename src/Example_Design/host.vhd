@@ -44,7 +44,7 @@ begin
             when INIT_ST =>
                avm_write_o      <= '0';
                avm_read_o       <= '1';
-               avm_address_o    <= (others => '0');
+               avm_address_o    <= X"00000004"; -- Byte address 0x0800
                avm_burstcount_o <= X"0200";
                state            <= WAIT_ST;
             when WAIT_ST =>
