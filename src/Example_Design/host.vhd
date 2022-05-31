@@ -5,6 +5,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use ieee.numeric_std_unsigned.all;
 
 entity host is
    port (
@@ -30,6 +31,12 @@ architecture simulation of host is
 
    signal state : state_t := INIT_ST;
 
+   attribute mark_debug                        : boolean;
+   attribute mark_debug of avm_read_o          : signal is true;
+   attribute mark_debug of avm_readdata_i      : signal is true;
+   attribute mark_debug of avm_readdatavalid_i : signal is true;
+   attribute mark_debug of avm_waitrequest_i   : signal is true;
+
 begin
 
    p_fsm : process (avm_clk_i)
@@ -47,8 +54,14 @@ begin
                avm_address_o    <= X"00000004"; -- Byte address 0x0800
                avm_burstcount_o <= X"0200";
                state            <= WAIT_ST;
+
             when WAIT_ST =>
-               null;
+               if avm_waitrequest_i = '0' and avm_address_o < X"00000007" then
+                  avm_read_o       <= '1';
+                  avm_address_o    <= avm_address_o + 1;
+                  avm_burstcount_o <= X"0200";
+                  state            <= WAIT_ST;
+               end if;
          end case;
 
          if avm_rst_i = '1' then

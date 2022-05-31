@@ -75,6 +75,8 @@ architecture synthesis of sdcard is
    signal resp_error    : std_logic;
    signal init_count    : natural range 0 to INIT_COUNT_MAX;
 
+   signal dat_ready     : std_logic;
+
    signal card_ver2     : std_logic;
    signal card_ccs      : std_logic;
    signal card_cid      : std_logic_vector(127 downto 0);
@@ -99,25 +101,27 @@ architecture synthesis of sdcard is
       SET_BUS_WIDTH_APP_ST,
       SET_BUS_WIDTH_ST,
       READY_ST,
+      READ_SINGLE_BLOCK_ST,
+      WAITING_ST,
       READING_ST
    );
 
    signal state : state_t := INIT_ST;
 
    attribute mark_debug                 : boolean;
---   attribute mark_debug of sd_clk_o     : signal is true;
---   attribute mark_debug of sd_cmd_in_i  : signal is true;
---   attribute mark_debug of sd_cmd_oe_o  : signal is true;
+   attribute mark_debug of sd_clk_o     : signal is true;
+   attribute mark_debug of sd_cmd_in_i  : signal is true;
+   attribute mark_debug of sd_cmd_out_o : signal is true;
+   attribute mark_debug of sd_cmd_oe_o  : signal is true;
    attribute mark_debug of state        : signal is true;
    attribute mark_debug of resp_timeout : signal is true;
    attribute mark_debug of resp_error   : signal is true;
    attribute mark_debug of resp_valid   : signal is true;
-
-   attribute mark_debug of card_ver2    : signal is true;
-   attribute mark_debug of card_ccs     : signal is true;
-   attribute mark_debug of card_cid     : signal is true;
-   attribute mark_debug of card_csd     : signal is true;
-   attribute mark_debug of card_rca     : signal is true;
+   attribute mark_debug of dat_ready    : signal is true;
+   attribute mark_debug of cmd_valid    : signal is true;
+   attribute mark_debug of cmd_ready    : signal is true;
+   attribute mark_debug of cmd_index    : signal is true;
+   attribute mark_debug of cmd_resp     : signal is true;
 
 begin
 
@@ -417,17 +421,30 @@ begin
                   cmd_data  <= avm_address_i;
                   cmd_resp  <= RESP_R1_LEN;              -- Expect response R1
                   cmd_valid <= '1';
-                  state     <= READING_ST;
+                  state     <= READ_SINGLE_BLOCK_ST;
                end if;
 
-            when READING_ST =>
+            when READ_SINGLE_BLOCK_ST =>                 -- We've sent CMD17, expecting response R1
                if resp_valid = '1' then                  -- Wait for response or timeout
                   -- Check response R1
                   if resp_timeout = '0' and resp_error = '0' then
-                     state <= READING_ST;
+                     state <= WAITING_ST;
                   else
                      state <= ERROR_ST;
                   end if;
+               end if;
+               if dat_ready = '0' then
+                  state <= READING_ST;
+               end if;
+
+            when WAITING_ST =>
+               if dat_ready = '0' then
+                  state <= READING_ST;
+               end if;
+
+            when READING_ST =>
+               if dat_ready = '1' then
+                  state <= READY_ST;
                end if;
 
             when ERROR_ST =>
@@ -449,9 +466,8 @@ begin
          end case;
 
          if avm_rst_i = '1' then
-            state               <= INIT_ST;
-            cmd_valid           <= '0';
-            avm_readdatavalid_o <= '0';
+            state     <= INIT_ST;
+            cmd_valid <= '0';
          end if;
       end if;
    end process p_fsm;
@@ -491,14 +507,11 @@ begin
       port map (
          clk_i        => avm_clk_i,
          rst_i        => avm_rst_i,
+         ready_o      => dat_ready,
          tx_valid_i   => '0',
-         tx_ready_o   => open,
          tx_data_i    => (others => '0'),
-         tx_last_i    => '0',
-         rx_valid_o   => open,
-         rx_ready_i   => '1',
-         rx_data_o    => open,
-         rx_last_o    => open,
+         rx_valid_o   => avm_readdatavalid_o,
+         rx_data_o    => avm_readdata_o,
          sd_clk_i     => sd_clk_o,
          sd_dat_in_i  => sd_dat_in_i,
          sd_dat_out_o => sd_dat_out_o,

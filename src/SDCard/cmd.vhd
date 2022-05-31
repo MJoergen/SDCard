@@ -82,10 +82,11 @@ architecture synthesis of cmd is
       return (cur_crc(5 downto 0) & "0") xor upd;
    end function new_crc;
 
-   attribute mark_debug               : boolean;
-   attribute mark_debug of state      : signal is true;
-   attribute mark_debug of resp_data  : signal is true;
-   attribute mark_debug of resp_count : signal is true;
+   attribute mark_debug                 : boolean;
+   attribute mark_debug of state        : signal is true;
+   attribute mark_debug of resp_count   : signal is true;
+   attribute mark_debug of resp_valid_o : signal is true;
+   attribute mark_debug of resp_ready_i : signal is true;
 
 begin
 
@@ -197,9 +198,11 @@ begin
          end if;
 
          if rst_i = '1' then
-            idle_count   <= IDLE_MAX;
-            state        <= INIT_ST;
-            resp_valid_o <= '0';
+            idle_count     <= IDLE_MAX;
+            state          <= INIT_ST;
+            resp_valid_o   <= '0';
+            resp_timeout_o <= '0';
+            resp_error_o   <= '0';
          end if;
       end if;
    end process p_fsm;
