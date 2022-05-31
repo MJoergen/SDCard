@@ -142,6 +142,10 @@ begin
                                 or state = SEND_RELATIVE_ADDR_ST
                                 or state = ERROR_ST
                                 or state = SEND_STATUS_ST
+                                or state = SEND_CSD_ST
+                                or state = SELECT_CARD_ST
+                                or state = SET_BUS_WIDTH_APP_ST
+                                or state = SET_BUS_WIDTH_ST
           else clk_counter(0);                       -- 50 MHz / 2 = 25 MHz
 
 
@@ -417,11 +421,18 @@ begin
                end if;
 
             when READING_ST =>
-               null;
+               if resp_valid = '1' then                  -- Wait for response or timeout
+                  -- Check response R1
+                  if resp_timeout = '0' and resp_error = '0' then
+                     state <= READING_ST;
+                  else
+                     state <= ERROR_ST;
+                  end if;
+               end if;
 
             when ERROR_ST =>
                if cmd_ready = '1' then
-                  cmd_index <= CMD_SEND_STATUS;          -- CMD13
+                  cmd_index <= CMD_APP_CMD;              -- CMD55
                   cmd_data  <= (others => '0');
                   cmd_data(31 downto 16) <= card_rca;
                   cmd_data(15)           <= '0';         -- Send Status
