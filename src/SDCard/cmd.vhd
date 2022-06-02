@@ -165,7 +165,7 @@ begin
                   end if;
 
                   -- This is an ugly hack because the CRC of the R3 (CID) does not cover the first eight bits.
-                  if resp_count = 128 then
+                  if resp_count = 129 then
                      crc <= (others => '0');
                   end if;
 
