@@ -324,8 +324,7 @@ begin
                   if resp_timeout = '0' and resp_error = '0' and
                      resp_data(R_CMD_INDEX) = std_logic_vector(to_unsigned(CMD_SEND_RELATIVE_ADDR, 8)) and
                      resp_data(R6_STAT_CURRENT_STATE)  = CARD_STATE_IDENT and
-                     resp_data(R6_STAT_READY_FOR_DATA) = '1' and
-                     resp_data(R6_STAT_APP_CMD)        = '1'
+                     resp_data(R6_STAT_READY_FOR_DATA) = '1'
                   then
                      card_rca <= resp_data(R6_RCA);
 
