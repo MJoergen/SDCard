@@ -109,7 +109,7 @@ begin
    -- Instantiate SDCard controller
    ---------------------------------------------------------
 
-   i_sdcard : entity work.sdcard
+   i_sdcard_wrapper : entity work.sdcard_wrapper
       port map (
          avm_clk_i           => avm_clk,
          avm_rst_i           => avm_rst,
@@ -130,7 +130,7 @@ begin
          sd_dat_out_o        => sd_dat_out,
          sd_dat_oe_o         => sd_dat_oe,
          uart_tx_o           => uart_tx_o
-      ); -- i_sdcard
+      ); -- i_sdcard_wrapper
 
 
    ---------------------------------------------------------

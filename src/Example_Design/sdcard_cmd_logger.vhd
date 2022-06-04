@@ -2,7 +2,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-entity cmd_logger is
+entity sdcard_cmd_logger is
    port (
       clk_i          : in  std_logic; -- 50 MHz
       rst_i          : in  std_logic;
@@ -29,9 +29,9 @@ entity cmd_logger is
 
       uart_tx_o      : out std_logic
    );
-end entity cmd_logger;
+end entity sdcard_cmd_logger;
 
-architecture synthesis of cmd_logger is
+architecture synthesis of sdcard_cmd_logger is
 
    -- Duplicated command
    signal cmd_valid_cmd   : std_logic;
@@ -85,7 +85,7 @@ begin
    -- Send command and get response
    -----------------------------------------------------
 
-   i_cmd : entity work.cmd
+   i_sdcard_cmd : entity work.sdcard_cmd
       port map (
          clk_i          => clk_i,
          rst_i          => rst_i,
@@ -103,7 +103,7 @@ begin
          sd_cmd_in_i    => sd_cmd_in_i,
          sd_cmd_out_o   => sd_cmd_out_o,
          sd_cmd_oe_o    => sd_cmd_oe_o
-      ); -- i_cmd
+      ); -- i_sdcard_cmd
 
 
    -----------------------------------------------------

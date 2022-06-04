@@ -12,7 +12,7 @@ use ieee.numeric_std.all;
 library work;
 use work.sdcard_globals.all;
 
-entity cmd is
+entity sdcard_cmd is
    port (
       clk_i          : in  std_logic; -- 50 MHz
       rst_i          : in  std_logic;
@@ -37,9 +37,9 @@ entity cmd is
       sd_cmd_out_o   : out std_logic;
       sd_cmd_oe_o    : out std_logic
    );
-end entity cmd;
+end entity sdcard_cmd;
 
-architecture synthesis of cmd is
+architecture synthesis of sdcard_cmd is
 
    constant IDLE_MAX     : natural := 400;    -- Idle for 1 ms after power-on.
    constant TIMEOUT_MAX  : natural := 4000;   -- Timeout after 10 ms.

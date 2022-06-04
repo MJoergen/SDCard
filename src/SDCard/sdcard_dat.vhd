@@ -12,7 +12,7 @@ use ieee.numeric_std.all;
 library work;
 use work.sdcard_globals.all;
 
-entity dat is
+entity sdcard_dat is
    port (
       clk_i        : in  std_logic; -- 50 MHz
       rst_i        : in  std_logic;
@@ -33,9 +33,9 @@ entity dat is
       sd_dat_out_o : out std_logic_vector(3 downto 0);
       sd_dat_oe_o  : out std_logic
    );
-end entity dat;
+end entity sdcard_dat;
 
-architecture synthesis of dat is
+architecture synthesis of sdcard_dat is
 
    constant RX_COUNT_MAX : natural := 1024+16;
 
