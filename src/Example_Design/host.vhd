@@ -31,12 +31,6 @@ architecture simulation of host is
 
    signal state : state_t := INIT_ST;
 
-   attribute mark_debug                        : boolean;
-   attribute mark_debug of avm_read_o          : signal is true;
-   attribute mark_debug of avm_readdata_i      : signal is true;
-   attribute mark_debug of avm_readdatavalid_i : signal is true;
-   attribute mark_debug of avm_waitrequest_i   : signal is true;
-
 begin
 
    p_fsm : process (avm_clk_i)

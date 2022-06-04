@@ -134,35 +134,34 @@ begin
       end if;
    end process p_counter;
 
-   sd_clk_o <= clk_counter(6) when state = INIT_ST   -- 50 MHz / 64 / 2 = 391 kHz
-                                or state = GO_IDLE_STATE_ST
-                                or state = SEND_IF_COND_ST
-                                or state = SD_SEND_OP_COND_APP_ST
-                                or state = SD_SEND_OP_COND_ST
-                                or state = ALL_SEND_CID_ST
-                                or state = SEND_RELATIVE_ADDR_ST
-                                or state = ERROR_ST
-                                or state = SEND_CSD_ST
-                                or state = SELECT_CARD_ST
-                                or state = SET_BUS_WIDTH_APP_ST
-                                or state = SET_BUS_WIDTH_ST
-          else clk_counter(0);                       -- 50 MHz / 2 = 25 MHz
+   p_out : process (avm_clk_i)
+   begin
+      if rising_edge(avm_clk_i) then
+         case state is
+            when INIT_ST                |
+                 GO_IDLE_STATE_ST       |
+                 SEND_IF_COND_ST        |
+                 SD_SEND_OP_COND_APP_ST |
+                 SD_SEND_OP_COND_ST     |
+                 ALL_SEND_CID_ST        |
+                 SEND_RELATIVE_ADDR_ST  |
+                 ERROR_ST               |
+                 SEND_CSD_ST            |
+                 SELECT_CARD_ST         |
+                 SET_BUS_WIDTH_APP_ST   |
+                 SET_BUS_WIDTH_ST       =>
+                    sd_clk_o      <= clk_counter(6);  -- 50 MHz / 64 / 2 = 391 kHz
+                    cmd_timeout_o <= 4000;            -- 10 ms @ 400 kHz
 
-   cmd_timeout_o <= 4000 when state = INIT_ST   -- 10 ms @ 400 kHz
-                           or state = GO_IDLE_STATE_ST
-                           or state = SEND_IF_COND_ST
-                           or state = SD_SEND_OP_COND_APP_ST
-                           or state = SD_SEND_OP_COND_ST
-                           or state = ALL_SEND_CID_ST
-                           or state = SEND_RELATIVE_ADDR_ST
-                           or state = ERROR_ST
-                           or state = SEND_CSD_ST
-                           or state = SELECT_CARD_ST
-                           or state = SET_BUS_WIDTH_APP_ST
-                           or state = SET_BUS_WIDTH_ST
-                        else 12500000;       -- 1 second @ 12.5 MHz
-
-   avm_waitrequest_o <= '0' when state = READY_ST else '1';
+            when READY_ST               |
+                 READ_SINGLE_BLOCK_ST   |
+                 WAITING_ST             |
+                 READING_ST             =>
+                    sd_clk_o      <= clk_counter(0);  -- 50 MHz / 2 = 25 MHz
+                    cmd_timeout_o <= 12500000;        -- 1 second @ 12.5 MHz
+         end case;
+      end if;
+   end process p_out;
 
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
@@ -170,6 +169,8 @@ begin
    -- Section 4.2 Card Identification Mode, Page 59.
    -- State Machine shown in Figure 4-2, Page 62.
    -- Section 4.7.4 Detailed Command Description
+
+   avm_waitrequest_o <= '0' when state = READY_ST else '1';
 
    p_fsm : process (avm_clk_i)
    begin
