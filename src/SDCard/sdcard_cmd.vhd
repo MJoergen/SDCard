@@ -62,8 +62,6 @@ architecture synthesis of sdcard_cmd is
    signal cooldown_count : natural range 0 to COOLDOWN_MAX;
 
    signal sd_clk_d       : std_logic;
-   signal sd_cmd_oe      : std_logic;
-   signal sd_cmd_out     : std_logic;
 
    signal send_data      : std_logic_vector(39 downto 0);
    signal send_count     : natural range 0 to 39;
@@ -93,6 +91,7 @@ begin
             resp_valid_o <= '0';
          end if;
 
+         sd_clk_d <= sd_clk_i;
          if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk_i
             case state is
                when INIT_ST =>
@@ -203,41 +202,29 @@ begin
    end process p_fsm;
 
 
+   -- The SDCard samples on rising edge of sd_clk.
+   -- Output is changed one system clock (20 ns) after rising edge of sd_clk.
    p_sd_cmd : process (all)
    begin
       -- Default is to always drive the CMD high
-      sd_cmd_out <= '1';
-      sd_cmd_oe  <= '1';
+      sd_cmd_out_o <= '1';
+      sd_cmd_oe_o  <= '1';
 
       case state is
          when INIT_ST | IDLE_ST =>
-            sd_cmd_out <= '1';
-            sd_cmd_oe  <= '1';
+            sd_cmd_out_o <= '1';
+            sd_cmd_oe_o  <= '1';
 
          when WRITING_ST | SEND_CRC_ST =>
-            sd_cmd_out <= send_data(39);
-            sd_cmd_oe  <= '1';
+            sd_cmd_out_o <= send_data(39);
+            sd_cmd_oe_o  <= '1';
 
          when WAIT_RESPONSE_ST | GET_RESPONSE_ST | COOLDOWN_ST =>
-            sd_cmd_out <= '0';
-            sd_cmd_oe  <= '0';
+            sd_cmd_out_o <= '0';
+            sd_cmd_oe_o  <= '0';
 
       end case;
    end process p_sd_cmd;
-
-
-   -- The SDCard samples on rising edge of sd_clk.
-   -- Output is changed one system clock (20 ns) after rising edge of sd_clk.
-   p_out : process (clk_i)
-   begin
-      if rising_edge(clk_i) then
-         sd_clk_d <= sd_clk_i;
-         if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk
-            sd_cmd_oe_o  <= sd_cmd_oe;
-            sd_cmd_out_o <= sd_cmd_out;
-         end if;
-      end if;
-   end process p_out;
 
 end architecture synthesis;
 
