@@ -38,9 +38,9 @@ entity sdcard_ctrl is
       avm_address_i       : in  std_logic_vector(31 downto 0);
       avm_writedata_i     : in  std_logic_vector(7 downto 0);
       avm_burstcount_i    : in  std_logic_vector(15 downto 0);
-      avm_readdata_o      : out std_logic_vector(7 downto 0);
-      avm_readdatavalid_o : out std_logic;
       avm_waitrequest_o   : out std_logic;
+      avm_init_error_o    : out std_logic;
+      avm_last_state_o    : out std_logic_vector(7 downto 0);
 
       sd_clk_o            : out std_logic;
       cmd_valid_o         : out std_logic;
@@ -48,6 +48,7 @@ entity sdcard_ctrl is
       cmd_index_o         : out natural range 0 to 63;
       cmd_data_o          : out std_logic_vector(31 downto 0);
       cmd_resp_o          : out natural range 0 to 255;
+      cmd_timeout_o       : out natural range 0 to 2**24 - 1;
       resp_valid_i        : in  std_logic;
       resp_ready_o        : out std_logic;
       resp_data_i         : in  std_logic_vector(135 downto 0);
@@ -82,7 +83,6 @@ architecture synthesis of sdcard_ctrl is
       ALL_SEND_CID_ST,
       SEND_RELATIVE_ADDR_ST,
       ERROR_ST,
-      SEND_STATUS_ST,
       -- Fast clock
       SEND_CSD_ST,
       SELECT_CARD_ST,
@@ -95,6 +95,28 @@ architecture synthesis of sdcard_ctrl is
    );
 
    signal state : state_t := INIT_ST;
+
+   function state_to_slv(state : state_t) return std_logic_vector is
+   begin
+      case state is
+         when INIT_ST                => return X"00";
+         when GO_IDLE_STATE_ST       => return X"01";
+         when SEND_IF_COND_ST        => return X"02";
+         when SD_SEND_OP_COND_APP_ST => return X"03";
+         when SD_SEND_OP_COND_ST     => return X"04";
+         when ALL_SEND_CID_ST        => return X"05";
+         when SEND_RELATIVE_ADDR_ST  => return X"06";
+         when ERROR_ST               => return X"07";
+         when SEND_CSD_ST            => return X"10";
+         when SELECT_CARD_ST         => return X"11";
+         when SET_BUS_WIDTH_APP_ST   => return X"12";
+         when SET_BUS_WIDTH_ST       => return X"13";
+         when READY_ST               => return X"14";
+         when READ_SINGLE_BLOCK_ST   => return X"15";
+         when WAITING_ST             => return X"16";
+         when READING_ST             => return X"17";
+      end case;
+   end function state_to_slv;
 
 begin
 
@@ -120,13 +142,25 @@ begin
                                 or state = ALL_SEND_CID_ST
                                 or state = SEND_RELATIVE_ADDR_ST
                                 or state = ERROR_ST
-                                or state = SEND_STATUS_ST
                                 or state = SEND_CSD_ST
                                 or state = SELECT_CARD_ST
                                 or state = SET_BUS_WIDTH_APP_ST
                                 or state = SET_BUS_WIDTH_ST
           else clk_counter(0);                       -- 50 MHz / 2 = 25 MHz
 
+   cmd_timeout_o <= 4000 when state = INIT_ST   -- 10 ms @ 400 kHz
+                           or state = GO_IDLE_STATE_ST
+                           or state = SEND_IF_COND_ST
+                           or state = SD_SEND_OP_COND_APP_ST
+                           or state = SD_SEND_OP_COND_ST
+                           or state = ALL_SEND_CID_ST
+                           or state = SEND_RELATIVE_ADDR_ST
+                           or state = ERROR_ST
+                           or state = SEND_CSD_ST
+                           or state = SELECT_CARD_ST
+                           or state = SET_BUS_WIDTH_APP_ST
+                           or state = SET_BUS_WIDTH_ST
+                        else 12500000;       -- 1 second @ 12.5 MHz
 
    avm_waitrequest_o <= '0' when state = READY_ST else '1';
 
@@ -140,6 +174,9 @@ begin
    p_fsm : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
+         if state /= ERROR_ST then
+            avm_last_state_o <= state_to_slv(state);
+         end if;
 
          if cmd_ready_i = '1' then
             cmd_valid_o <= '0';
@@ -149,11 +186,12 @@ begin
             when INIT_ST =>
                if cmd_ready_i = '1' then
                   -- Initialize information about card
-                  card_ver2  <= '0';
-                  card_ccs   <= '0';
-                  card_cid   <= (others => '0');
-                  card_csd   <= (others => '0');
-                  card_rca   <= (others => '0');
+                  card_ver2        <= '0';
+                  card_ccs         <= '0';
+                  card_cid         <= (others => '0');
+                  card_csd         <= (others => '0');
+                  card_rca         <= (others => '0');
+                  avm_init_error_o <= '0';
 
                   -- Send CMD0 (see section 4.2.1)
                   -- This resets the SD Card
@@ -421,18 +459,7 @@ begin
                end if;
 
             when ERROR_ST =>
-               if cmd_ready_i = '1' then
-                  cmd_index_o <= CMD_APP_CMD;              -- CMD55
-                  cmd_data_o  <= (others => '0');
-                  cmd_data_o(31 downto 16) <= card_rca;
-                  cmd_data_o(15)           <= '0';         -- Send Status
-                  cmd_resp_o  <= RESP_R1_LEN;              -- Expect response R1
-                  cmd_valid_o <= '1';
-                  state       <= SEND_STATUS_ST;
-               end if;
-
-            when SEND_STATUS_ST =>                       -- We've sent CMD13, expecting response R1
-               null;
+               avm_init_error_o <= '1';
 
             when others =>
                null;

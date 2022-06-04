@@ -13,6 +13,7 @@ entity sdcard_cmd_logger is
       cmd_index_i    : in  natural range 0 to 63;
       cmd_data_i     : in  std_logic_vector(31 downto 0);
       cmd_resp_i     : in  natural range 0 to 255;   -- Expected number of bits in response
+      cmd_timeout_i  : in  natural range 0 to 2**24 - 1; -- Timeout in SD card clock cycles (max 1 second)
 
       -- Response received from SDCard
       resp_valid_o   : out std_logic;
@@ -94,6 +95,7 @@ begin
          cmd_index_i    => cmd_index_i,
          cmd_data_i     => cmd_data_i,
          cmd_resp_i     => cmd_resp_i,
+         cmd_timeout_i  => cmd_timeout_i,
          resp_valid_o   => resp_valid_cmd,
          resp_ready_i   => resp_ready_cmd,
          resp_data_o    => resp_data_o,

@@ -22,7 +22,8 @@ entity sdcard_cmd is
       cmd_ready_o    : out std_logic;
       cmd_index_i    : in  natural range 0 to 63;
       cmd_data_i     : in  std_logic_vector(31 downto 0);
-      cmd_resp_i     : in  natural range 0 to 255;   -- Expected number of bits in response
+      cmd_resp_i     : in  natural range 0 to 255;       -- Expected number of bits in response
+      cmd_timeout_i  : in  natural range 0 to 2**24 - 1; -- Timeout in SD card clock cycles (max 1 second)
 
       -- Response received from SDCard
       resp_valid_o   : out std_logic;
@@ -42,7 +43,6 @@ end entity sdcard_cmd;
 architecture synthesis of sdcard_cmd is
 
    constant IDLE_MAX     : natural := 400;    -- Idle for 1 ms after power-on.
-   constant TIMEOUT_MAX  : natural := 4000;   -- Timeout after 10 ms.
    constant COOLDOWN_MAX : natural := 5;      -- Wait a few clock cycles before next command.
 
    type state_t is (
@@ -58,7 +58,7 @@ architecture synthesis of sdcard_cmd is
    signal state : state_t := INIT_ST;
 
    signal idle_count     : natural range 0 to IDLE_MAX;
-   signal timeout_count  : natural range 0 to TIMEOUT_MAX;
+   signal timeout_count  : natural range 0 to 2**24 - 1;
    signal cooldown_count : natural range 0 to COOLDOWN_MAX;
 
    signal sd_clk_d       : std_logic;
@@ -81,12 +81,6 @@ architecture synthesis of sdcard_cmd is
       upd := (0 => inv, 3 => inv, others => '0');
       return (cur_crc(5 downto 0) & "0") xor upd;
    end function new_crc;
-
-   attribute mark_debug                 : boolean;
-   attribute mark_debug of state        : signal is true;
-   attribute mark_debug of resp_count   : signal is true;
-   attribute mark_debug of resp_valid_o : signal is true;
-   attribute mark_debug of resp_ready_i : signal is true;
 
 begin
 
@@ -125,6 +119,7 @@ begin
                      send_count <= send_count - 1;
                      crc        <= new_crc(crc, send_data(39));
                   else
+                     crc                     <= new_crc(crc, send_data(39));
                      send_data(39 downto 32) <= new_crc(crc, send_data(39)) & "1";
                      send_count              <= 7;
                      state                   <= SEND_CRC_ST;
@@ -138,7 +133,7 @@ begin
                      if resp_count > 0 then
                         resp_count    <= resp_count - 1;
                         crc           <= (others => '0');
-                        timeout_count <= TIMEOUT_MAX;
+                        timeout_count <= cmd_timeout_i;
                         state         <= WAIT_RESPONSE_ST;
                      else
                         cooldown_count <= COOLDOWN_MAX;
@@ -231,18 +226,15 @@ begin
    end process p_sd_cmd;
 
 
-   -- Output is changed on falling edge of clk. The SDCard samples on rising clock edge.
+   -- The SDCard samples on rising edge of sd_clk.
+   -- Output is changed one system clock (20 ns) after rising edge of sd_clk.
    p_out : process (clk_i)
    begin
       if rising_edge(clk_i) then
          sd_clk_d <= sd_clk_i;
-         if sd_clk_d = '0' and sd_clk_i = '1' then -- Falling edge of sd_clk_i
-            sd_cmd_oe_o <= sd_cmd_oe;
-            if sd_cmd_oe = '1' then
-               sd_cmd_out_o <= sd_cmd_out;
-            else
-               sd_cmd_out_o <= 'Z';
-            end if;
+         if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk
+            sd_cmd_oe_o  <= sd_cmd_oe;
+            sd_cmd_out_o <= sd_cmd_out;
          end if;
       end if;
    end process p_out;

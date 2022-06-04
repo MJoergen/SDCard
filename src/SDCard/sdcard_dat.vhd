@@ -14,24 +14,25 @@ use work.sdcard_globals.all;
 
 entity sdcard_dat is
    port (
-      clk_i        : in  std_logic; -- 50 MHz
-      rst_i        : in  std_logic;
+      clk_i          : in  std_logic; -- 50 MHz
+      rst_i          : in  std_logic;
 
-      ready_o      : out std_logic;
+      ready_o        : out std_logic;
 
       -- Command to send to SDCard
-      tx_valid_i   : in  std_logic;
-      tx_data_i    : in  std_logic_vector(7 downto 0);
+      tx_valid_i     : in  std_logic;
+      tx_data_i      : in  std_logic_vector(7 downto 0);
 
       -- Response received from SDCard
-      rx_valid_o   : out std_logic;
-      rx_data_o    : out std_logic_vector(7 downto 0);
+      rx_valid_o     : out std_logic;
+      rx_data_o      : out std_logic_vector(7 downto 0);
+      rx_crc_error_o : out std_logic;
 
       -- SDCard device interface
-      sd_clk_i     : in  std_logic; -- 25 MHz or 400 kHz
-      sd_dat_in_i  : in  std_logic_vector(3 downto 0);
-      sd_dat_out_o : out std_logic_vector(3 downto 0);
-      sd_dat_oe_o  : out std_logic
+      sd_clk_i       : in  std_logic; -- 25 MHz or 400 kHz
+      sd_dat_in_i    : in  std_logic_vector(3 downto 0);
+      sd_dat_out_o   : out std_logic_vector(3 downto 0);
+      sd_dat_oe_o    : out std_logic
    );
 end entity sdcard_dat;
 
@@ -73,18 +74,6 @@ architecture synthesis of sdcard_dat is
 
    signal state : state_t := IDLE_ST;
 
-   attribute mark_debug                 : boolean;
-   attribute mark_debug of sd_dat_in_i  : signal is true;
-   attribute mark_debug of sd_dat_out_o : signal is true;
-   attribute mark_debug of sd_dat_oe_o  : signal is true;
-   attribute mark_debug of state        : signal is true;
-   attribute mark_debug of rx_count     : signal is true;
-   attribute mark_debug of rx_msb_data  : signal is true;
-   attribute mark_debug of rx_msb_valid : signal is true;
-   attribute mark_debug of rx_data_o    : signal is true;
-   attribute mark_debug of rx_valid_o   : signal is true;
-   attribute mark_debug of ready_o      : signal is true;
-
 begin
 
    ready_o <= '1' when state = IDLE_ST else '0';
@@ -98,13 +87,14 @@ begin
             case state is
                when IDLE_ST =>
                   if sd_dat_in_i = "0000" then
-                     rx_count     <= RX_COUNT_MAX;
-                     crc0         <= (others => '0');
-                     crc1         <= (others => '0');
-                     crc2         <= (others => '0');
-                     crc3         <= (others => '0');
-                     rx_msb_valid <= '0';
-                     state        <= RX_ST;
+                     rx_crc_error_o <= '0';
+                     rx_count       <= RX_COUNT_MAX;
+                     crc0           <= (others => '0');
+                     crc1           <= (others => '0');
+                     crc2           <= (others => '0');
+                     crc3           <= (others => '0');
+                     rx_msb_valid   <= '0';
+                     state          <= RX_ST;
                   end if;
 
                when RX_ST =>
@@ -138,7 +128,8 @@ begin
                   end if;
 
                when ERROR_ST =>
-                  null;
+                  rx_crc_error_o <= '1';
+                  state <= IDLE_ST;
 
             end case;
          end if;
