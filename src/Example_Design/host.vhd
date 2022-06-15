@@ -25,23 +25,31 @@ end entity host;
 architecture simulation of host is
 
    type state_t is (
-      INIT_ST,
+      READ_ST,
       WAIT_ST
    );
 
-   signal state : state_t := INIT_ST;
+   signal state : state_t := READ_ST;
+
+   signal fsm_update    : std_logic;
+   signal random_output : std_logic_vector(21 downto 0);
 
 begin
+
+   -- Only update address once every read command
+   fsm_update <= avm_read_o and not avm_waitrequest_i;
 
    i_random : entity work.random
       port map (
          clk_i      => avm_clk_i,
          rst_i      => avm_rst_i,
+         update_i   => fsm_update,
          load_i     => '0',
-         load_val_i => (others => '0'),
-         output_o   => avm_address_o(21 downto 0)
+         load_val_i => (others => '1'),
+         output_o   => random_output
       ); -- i_random
-   avm_address_o(31 downto 22) <= (others => '0');
+   avm_address_o <= "0000000000" & not random_output;
+
 
    p_fsm : process (avm_clk_i)
    begin
@@ -52,7 +60,7 @@ begin
          end if;
 
          case state is
-            when INIT_ST =>
+            when READ_ST =>
                avm_write_o      <= '0';
                avm_read_o       <= '1';
                avm_burstcount_o <= X"0200";
@@ -60,16 +68,14 @@ begin
 
             when WAIT_ST =>
                if avm_waitrequest_i = '0' then
-                  avm_read_o       <= '1';
-                  avm_burstcount_o <= X"0200";
-                  state            <= WAIT_ST;
+                  state <= READ_ST;
                end if;
          end case;
 
          if avm_rst_i = '1' then
             avm_write_o <= '0';
             avm_read_o  <= '0';
-            state       <= INIT_ST;
+            state       <= READ_ST;
          end if;
       end if;
    end process p_fsm;

@@ -211,15 +211,11 @@ begin
       sd_cmd_oe_o  <= '0';
 
       case state is
-         when INIT_ST | IDLE_ST =>
-            sd_cmd_out_o <= '1';
-            sd_cmd_oe_o  <= '0';
-
          when WRITING_ST | SEND_CRC_ST =>
             sd_cmd_out_o <= send_data(39);
             sd_cmd_oe_o  <= '1';
 
-         when WAIT_RESPONSE_ST | GET_RESPONSE_ST | COOLDOWN_ST =>
+         when others =>
             sd_cmd_out_o <= '1';
             sd_cmd_oe_o  <= '0';
 

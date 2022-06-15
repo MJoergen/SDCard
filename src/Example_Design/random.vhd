@@ -7,6 +7,7 @@ entity random is
    port (
       clk_i      : in  std_logic;
       rst_i      : in  std_logic;
+      update_i   : in  std_logic;
       load_i     : in  std_logic;
       load_val_i : in  std_logic_vector(21 downto 0);
       output_o   : out std_logic_vector(21 downto 0)
@@ -33,6 +34,7 @@ begin
       port map (
          clk_i      => clk_i,
          rst_i      => rst_i,
+         update_i   => update_i,
          load_i     => load_i,
          load_val_i => load_val_i,
          output_o   => output_1
@@ -46,6 +48,7 @@ begin
       port map (
          clk_i      => clk_i,
          rst_i      => rst_i,
+         update_i   => update_i,
          load_i     => load_i,
          load_val_i => load_val_i,
          output_o   => output_2

@@ -10,6 +10,7 @@ entity lfsr is
    port (
       clk_i      : in  std_logic;
       rst_i      : in  std_logic;
+      update_i   : in  std_logic;
       load_i     : in  std_logic;
       load_val_i : in  std_logic_vector(G_WIDTH-1 downto 0);
       output_o   : out std_logic_vector(G_WIDTH-1 downto 0)
@@ -27,10 +28,12 @@ begin
    p_lfsr : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         lfsr <= lfsr(G_WIDTH-2 downto 0) & "0";
-         if lfsr(G_WIDTH-1) = '1' then
-            report "XOR with C_UPDATE:" & to_hstring(C_UPDATE);
-            lfsr <= (lfsr(G_WIDTH-2 downto 0) & "0") xor C_UPDATE;
+         if update_i = '1' then
+            lfsr <= lfsr(G_WIDTH-2 downto 0) & "0";
+            if lfsr(G_WIDTH-1) = '1' then
+               report "XOR with C_UPDATE:" & to_hstring(C_UPDATE);
+               lfsr <= (lfsr(G_WIDTH-2 downto 0) & "0") xor C_UPDATE;
+            end if;
          end if;
 
          if load_i = '1' then

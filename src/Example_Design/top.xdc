@@ -24,7 +24,7 @@ create_clock -period 10.000 -name clk [get_ports clk_i]
 ## Micro SD Connector (external slot at back of the cover)
 set_property -dict {PACKAGE_PIN K1 IOSTANDARD LVCMOS33} [get_ports sd_cd_i]
 set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports sd_clk_o]
-set_property -dict {PACKAGE_PIN J2 IOSTANDARD LVCMOS33} [get_ports sd_cmd_io]
+set_property -dict {PACKAGE_PIN J2 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_cmd_io]
 set_property -dict {PACKAGE_PIN H2 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[0]]
 set_property -dict {PACKAGE_PIN H3 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[1]]
 set_property -dict {PACKAGE_PIN J1 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[2]]
