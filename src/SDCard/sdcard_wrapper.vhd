@@ -46,7 +46,6 @@ entity sdcard_wrapper is
       avm_last_state_o    : out std_logic_vector(7 downto 0);
 
       -- SDCard device interface
-      sd_cd_i             : in  std_logic;
       sd_clk_o            : out std_logic;   -- 25 MHz or 400 kHz
       sd_cmd_in_i         : in  std_logic;
       sd_cmd_out_o        : out std_logic;
