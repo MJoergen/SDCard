@@ -1,0 +1,27 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Wed Jun 15 06:20:07 2022
+[*]
+[dumpfile] "/home/mfj/git/PRIVATE/MJoergen/SDCard/tb.ghw"
+[dumpfile_mtime] "Wed Jun 15 06:19:05 2022"
+[dumpfile_size] 210778
+[savefile] "/home/mfj/git/PRIVATE/MJoergen/SDCard/tb.gtkw"
+[timestart] 0
+[size] 1570 919
+[pos] -1 -1
+*-28.765808 282000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_random.
+[sst_width] 263
+[signals_width] 229
+[sst_expanded] 1
+[sst_vpaned_height] 257
+@28
+top.tb_random.clk
+top.tb_random.rst
+top.tb_random.load
+@22
+#{top.tb_random.load_val[21:0]} top.tb_random.load_val[21] top.tb_random.load_val[20] top.tb_random.load_val[19] top.tb_random.load_val[18] top.tb_random.load_val[17] top.tb_random.load_val[16] top.tb_random.load_val[15] top.tb_random.load_val[14] top.tb_random.load_val[13] top.tb_random.load_val[12] top.tb_random.load_val[11] top.tb_random.load_val[10] top.tb_random.load_val[9] top.tb_random.load_val[8] top.tb_random.load_val[7] top.tb_random.load_val[6] top.tb_random.load_val[5] top.tb_random.load_val[4] top.tb_random.load_val[3] top.tb_random.load_val[2] top.tb_random.load_val[1] top.tb_random.load_val[0]
+#{top.tb_random.output[21:0]} top.tb_random.output[21] top.tb_random.output[20] top.tb_random.output[19] top.tb_random.output[18] top.tb_random.output[17] top.tb_random.output[16] top.tb_random.output[15] top.tb_random.output[14] top.tb_random.output[13] top.tb_random.output[12] top.tb_random.output[11] top.tb_random.output[10] top.tb_random.output[9] top.tb_random.output[8] top.tb_random.output[7] top.tb_random.output[6] top.tb_random.output[5] top.tb_random.output[4] top.tb_random.output[3] top.tb_random.output[2] top.tb_random.output[1] top.tb_random.output[0]
+[pattern_trace] 1
+[pattern_trace] 0

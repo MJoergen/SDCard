@@ -33,6 +33,16 @@ architecture simulation of host is
 
 begin
 
+   i_random : entity work.random
+      port map (
+         clk_i      => avm_clk_i,
+         rst_i      => avm_rst_i,
+         load_i     => '0',
+         load_val_i => (others => '0'),
+         output_o   => avm_address_o(21 downto 0)
+      ); -- i_random
+   avm_address_o(31 downto 22) <= (others => '0');
+
    p_fsm : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
@@ -45,14 +55,12 @@ begin
             when INIT_ST =>
                avm_write_o      <= '0';
                avm_read_o       <= '1';
-               avm_address_o    <= X"00000004"; -- Byte address 0x0800
                avm_burstcount_o <= X"0200";
                state            <= WAIT_ST;
 
             when WAIT_ST =>
-               if avm_waitrequest_i = '0' and avm_address_o < X"00000007" then
+               if avm_waitrequest_i = '0' then
                   avm_read_o       <= '1';
-                  avm_address_o    <= avm_address_o + 1;
                   avm_burstcount_o <= X"0200";
                   state            <= WAIT_ST;
                end if;
