@@ -54,7 +54,10 @@ entity sdcard_wrapper is
       sd_dat_out_o        : out std_logic_vector(3 downto 0);
       sd_dat_oe_o         : out std_logic;
 
-      uart_tx_o           : out std_logic
+      -- UART output
+      uart_valid_o        : out std_logic;
+      uart_ready_i        : in  std_logic;
+      uart_data_o         : out std_logic_vector(7 downto 0)
    );
 end entity sdcard_wrapper;
 
@@ -130,7 +133,9 @@ begin
          sd_cmd_in_i    => sd_cmd_in_i,
          sd_cmd_out_o   => sd_cmd_out_o,
          sd_cmd_oe_o    => sd_cmd_oe_o,
-         uart_tx_o      => uart_tx_o
+         uart_valid_o   => uart_valid_o,
+         uart_ready_i   => uart_ready_i,
+         uart_data_o    => uart_data_o
       ); -- i_sdcard_cmd_logger
 
 

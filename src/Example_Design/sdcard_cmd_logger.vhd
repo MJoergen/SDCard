@@ -28,7 +28,10 @@ entity sdcard_cmd_logger is
       sd_cmd_out_o   : out std_logic;
       sd_cmd_oe_o    : out std_logic;
 
-      uart_tx_o      : out std_logic
+      -- UART output
+      uart_valid_o   : out std_logic;
+      uart_ready_i   : in  std_logic;
+      uart_data_o    : out std_logic_vector(7 downto 0)
    );
 end entity sdcard_cmd_logger;
 
@@ -59,11 +62,6 @@ architecture synthesis of sdcard_cmd_logger is
    signal ser_ready_cmd   : std_logic;
    signal ser_data_resp   : std_logic_vector(7 downto 0);
    signal ser_data_cmd    : std_logic_vector(7 downto 0);
-
-   -- UART output
-   signal uart_valid      : std_logic;
-   signal uart_ready      : std_logic;
-   signal uart_data       : std_logic_vector(7 downto 0);
 
 begin
 
@@ -207,20 +205,10 @@ begin
          s2_valid_i => ser_valid_cmd,
          s2_ready_o => ser_ready_cmd,
          s2_data_i  => ser_data_cmd,
-         m_valid_o  => uart_valid,
-         m_ready_i  => uart_ready,
-         m_data_o   => uart_data
+         m_valid_o  => uart_valid_o,
+         m_ready_i  => uart_ready_i,
+         m_data_o   => uart_data_o
       ); -- i_merginator
-
-   i_uart : entity work.uart
-      port map (
-         clk_i     => clk_i,
-         rst_i     => rst_i,
-         s_valid_i => uart_valid,
-         s_ready_o => uart_ready,
-         s_data_i  => uart_data,
-         uart_tx_o => uart_tx_o
-      ); -- i_uart
 
 end architecture synthesis;
 

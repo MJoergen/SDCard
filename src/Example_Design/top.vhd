@@ -37,6 +37,10 @@ architecture synthesis of top is
    signal sd_dat_out        : std_logic_vector(3 downto 0);
    signal sd_dat_oe         : std_logic;
 
+   signal uart_valid        : std_logic;
+   signal uart_ready        : std_logic;
+   signal uart_data         : std_logic_vector(7 downto 0);
+
    signal key_num           : integer range 0 to 79;
    signal key_pressed_n     : std_logic;
    signal keys              : std_logic_vector(79 downto 0);
@@ -153,8 +157,21 @@ begin
          sd_dat_in_i         => sd_dat_in,
          sd_dat_out_o        => sd_dat_out,
          sd_dat_oe_o         => sd_dat_oe,
-         uart_tx_o           => uart_tx_o
+         uart_valid_o        => uart_valid,
+         uart_ready_i        => uart_ready,
+         uart_data_o         => uart_data
       ); -- i_sdcard_wrapper
+
+   i_uart : entity work.uart
+      port map (
+         clk_i      => avm_clk,
+         rst_i      => avm_rst,
+         uart_div_i => 434,
+         s_valid_i  => uart_valid,
+         s_ready_o  => uart_ready,
+         s_data_i   => uart_data,
+         uart_tx_o  => uart_tx_o
+      ); -- i_uart
 
 
    p_count_low : process (avm_clk)
