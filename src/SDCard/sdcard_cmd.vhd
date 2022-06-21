@@ -82,7 +82,7 @@ architecture synthesis of sdcard_cmd is
 
 begin
 
-   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' else '0';
+   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' and sd_cmd_in_i = '1' else '0';
 
    p_fsm : process (clk_i)
    begin
@@ -102,7 +102,7 @@ begin
                   end if;
 
                when IDLE_ST =>
-                  if cmd_valid_i = '1' then
+                  if cmd_valid_i = '1' and cmd_ready_o = '1' then
                      resp_timeout_o <= '0';
                      resp_error_o   <= '0';
                      send_data      <= "01" & std_logic_vector(to_unsigned(cmd_index_i, 6)) & cmd_data_i;
