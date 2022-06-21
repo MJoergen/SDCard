@@ -175,7 +175,7 @@ begin  -- behavioural
             -- Reset to start
             sync_pulse <= '1';
             output_vector <= (others => '0');
-            if flopmotor='1' or (flopled='1' and counter(24)='1') then
+            if flopmotor='1' or flopled='1' then
               output_vector(23 downto 0) <= x"00FF00";
               output_vector(47 downto 24) <= x"00FF00";
             end if;

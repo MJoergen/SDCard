@@ -11,6 +11,7 @@ entity host is
    port (
       avm_clk_i           : in  std_logic;
       avm_rst_i           : in  std_logic;
+      avm_reset_val_i     : in  std_logic_vector(21 downto 0);
       avm_write_o         : out std_logic;
       avm_read_o          : out std_logic;
       avm_address_o       : out std_logic_vector(31 downto 0);
@@ -42,10 +43,10 @@ begin
    i_random : entity work.random
       port map (
          clk_i      => avm_clk_i,
-         rst_i      => avm_rst_i,
+         rst_i      => '0',
          update_i   => fsm_update,
-         load_i     => '0',
-         load_val_i => (others => '1'),
+         load_i     => avm_rst_i,
+         load_val_i => avm_reset_val_i,
          output_o   => random_output
       ); -- i_random
    avm_address_o <= "0000000000" & not random_output;

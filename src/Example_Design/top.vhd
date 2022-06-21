@@ -37,24 +37,25 @@ architecture synthesis of top is
    signal sd_dat_out        : std_logic_vector(3 downto 0);
    signal sd_dat_oe         : std_logic;
 
-   -- keys_n(0) : Cursor up
-   -- keys_n(1) : Cursor down
-   -- keys_n(2) : Cursor left
-   -- keys_n(3) : Cursor right
-   -- keys_n(4) : Return
-   -- keys_n(5) : Space
-   -- keys_n(6) : Run/Stop
-   -- keys_n(7) : Help
-   -- keys_n(8) : F1
-   -- keys_n(9) : F3
-   signal keys_n            : std_logic_vector(15 downto 0);
+   signal key_num           : integer range 0 to 79;
+   signal key_pressed_n     : std_logic;
+   signal keys              : std_logic_vector(79 downto 0);
    signal reset_n           : std_logic;
+
+   signal count_low         : natural range 0 to 4095;
+   signal drive_led         : std_logic;
+   signal avm_reset_val     : std_logic_vector(21 downto 0);
+
+   signal counter           : natural range 0 to 65535;
+   signal start             : std_logic;
 
 begin
 
    ---------------------------------------------------------
    -- Instantiate clock generator
    ---------------------------------------------------------
+
+   drive_led <= '1' when count_low < 4095 else '0';
 
    i_m2m_keyb : entity work.m2m_keyb
       port map (
@@ -63,14 +64,21 @@ begin
          kio8_o           => kb_io0_o,
          kio9_o           => kb_io1_o,
          kio10_i          => kb_io2_i,
-         enable_core_i    => '0',
-         key_num_o        => open,
-         key_pressed_n_o  => open,
-         drive_led_i      => '0',
-         qnice_keys_n_o   => keys_n
+         enable_core_i    => '1',
+         key_num_o        => key_num,
+         key_pressed_n_o  => key_pressed_n,
+         drive_led_i      => drive_led,
+         qnice_keys_n_o   => open
       ); -- i_m2m_keyb
 
-   reset_n <= keys_n(4);
+   p_keys : process (avm_clk)
+   begin
+      if rising_edge(avm_clk) then
+         keys(key_num) <= key_pressed_n;
+      end if;
+   end process p_keys;
+
+   reset_n <= and(keys);
 
 
    ---------------------------------------------------------
@@ -82,9 +90,13 @@ begin
          sys_clk_i  => clk_i,
          sys_rstn_i => reset_n,
          clk_o      => avm_clk,
-         rst_o      => avm_rst
+         rst_o      => open
       ); -- i_clk
 
+   avm_rst <= not reset_n;
+
+
+   avm_reset_val <= keys(21 downto 0) and keys(43 downto 22) and keys(65 downto 44) and (X"FF" & keys(79 downto 66));
 
    ---------------------------------------------------------
    -- Instantiate host emulator
@@ -94,6 +106,7 @@ begin
       port map (
          avm_clk_i           => avm_clk,
          avm_rst_i           => avm_rst,
+         avm_reset_val_i     => avm_reset_val,
          avm_write_o         => avm_write,
          avm_read_o          => avm_read,
          avm_address_o       => avm_address,
@@ -103,6 +116,18 @@ begin
          avm_readdatavalid_i => avm_readdatavalid,
          avm_waitrequest_i   => avm_waitrequest
       ); -- i_host
+
+   p_counter : process (avm_clk)
+   begin
+      if rising_edge(avm_clk) then
+         if avm_read = '1' and avm_waitrequest = '0' then
+            counter <= counter + 1;
+         end if;
+         if avm_rst = '1' then
+            counter <= 0;
+         end if;
+      end if;
+   end process p_counter;
 
 
    ---------------------------------------------------------
@@ -130,6 +155,33 @@ begin
          sd_dat_oe_o         => sd_dat_oe,
          uart_tx_o           => uart_tx_o
       ); -- i_sdcard_wrapper
+
+
+   p_count_low : process (avm_clk)
+   begin
+      if rising_edge(avm_clk) then
+         if sd_cmd_in = '1' then
+            count_low <= 0;
+         end if;
+
+         if sd_cmd_in = '0' and count_low < 4095 and start = '1' then
+            count_low <= count_low + 1;
+         end if;
+      end if;
+   end process p_count_low;
+
+   p_start : process (avm_clk)
+   begin
+      if rising_edge(avm_clk) then
+         if avm_read = '1' and avm_waitrequest = '0' then
+            start <= '1';
+         end if;
+
+         if avm_rst = '1' then
+            start <= '0';
+         end if;
+      end if;
+   end process p_start;
 
 
    ---------------------------------------------------------
