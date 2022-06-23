@@ -3,7 +3,7 @@
 <!--                                                         -->
 <!-- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.   -->
 
-<Project Version="7" Minor="44" Path="/home/mfj/git/PRIVATE/MJoergen/SDCard/src/Example_Design/Nexys4DDR/Nexys4DDR.xpr">
+<Project Version="7" Minor="44" Path="/home/mike/git/MJoergen/SDCard/src/Example_Design/Nexys4DDR/Nexys4DDR.xpr">
   <DefaultLaunch Dir="$PRUNDIR"/>
   <Configuration>
     <Option Name="Id" Val="e864e75e45ff40d9bfb9798c053bf04d"/>

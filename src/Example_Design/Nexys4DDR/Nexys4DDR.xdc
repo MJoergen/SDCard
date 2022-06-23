@@ -6,7 +6,7 @@
 # Place SD close to I/O pins
 create_pblock pblock_i_sd
 add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard_wrapper/i_sdcard_cmd_logger/i_sdcard_cmd]]
-resize_pblock pblock_i_sd -add {SLICE_X82Y113:SLICE_X89Y136}
+resize_pblock pblock_i_sd -add {SLICE_X82Y113:SLICE_X89Y132}
 
 ## External clock signal (100 MHz)
 set_property -dict {PACKAGE_PIN E3 IOSTANDARD LVCMOS33} [get_ports clk_i]
