@@ -38,9 +38,9 @@ architecture synthesis of top is
    signal sd_dat_out        : std_logic_vector(3 downto 0);
    signal sd_dat_oe         : std_logic;
 
-   signal uart_valid : std_logic;
-   signal uart_ready : std_logic;
-   signal uart_data  : std_logic_vector(7 downto 0);
+   signal uart_valid        : std_logic;
+   signal uart_ready        : std_logic;
+   signal uart_data         : std_logic_vector(7 downto 0);
 
 begin
 
@@ -60,30 +60,13 @@ begin
 
 
    ---------------------------------------------------------
-   -- Instantiate clock generator
+   -- Instantiate MEGA65 platform interface
    ---------------------------------------------------------
 
-   m2m_keyb_inst : entity work.m2m_keyb
+   mega65_inst : entity work.mega65
       port map (
-         clk_main_i       => sys_clk_i,
-         clk_main_speed_i => 100 * 1000 * 1000,
-         kio8_o           => kb_io0_o,
-         kio9_o           => kb_io1_o,
-         kio10_i          => kb_io2_i,
-         enable_core_i    => '1',
-         key_num_o        => open,
-         key_pressed_n_o  => open,
-         drive_led_i      => '0',
-         qnice_keys_n_o   => open
-      ); -- m2m_keyb_inst
-
-
-   ---------------------------------------------------------
-   -- Instantiate host emulator
-   ---------------------------------------------------------
-
-   host_inst : entity work.host
-      port map (
+         sys_clk_i           => sys_clk_i,
+         -- Interface to SDCard controller
          avm_clk_i           => avm_clk,
          avm_rst_i           => avm_rst,
          avm_write_o         => avm_write,
@@ -93,19 +76,17 @@ begin
          avm_burstcount_o    => avm_burstcount,
          avm_readdata_i      => avm_readdata,
          avm_readdatavalid_i => avm_readdatavalid,
-         avm_waitrequest_i   => avm_waitrequest
-      ); -- host_inst
-
-   uart_inst : entity work.uart
-      port map (
-         clk_i      => avm_clk,
-         rst_i      => avm_rst,
-         uart_div_i => 434,
-         s_valid_i  => uart_valid,
-         s_ready_o  => uart_ready,
-         s_data_i   => uart_data,
-         uart_tx_o  => uart_tx_o
-      ); -- uart_inst
+         avm_waitrequest_i   => avm_waitrequest,
+         uart_valid_i        => uart_valid,
+         uart_ready_o        => uart_ready,
+         uart_data_i         => uart_data,
+         -- Interface to MEGA65 I/O ports
+         uart_rx_i           => uart_rx_i,
+         uart_tx_o           => uart_tx_o,
+         kb_io0_o            => kb_io0_o,
+         kb_io1_o            => kb_io1_o,
+         kb_io2_i            => kb_io2_i
+      ); -- mega65_inst
 
 
    ---------------------------------------------------------
@@ -124,16 +105,16 @@ begin
          avm_readdata_o      => avm_readdata,
          avm_readdatavalid_o => avm_readdatavalid,
          avm_waitrequest_o   => avm_waitrequest,
+         uart_valid_o        => uart_valid,
+         uart_ready_i        => uart_ready,
+         uart_data_o         => uart_data,
          sd_clk_o            => sd_clk,
          sd_cmd_in_i         => sd_cmd_in,
          sd_cmd_out_o        => sd_cmd_out,
          sd_cmd_oe_o         => sd_cmd_oe,
          sd_dat_in_i         => sd_dat_in,
          sd_dat_out_o        => sd_dat_out,
-         sd_dat_oe_o         => sd_dat_oe,
-         uart_valid_o        => uart_valid,
-         uart_ready_i        => uart_ready,
-         uart_data_o         => uart_data
+         sd_dat_oe_o         => sd_dat_oe
       ); -- sdcard_wrapper_inst
 
 

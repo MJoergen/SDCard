@@ -14,7 +14,7 @@ endgroup
 startgroup
 create_pblock pblock_i_kbd
 resize_pblock pblock_i_kbd -add {SLICE_X0Y225:SLICE_X7Y237}
-add_cells_to_pblock pblock_i_kbd [get_cells [list m2m_keyb_inst/m65driver]]
+add_cells_to_pblock pblock_i_kbd [get_cells [list mega65_inst/m2m_keyb_inst/m65driver]]
 endgroup
 
 ## External clock signal (100 MHz)
@@ -23,7 +23,7 @@ set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports sys_clk_i]
 ## Reset signal (Active low. From MAX10)
 set_property -dict {PACKAGE_PIN M13 IOSTANDARD LVCMOS33} [get_ports sys_rstn_i]
 
-create_clock -period 10.000 -name clk [get_ports clk_i]
+create_clock -period 10.000 -name clk [get_ports sys_clk_i]
 
 ## Micro SD Connector (external slot at back of the cover)
 set_property -dict {PACKAGE_PIN K1 IOSTANDARD LVCMOS33} [get_ports sd_cd_i]
