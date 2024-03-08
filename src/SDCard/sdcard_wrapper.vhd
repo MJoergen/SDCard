@@ -46,13 +46,10 @@ entity sdcard_wrapper is
       avm_last_state_o    : out   std_logic_vector(7 downto 0);
 
       -- SDCard device interface
-      sd_clk_o            : out   std_logic; -- 25 MHz or 400 kHz
-      sd_cmd_in_i         : in    std_logic;
-      sd_cmd_out_o        : out   std_logic;
-      sd_cmd_oe_o         : out   std_logic;
-      sd_dat_in_i         : in    std_logic_vector(3 downto 0);
-      sd_dat_out_o        : out   std_logic_vector(3 downto 0);
-      sd_dat_oe_o         : out   std_logic;
+      sd_cd_i             : in    std_logic;
+      sd_clk_o            : out   std_logic;
+      sd_cmd_io           : inout std_logic;
+      sd_dat_io           : inout std_logic_vector(3 downto 0);
 
       -- UART output
       uart_valid_o        : out   std_logic;
@@ -62,6 +59,14 @@ entity sdcard_wrapper is
 end entity sdcard_wrapper;
 
 architecture synthesis of sdcard_wrapper is
+
+   signal sd_clk       : std_logic; -- 25 MHz or 400 kHz
+   signal sd_cmd_in    : std_logic;
+   signal sd_cmd_out   : std_logic;
+   signal sd_cmd_oe    : std_logic;
+   signal sd_dat_in    : std_logic_vector(3 downto 0);
+   signal sd_dat_out   : std_logic_vector(3 downto 0);
+   signal sd_dat_oe    : std_logic;
 
    signal cmd_valid    : std_logic;
    signal cmd_ready    : std_logic;
@@ -75,15 +80,6 @@ architecture synthesis of sdcard_wrapper is
    signal resp_timeout : std_logic;
    signal resp_error   : std_logic;
    signal dat_ready    : std_logic;
-
-   attribute mark_debug : string;
-   attribute mark_debug of sd_clk_o     : signal is "true";
-   attribute mark_debug of sd_cmd_in_i  : signal is "true";
-   attribute mark_debug of sd_cmd_out_o : signal is "true";
-   attribute mark_debug of sd_cmd_oe_o  : signal is "true";
-   attribute mark_debug of sd_dat_in_i  : signal is "true";
-   attribute mark_debug of sd_dat_out_o : signal is "true";
-   attribute mark_debug of sd_dat_oe_o  : signal is "true";
 
 begin
 
@@ -139,9 +135,9 @@ begin
          resp_timeout_o => resp_timeout,
          resp_error_o   => resp_error,
          sd_clk_i       => sd_clk_o,
-         sd_cmd_in_i    => sd_cmd_in_i,
-         sd_cmd_out_o   => sd_cmd_out_o,
-         sd_cmd_oe_o    => sd_cmd_oe_o,
+         sd_cmd_in_i    => sd_cmd_in,
+         sd_cmd_out_o   => sd_cmd_out,
+         sd_cmd_oe_o    => sd_cmd_oe,
          uart_valid_o   => uart_valid_o,
          uart_ready_i   => uart_ready_i,
          uart_data_o    => uart_data_o
@@ -163,10 +159,21 @@ begin
          rx_data_o      => avm_readdata_o,
          rx_crc_error_o => avm_crc_error_o,
          sd_clk_i       => sd_clk_o,
-         sd_dat_in_i    => sd_dat_in_i,
-         sd_dat_out_o   => sd_dat_out_o,
-         sd_dat_oe_o    => sd_dat_oe_o
+         sd_dat_in_i    => sd_dat_in,
+         sd_dat_out_o   => sd_dat_out,
+         sd_dat_oe_o    => sd_dat_oe
       ); -- sdcard_dat_inst
+
+
+   ---------------------------------------------------------
+   -- Connect I/O buffers
+   ---------------------------------------------------------
+
+   sd_clk_o  <= sd_clk;
+   sd_cmd_in <= sd_cmd_io;
+   sd_dat_in <= sd_dat_io;
+   sd_cmd_io <= sd_cmd_out when sd_cmd_oe = '1' else 'Z';
+   sd_dat_io <= sd_dat_out when sd_dat_oe = '1' else (others => 'Z');
 
 end architecture synthesis;
 
