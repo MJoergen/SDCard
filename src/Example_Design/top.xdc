@@ -7,7 +7,7 @@
 startgroup
 create_pblock pblock_i_sd
 resize_pblock pblock_i_sd -add {SLICE_X156Y175:SLICE_X163Y187}
-add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard_wrapper/i_sdcard_cmd_logger/i_sdcard_cmd]]
+add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard_wrapper/sdcard_cmd_logger_inst/i_sdcard_cmd]]
 endgroup
 
 # Place KBD close to I/O pins

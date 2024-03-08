@@ -22,42 +22,42 @@
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+   use ieee.std_logic_1164.all;
+   use ieee.numeric_std.all;
 
 library work;
-use work.sdcard_globals.all;
+   use work.sdcard_globals.all;
 
 entity sdcard_wrapper is
    port (
       -- Avalon Memory Map
-      avm_clk_i           : in  std_logic;   -- 50 Mhz
-      avm_rst_i           : in  std_logic;   -- Synchronous reset, active high
-      avm_write_i         : in  std_logic;
-      avm_read_i          : in  std_logic;
-      avm_address_i       : in  std_logic_vector(31 downto 0);
-      avm_writedata_i     : in  std_logic_vector(7 downto 0);
-      avm_burstcount_i    : in  std_logic_vector(15 downto 0);
-      avm_readdata_o      : out std_logic_vector(7 downto 0);
-      avm_readdatavalid_o : out std_logic;
-      avm_waitrequest_o   : out std_logic;
-      avm_init_error_o    : out std_logic;
-      avm_crc_error_o     : out std_logic;
-      avm_last_state_o    : out std_logic_vector(7 downto 0);
+      avm_clk_i           : in    std_logic; -- 50 Mhz
+      avm_rst_i           : in    std_logic; -- Synchronous reset, active high
+      avm_write_i         : in    std_logic;
+      avm_read_i          : in    std_logic;
+      avm_address_i       : in    std_logic_vector(31 downto 0);
+      avm_writedata_i     : in    std_logic_vector(7 downto 0);
+      avm_burstcount_i    : in    std_logic_vector(15 downto 0);
+      avm_readdata_o      : out   std_logic_vector(7 downto 0);
+      avm_readdatavalid_o : out   std_logic;
+      avm_waitrequest_o   : out   std_logic;
+      avm_init_error_o    : out   std_logic;
+      avm_crc_error_o     : out   std_logic;
+      avm_last_state_o    : out   std_logic_vector(7 downto 0);
 
       -- SDCard device interface
-      sd_clk_o            : out std_logic;   -- 25 MHz or 400 kHz
-      sd_cmd_in_i         : in  std_logic;
-      sd_cmd_out_o        : out std_logic;
-      sd_cmd_oe_o         : out std_logic;
-      sd_dat_in_i         : in  std_logic_vector(3 downto 0);
-      sd_dat_out_o        : out std_logic_vector(3 downto 0);
-      sd_dat_oe_o         : out std_logic;
+      sd_clk_o            : out   std_logic; -- 25 MHz or 400 kHz
+      sd_cmd_in_i         : in    std_logic;
+      sd_cmd_out_o        : out   std_logic;
+      sd_cmd_oe_o         : out   std_logic;
+      sd_dat_in_i         : in    std_logic_vector(3 downto 0);
+      sd_dat_out_o        : out   std_logic_vector(3 downto 0);
+      sd_dat_oe_o         : out   std_logic;
 
       -- UART output
-      uart_valid_o        : out std_logic;
-      uart_ready_i        : in  std_logic;
-      uart_data_o         : out std_logic_vector(7 downto 0)
+      uart_valid_o        : out   std_logic;
+      uart_ready_i        : in    std_logic;
+      uart_data_o         : out   std_logic_vector(7 downto 0)
    );
 end entity sdcard_wrapper;
 
@@ -68,7 +68,7 @@ architecture synthesis of sdcard_wrapper is
    signal cmd_index    : natural range 0 to 63;
    signal cmd_data     : std_logic_vector(31 downto 0);
    signal cmd_resp     : natural range 0 to 255;
-   signal cmd_timeout  : natural range 0 to 2**24-1;
+   signal cmd_timeout  : natural range 0 to 2 ** 24 - 1;
    signal resp_valid   : std_logic;
    signal resp_ready   : std_logic;
    signal resp_data    : std_logic_vector(135 downto 0);
@@ -76,45 +76,54 @@ architecture synthesis of sdcard_wrapper is
    signal resp_error   : std_logic;
    signal dat_ready    : std_logic;
 
+   attribute mark_debug : string;
+   attribute mark_debug of sd_clk_o     : signal is "true";
+   attribute mark_debug of sd_cmd_in_i  : signal is "true";
+   attribute mark_debug of sd_cmd_out_o : signal is "true";
+   attribute mark_debug of sd_cmd_oe_o  : signal is "true";
+   attribute mark_debug of sd_dat_in_i  : signal is "true";
+   attribute mark_debug of sd_dat_out_o : signal is "true";
+   attribute mark_debug of sd_dat_oe_o  : signal is "true";
+
 begin
 
    ----------------------------------
    -- Instantiate main state machine
    ----------------------------------
 
-   i_sdcard_ctrl : entity work.sdcard_ctrl
+   sdcard_ctrl_inst : entity work.sdcard_ctrl
       port map (
-         avm_clk_i           => avm_clk_i,
-         avm_rst_i           => avm_rst_i,
-         avm_write_i         => avm_write_i,
-         avm_read_i          => avm_read_i,
-         avm_address_i       => avm_address_i,
-         avm_writedata_i     => avm_writedata_i,
-         avm_burstcount_i    => avm_burstcount_i,
-         avm_waitrequest_o   => avm_waitrequest_o,
-         avm_init_error_o    => avm_init_error_o,
-         avm_last_state_o    => avm_last_state_o,
-         sd_clk_o            => sd_clk_o,
-         cmd_valid_o         => cmd_valid,
-         cmd_ready_i         => cmd_ready,
-         cmd_index_o         => cmd_index,
-         cmd_data_o          => cmd_data,
-         cmd_resp_o          => cmd_resp,
-         cmd_timeout_o       => cmd_timeout,
-         resp_valid_i        => resp_valid,
-         resp_ready_o        => resp_ready,
-         resp_data_i         => resp_data,
-         resp_timeout_i      => resp_timeout,
-         resp_error_i        => resp_error,
-         dat_ready_i         => dat_ready
-      ); -- i_sdcard_ctrl
+         avm_clk_i         => avm_clk_i,
+         avm_rst_i         => avm_rst_i,
+         avm_write_i       => avm_write_i,
+         avm_read_i        => avm_read_i,
+         avm_address_i     => avm_address_i,
+         avm_writedata_i   => avm_writedata_i,
+         avm_burstcount_i  => avm_burstcount_i,
+         avm_waitrequest_o => avm_waitrequest_o,
+         avm_init_error_o  => avm_init_error_o,
+         avm_last_state_o  => avm_last_state_o,
+         sd_clk_o          => sd_clk_o,
+         cmd_valid_o       => cmd_valid,
+         cmd_ready_i       => cmd_ready,
+         cmd_index_o       => cmd_index,
+         cmd_data_o        => cmd_data,
+         cmd_resp_o        => cmd_resp,
+         cmd_timeout_o     => cmd_timeout,
+         resp_valid_i      => resp_valid,
+         resp_ready_o      => resp_ready,
+         resp_data_i       => resp_data,
+         resp_timeout_i    => resp_timeout,
+         resp_error_i      => resp_error,
+         dat_ready_i       => dat_ready
+      ); -- sdcard_ctrl_inst
 
 
    ----------------------------------
    -- Instantiate CMD controller
    ----------------------------------
 
-   i_sdcard_cmd_logger : entity work.sdcard_cmd_logger
+   sdcard_cmd_logger_inst : entity work.sdcard_cmd_logger
       port map (
          clk_i          => avm_clk_i,
          rst_i          => avm_rst_i,
@@ -136,14 +145,14 @@ begin
          uart_valid_o   => uart_valid_o,
          uart_ready_i   => uart_ready_i,
          uart_data_o    => uart_data_o
-      ); -- i_sdcard_cmd_logger
+      ); -- sdcard_cmd_logger_inst
 
 
    ----------------------------------
    -- Instantiate DAT controller
    ----------------------------------
 
-   i_sdcard_dat : entity work.sdcard_dat
+   sdcard_dat_inst : entity work.sdcard_dat
       port map (
          clk_i          => avm_clk_i,
          rst_i          => avm_rst_i,
@@ -157,7 +166,7 @@ begin
          sd_dat_in_i    => sd_dat_in_i,
          sd_dat_out_o   => sd_dat_out_o,
          sd_dat_oe_o    => sd_dat_oe_o
-      ); -- i_sdcard_dat
+      ); -- sdcard_dat_inst
 
 end architecture synthesis;
 
