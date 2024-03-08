@@ -7,21 +7,21 @@
 startgroup
 create_pblock pblock_i_sd
 resize_pblock pblock_i_sd -add {SLICE_X156Y175:SLICE_X163Y187}
-add_cells_to_pblock pblock_i_sd [get_cells [list i_sdcard_wrapper/sdcard_cmd_logger_inst/i_sdcard_cmd]]
+add_cells_to_pblock pblock_i_sd [get_cells [list sdcard_wrapper_inst/sdcard_cmd_logger_inst/i_sdcard_cmd]]
 endgroup
 
 # Place KBD close to I/O pins
 startgroup
 create_pblock pblock_i_kbd
 resize_pblock pblock_i_kbd -add {SLICE_X0Y225:SLICE_X7Y237}
-add_cells_to_pblock pblock_i_kbd [get_cells [list i_m2m_keyb/m65driver]]
+add_cells_to_pblock pblock_i_kbd [get_cells [list m2m_keyb_inst/m65driver]]
 endgroup
 
 ## External clock signal (100 MHz)
-set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports clk_i]
+set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports sys_clk_i]
 
 ## Reset signal (Active low. From MAX10)
-set_property -dict {PACKAGE_PIN M13 IOSTANDARD LVCMOS33} [get_ports rstn_i]
+set_property -dict {PACKAGE_PIN M13 IOSTANDARD LVCMOS33} [get_ports sys_rstn_i]
 
 create_clock -period 10.000 -name clk [get_ports clk_i]
 
