@@ -57,6 +57,9 @@ begin
    ---------------------------------------------------------
 
    mega65_inst : entity work.mega65
+      generic map (
+         G_AVM_CLK_HZ => 50_000_000
+      )
       port map (
          sys_clk_i           => sys_clk_i,
          -- Interface to SDCard controller

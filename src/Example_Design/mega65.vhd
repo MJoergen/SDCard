@@ -3,6 +3,9 @@ library ieee;
    use ieee.numeric_std.all;
 
 entity mega65 is
+   generic (
+      G_AVM_CLK_HZ : natural
+   );
    port (
       sys_clk_i           : in    std_logic;
       -- Interface to SDCard controller
@@ -64,7 +67,7 @@ begin
       port map (
          clk_i      => avm_clk_i,
          rst_i      => avm_rst_i,
-         uart_div_i => 434,
+         uart_div_i => G_AVM_CLK_HZ / 115_200,
          s_valid_i  => uart_valid_i,
          s_ready_o  => uart_ready_o,
          s_data_i   => uart_data_i,
