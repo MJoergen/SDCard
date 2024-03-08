@@ -19,6 +19,10 @@ endgroup
 
 ## External clock signal (100 MHz)
 set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports clk_i]
+
+## Reset signal (Active low. From MAX10)
+set_property -dict {PACKAGE_PIN M13 IOSTANDARD LVCMOS33} [get_ports rstn_i]
+
 create_clock -period 10.000 -name clk [get_ports clk_i]
 
 ## Micro SD Connector (external slot at back of the cover)
