@@ -26,7 +26,7 @@ entity sdcard_cmd_logger is
       sd_clk_i       : in  std_logic; -- 25 MHz or 400 kHz
       sd_cmd_in_i    : in  std_logic;
       sd_cmd_out_o   : out std_logic;
-      sd_cmd_oe_o    : out std_logic;
+      sd_cmd_oe_n_o  : out std_logic;
 
       -- UART output
       uart_valid_o   : out std_logic;
@@ -102,7 +102,7 @@ begin
          sd_clk_i       => sd_clk_i,
          sd_cmd_in_i    => sd_cmd_in_i,
          sd_cmd_out_o   => sd_cmd_out_o,
-         sd_cmd_oe_o    => sd_cmd_oe_o
+         sd_cmd_oe_n_o  => sd_cmd_oe_n_o
       ); -- i_sdcard_cmd
 
 

@@ -32,7 +32,7 @@ entity sdcard_dat is
       sd_clk_i       : in    std_logic; -- 25 MHz or 400 kHz
       sd_dat_in_i    : in    std_logic_vector(3 downto 0);
       sd_dat_out_o   : out   std_logic_vector(3 downto 0);
-      sd_dat_oe_o    : out   std_logic
+      sd_dat_oe_n_o  : out   std_logic
    );
 end entity sdcard_dat;
 
@@ -155,7 +155,7 @@ begin
          sd_clk_d <= sd_clk_i;
          if sd_clk_d = '1' and sd_clk_i = '0' then -- Falling edge of sd_clk_i
             sd_dat_out_o <= "1111";
-            sd_dat_oe_o  <= '0';
+            sd_dat_oe_n_o <= '1';
          end if;
       end if;
    end process out_proc;

@@ -36,7 +36,7 @@ entity sdcard_cmd is
       sd_clk_i       : in    std_logic;                      -- 25 MHz or 400 kHz
       sd_cmd_in_i    : in    std_logic;
       sd_cmd_out_o   : out   std_logic;
-      sd_cmd_oe_o    : out   std_logic
+      sd_cmd_oe_n_o  : out   std_logic
    );
 end entity sdcard_cmd;
 
@@ -215,18 +215,18 @@ begin
    sd_cmd_proc : process (all)
    begin
       -- Default is to let CMD float high (internal pull up resistor)
-      sd_cmd_out_o <= '1';
-      sd_cmd_oe_o  <= '0';
+      sd_cmd_out_o  <= '1';
+      sd_cmd_oe_n_o <= '1';
 
       case state is
 
          when WRITING_ST | SEND_CRC_ST =>
-            sd_cmd_out_o <= send_data(39);
-            sd_cmd_oe_o  <= '1';
+            sd_cmd_out_o  <= send_data(39);
+            sd_cmd_oe_n_o <= '0';
 
          when others =>
-            sd_cmd_out_o <= '1';
-            sd_cmd_oe_o  <= '0';
+            sd_cmd_out_o  <= '1';
+            sd_cmd_oe_n_o <= '1';
 
       end case;
 

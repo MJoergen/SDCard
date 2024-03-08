@@ -63,10 +63,10 @@ architecture synthesis of sdcard_wrapper is
    signal sd_clk       : std_logic; -- 25 MHz or 400 kHz
    signal sd_cmd_in    : std_logic;
    signal sd_cmd_out   : std_logic;
-   signal sd_cmd_oe    : std_logic;
+   signal sd_cmd_oe_n  : std_logic;
    signal sd_dat_in    : std_logic_vector(3 downto 0);
    signal sd_dat_out   : std_logic_vector(3 downto 0);
-   signal sd_dat_oe    : std_logic;
+   signal sd_dat_oe_n  : std_logic;
 
    signal cmd_valid    : std_logic;
    signal cmd_ready    : std_logic;
@@ -137,7 +137,7 @@ begin
          sd_clk_i       => sd_clk_o,
          sd_cmd_in_i    => sd_cmd_in,
          sd_cmd_out_o   => sd_cmd_out,
-         sd_cmd_oe_o    => sd_cmd_oe,
+         sd_cmd_oe_n_o  => sd_cmd_oe_n,
          uart_valid_o   => uart_valid_o,
          uart_ready_i   => uart_ready_i,
          uart_data_o    => uart_data_o
@@ -161,7 +161,7 @@ begin
          sd_clk_i       => sd_clk_o,
          sd_dat_in_i    => sd_dat_in,
          sd_dat_out_o   => sd_dat_out,
-         sd_dat_oe_o    => sd_dat_oe
+         sd_dat_oe_n_o  => sd_dat_oe_n
       ); -- sdcard_dat_inst
 
 
@@ -172,8 +172,8 @@ begin
    sd_clk_o  <= sd_clk;
    sd_cmd_in <= sd_cmd_io;
    sd_dat_in <= sd_dat_io;
-   sd_cmd_io <= sd_cmd_out when sd_cmd_oe = '1' else 'Z';
-   sd_dat_io <= sd_dat_out when sd_dat_oe = '1' else (others => 'Z');
+   sd_cmd_io <= sd_cmd_out when sd_cmd_oe_n = '0' else 'Z';
+   sd_dat_io <= sd_dat_out when sd_dat_oe_n = '0' else (others => 'Z');
 
 end architecture synthesis;
 
