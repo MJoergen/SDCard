@@ -44,12 +44,10 @@ begin
    clk_inst : entity work.clk
       port map (
          sys_clk_i  => sys_clk_i,
-         sys_rstn_i => sys_rstn_i,
+         sys_rstn_i => sys_rstn_i and uart_rx_i,
          clk_o      => avm_clk,
-         rst_o      => open
+         rst_o      => avm_rst
       ); -- clk_inst
-
-   avm_rst   <= not sys_rstn_i;
 
 
    ---------------------------------------------------------

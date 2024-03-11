@@ -45,7 +45,7 @@ begin
          rst_i      => '0',
          update_i   => fsm_update,
          load_i     => avm_rst_i,
-         load_val_i => (others => '0'),
+         load_val_i => (others => '1'),
          output_o   => random_output
       ); -- random_inst
 
