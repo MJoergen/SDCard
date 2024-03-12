@@ -32,13 +32,13 @@ architecture simulation of tb is
    signal sd_cmd            : std_logic;
    signal sd_dat            : std_logic_vector(3 downto 0);
 
-   component sdModel is
+   component mdl_sdio is
       port (
-         sdClk : in    std_logic;
-         cmd   : inout std_logic;
-         dat   : inout std_logic_vector(3 downto 0)
+         sd_clk : in    std_logic;
+         sd_cmd : inout std_logic;
+         sd_dat : inout std_logic_vector(3 downto 0)
       );
-   end component sdModel;
+   end component mdl_sdio;
 
 begin
 
@@ -109,12 +109,12 @@ begin
    -- Instantiate SDCard simulation model
    ---------------------------------------------------------
 
-   i_sdModel : sdModel
+   i_mdl_sdio : component mdl_sdio
       port map (
-         sdClk => sd_clk,
-         cmd   => sd_cmd,
-         dat   => sd_dat
-      ); -- i_sdModel
+         sd_clk => sd_clk,
+         sd_cmd => sd_cmd,
+         sd_dat => sd_dat
+      ); -- i_mdl_sdio
 
 end architecture simulation;
 
