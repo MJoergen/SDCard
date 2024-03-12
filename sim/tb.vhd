@@ -2,7 +2,7 @@
 -- This closely mimics the MEGA65 top level file, except that
 -- clocks are generated directly, instead of via MMCM.
 --
--- Run for 2000 us.
+-- Run for 10 ms.
 --
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 

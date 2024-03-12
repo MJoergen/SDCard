@@ -31,7 +31,6 @@ begin
          if update_i = '1' then
             lfsr <= lfsr(G_WIDTH-2 downto 0) & "0";
             if lfsr(G_WIDTH-1) = '1' then
-               report "XOR with C_UPDATE:" & to_hstring(C_UPDATE);
                lfsr <= (lfsr(G_WIDTH-2 downto 0) & "0") xor C_UPDATE;
             end if;
          end if;

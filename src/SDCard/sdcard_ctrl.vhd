@@ -306,7 +306,7 @@ begin
                   -- Check response R1
                   if resp_timeout_i = '0' and resp_error_i = '0' and
                      resp_data_i(R_CMD_INDEX) = std_logic_vector(to_unsigned(C_CMD_APP_CMD, 8)) and
-                     resp_data_i(R_CARD_STAT_CURRENT_STATE)  = C_CARD_STATE_IDLE and
+--                     resp_data_i(R_CARD_STAT_CURRENT_STATE)  = C_CARD_STATE_IDLE and
                      resp_data_i(C_CARD_STAT_READY_FOR_DATA) = '1' and
                      resp_data_i(C_CARD_STAT_APP_CMD)        = '1' then
                      cmd_index_o           <= C_ACMD_SD_SEND_OP_COND;
