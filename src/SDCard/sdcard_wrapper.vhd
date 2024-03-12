@@ -60,26 +60,34 @@ end entity sdcard_wrapper;
 
 architecture synthesis of sdcard_wrapper is
 
-   signal sd_clk       : std_logic; -- 25 MHz or 400 kHz
-   signal sd_cmd_in    : std_logic;
-   signal sd_cmd_out   : std_logic;
-   signal sd_cmd_oe_n  : std_logic;
-   signal sd_dat_in    : std_logic_vector(3 downto 0);
-   signal sd_dat_out   : std_logic_vector(3 downto 0);
-   signal sd_dat_oe_n  : std_logic;
+   signal sd_clk          : std_logic; -- 25 MHz or 400 kHz
+   signal sd_cmd_in       : std_logic;
+   signal sd_cmd_out      : std_logic;
+   signal sd_cmd_oe_n     : std_logic;
+   signal sd_dat_in       : std_logic_vector(3 downto 0);
+   signal sd_dat_out      : std_logic_vector(3 downto 0);
+   signal sd_dat_oe_n     : std_logic;
 
-   signal cmd_valid    : std_logic;
-   signal cmd_ready    : std_logic;
-   signal cmd_index    : natural range 0 to 63;
-   signal cmd_data     : std_logic_vector(31 downto 0);
-   signal cmd_resp     : natural range 0 to 255;
-   signal cmd_timeout  : natural range 0 to 2 ** 24 - 1;
-   signal resp_valid   : std_logic;
-   signal resp_ready   : std_logic;
-   signal resp_data    : std_logic_vector(135 downto 0);
-   signal resp_timeout : std_logic;
-   signal resp_error   : std_logic;
-   signal dat_ready    : std_logic;
+   signal sd_clk_reg      : std_logic;
+   signal sd_cmd_out_reg  : std_logic;
+   signal sd_cmd_oe_n_reg : std_logic;
+   signal sd_dat_out_reg  : std_logic_vector(3 downto 0);
+   signal sd_dat_oe_n_reg : std_logic;
+
+   signal cmd_valid       : std_logic;
+   signal cmd_ready       : std_logic;
+   signal cmd_index       : natural range 0 to 63;
+   signal cmd_data        : std_logic_vector(31 downto 0);
+   signal cmd_resp        : natural range 0 to 255;
+   signal cmd_timeout     : natural range 0 to 2 ** 24 - 1;
+   signal resp_valid      : std_logic;
+   signal resp_ready      : std_logic;
+   signal resp_data       : std_logic_vector(135 downto 0);
+   signal resp_timeout    : std_logic;
+   signal resp_error      : std_logic;
+   signal dat_ready       : std_logic;
+
+   signal count_low       : natural range 0 to 16383;
 
 begin
 
@@ -99,7 +107,7 @@ begin
          avm_waitrequest_o => avm_waitrequest_o,
          avm_init_error_o  => avm_init_error_o,
          avm_last_state_o  => avm_last_state_o,
-         sd_clk_o          => sd_clk_o,
+         sd_clk_o          => sd_clk,
          cmd_valid_o       => cmd_valid,
          cmd_ready_i       => cmd_ready,
          cmd_index_o       => cmd_index,
@@ -134,7 +142,7 @@ begin
          resp_data_o    => resp_data,
          resp_timeout_o => resp_timeout,
          resp_error_o   => resp_error,
-         sd_clk_i       => sd_clk_o,
+         sd_clk_i       => sd_clk,
          sd_cmd_in_i    => sd_cmd_in,
          sd_cmd_out_o   => sd_cmd_out,
          sd_cmd_oe_n_o  => sd_cmd_oe_n,
@@ -158,22 +166,46 @@ begin
          rx_valid_o     => avm_readdatavalid_o,
          rx_data_o      => avm_readdata_o,
          rx_crc_error_o => avm_crc_error_o,
-         sd_clk_i       => sd_clk_o,
+         sd_clk_i       => sd_clk,
          sd_dat_in_i    => sd_dat_in,
          sd_dat_out_o   => sd_dat_out,
          sd_dat_oe_n_o  => sd_dat_oe_n
       ); -- sdcard_dat_inst
+
+   count_low_proc : process (avm_clk_i)
+   begin
+      if rising_edge(avm_clk_i) then
+         if sd_cmd_in = '0' then
+            count_low <= count_low + 1;
+         else
+            count_low <= 0;
+         end if;
+      end if;
+   end process count_low_proc;
 
 
    ---------------------------------------------------------
    -- Connect I/O buffers
    ---------------------------------------------------------
 
-   sd_clk_o  <= sd_clk;
+   output_reg_proc : process (avm_clk_i)
+   begin
+      if rising_edge(avm_clk_i) then
+         sd_clk_reg      <= sd_clk;
+         sd_cmd_out_reg  <= sd_cmd_out;
+         sd_cmd_oe_n_reg <= sd_cmd_oe_n;
+         sd_dat_out_reg  <= sd_dat_out;
+         sd_dat_oe_n_reg <= sd_dat_oe_n;
+      end if;
+   end process output_reg_proc;
+
+   sd_clk_o  <= sd_clk_reg;
    sd_cmd_in <= sd_cmd_io;
    sd_dat_in <= sd_dat_io;
-   sd_cmd_io <= sd_cmd_out when sd_cmd_oe_n = '0' else 'Z';
-   sd_dat_io <= sd_dat_out when sd_dat_oe_n = '0' else (others => 'Z');
+   sd_cmd_io <= sd_cmd_out_reg when sd_cmd_oe_n_reg = '0' else
+                'Z';
+   sd_dat_io <= sd_dat_out_reg when sd_dat_oe_n_reg = '0' else
+                (others => 'Z');
 
 end architecture synthesis;
 

@@ -3,12 +3,10 @@
 # Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 
-# Place SD close to I/O pins
-startgroup
-create_pblock pblock_i_sd
-resize_pblock pblock_i_sd -add {SLICE_X156Y175:SLICE_X163Y187}
-add_cells_to_pblock pblock_i_sd [get_cells [list sdcard_wrapper_inst/sdcard_cmd_logger_inst/i_sdcard_cmd]]
-endgroup
+# Place output registers close to I/O pads
+set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_clk_reg_reg ]
+set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_cmd_out_reg_reg ]
+set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_cmd_oe_n_reg_reg ]
 
 # Place KBD close to I/O pins
 startgroup
