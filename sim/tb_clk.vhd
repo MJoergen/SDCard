@@ -29,7 +29,7 @@ begin
    p_rst : process
    begin
       rst_o <= '1';
-      wait for 10*C_CLK_PERIOD;
+      wait for 100*C_CLK_PERIOD;
       wait until clk_o = '1';
       rst_o <= '0';
       wait;

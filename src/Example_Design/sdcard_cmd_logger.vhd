@@ -3,6 +3,9 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity sdcard_cmd_logger is
+   generic (
+      G_UART : boolean
+   );
    port (
       clk_i          : in  std_logic; -- 50 MHz
       rst_i          : in  std_logic;
@@ -66,21 +69,6 @@ architecture synthesis of sdcard_cmd_logger is
 begin
 
    -----------------------------------------------------
-   -- Duplicate command to cmd and serializer
-   -----------------------------------------------------
-
-   i_duplicator_cmd : entity work.duplicator
-      port map (
-         s_valid_i  => cmd_valid_i,
-         s_ready_o  => cmd_ready_o,
-         m1_valid_o => cmd_valid_cmd,
-         m1_ready_i => cmd_ready_cmd,
-         m2_valid_o => cmd_valid_ser,
-         m2_ready_i => cmd_ready_ser
-      ); -- i_duplicator_cmd
-
-
-   -----------------------------------------------------
    -- Send command and get response
    -----------------------------------------------------
 
@@ -106,109 +94,137 @@ begin
       ); -- i_sdcard_cmd
 
 
-   -----------------------------------------------------
-   -- Serialize command
-   -----------------------------------------------------
+   gen_uart : if G_UART generate
 
-   i_hexifier_cmd : entity work.hexifier
-      generic map (
-         G_DATA_NIBBLES => 10
-      )
-      port map (
-         s_data_i => std_logic_vector(to_unsigned(cmd_index_i,8)) & cmd_data_i,
-         m_data_o => cmd_hex
-      );
+      -----------------------------------------------------
+      -- Duplicate command to cmd and serializer
+      -----------------------------------------------------
 
-   cmd_hex_ser <= cmd_hex & X"0D0A" when cmd_resp_i = 0 else
-                  cmd_hex & X"3A20";
-
-   i_serializer_cmd : entity work.serializer
-      generic map (
-         G_DATA_SIZE_IN  => 96,
-         G_DATA_SIZE_OUT => 8
-      )
-      port map (
-         clk_i     => clk_i,
-         rst_i     => rst_i,
-         s_valid_i => cmd_valid_ser,
-         s_ready_o => cmd_ready_ser,
-         s_data_i  => cmd_hex_ser,
-         m_valid_o => ser_valid_cmd,
-         m_ready_i => ser_ready_cmd,
-         m_data_o  => ser_data_cmd
-      ); -- i_serializer
+      i_duplicator_cmd : entity work.duplicator
+         port map (
+            s_valid_i  => cmd_valid_i,
+            s_ready_o  => cmd_ready_o,
+            m1_valid_o => cmd_valid_cmd,
+            m1_ready_i => cmd_ready_cmd,
+            m2_valid_o => cmd_valid_ser,
+            m2_ready_i => cmd_ready_ser
+         ); -- i_duplicator_cmd
 
 
-   -----------------------------------------------------
-   -- Duplicate response to serializer and output
-   -----------------------------------------------------
+      -----------------------------------------------------
+      -- Serialize command
+      -----------------------------------------------------
 
-   i_duplicator_resp : entity work.duplicator
-      port map (
-         s_valid_i  => resp_valid_cmd,
-         s_ready_o  => resp_ready_cmd,
-         m1_valid_o => resp_valid_o,
-         m1_ready_i => resp_ready_i,
-         m2_valid_o => resp_valid_ser,
-         m2_ready_i => resp_ready_ser
-      ); -- i_duplicator_resp
+      i_hexifier_cmd : entity work.hexifier
+         generic map (
+            G_DATA_NIBBLES => 10
+         )
+         port map (
+            s_data_i => std_logic_vector(to_unsigned(cmd_index_i,8)) & cmd_data_i,
+            m_data_o => cmd_hex
+         );
 
+      cmd_hex_ser <= cmd_hex & X"0D0A" when cmd_resp_i = 0 else
+                     cmd_hex & X"3A20";
 
-   -----------------------------------------------------
-   -- Serialize response
-   -----------------------------------------------------
-
-   resp_data <= X"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" when resp_timeout_o = '1' else
-                X"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" when resp_error_o = '1' else
-                resp_data_o;
-
-   i_hexifier_resp : entity work.hexifier
-      generic map (
-         G_DATA_NIBBLES => 34
-      )
-      port map (
-         s_data_i => resp_data,
-         m_data_o => resp_hex
-      );
-
-   i_serializer_resp : entity work.serializer
-      generic map (
-         G_DATA_SIZE_IN  => 288,
-         G_DATA_SIZE_OUT => 8
-      )
-      port map (
-         clk_i     => clk_i,
-         rst_i     => rst_i,
-         s_valid_i => resp_valid_ser,
-         s_ready_o => resp_ready_ser,
-         s_data_i  => resp_hex & X"0D0A",
-         m_valid_o => ser_valid_resp,
-         m_ready_i => ser_ready_resp,
-         m_data_o  => ser_data_resp
-      ); -- i_serializer
+      i_serializer_cmd : entity work.serializer
+         generic map (
+            G_DATA_SIZE_IN  => 96,
+            G_DATA_SIZE_OUT => 8
+         )
+         port map (
+            clk_i     => clk_i,
+            rst_i     => rst_i,
+            s_valid_i => cmd_valid_ser,
+            s_ready_o => cmd_ready_ser,
+            s_data_i  => cmd_hex_ser,
+            m_valid_o => ser_valid_cmd,
+            m_ready_i => ser_ready_cmd,
+            m_data_o  => ser_data_cmd
+         ); -- i_serializer
 
 
-   -----------------------------------------------------
-   -- Merge output streams from the two serializers
-   -----------------------------------------------------
+      -----------------------------------------------------
+      -- Duplicate response to serializer and output
+      -----------------------------------------------------
 
-   i_merginator : entity work.merginator
-      generic map (
-         G_DATA_SIZE => 8
-      )
-      port map (
-         clk_i      => clk_i,
-         rst_i      => rst_i,
-         s1_valid_i => ser_valid_resp,
-         s1_ready_o => ser_ready_resp,
-         s1_data_i  => ser_data_resp,
-         s2_valid_i => ser_valid_cmd,
-         s2_ready_o => ser_ready_cmd,
-         s2_data_i  => ser_data_cmd,
-         m_valid_o  => uart_valid_o,
-         m_ready_i  => uart_ready_i,
-         m_data_o   => uart_data_o
-      ); -- i_merginator
+      i_duplicator_resp : entity work.duplicator
+         port map (
+            s_valid_i  => resp_valid_cmd,
+            s_ready_o  => resp_ready_cmd,
+            m1_valid_o => resp_valid_o,
+            m1_ready_i => resp_ready_i,
+            m2_valid_o => resp_valid_ser,
+            m2_ready_i => resp_ready_ser
+         ); -- i_duplicator_resp
+
+
+      -----------------------------------------------------
+      -- Serialize response
+      -----------------------------------------------------
+
+      resp_data <= X"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" when resp_timeout_o = '1' else
+                   X"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" when resp_error_o = '1' else
+                   resp_data_o;
+
+      i_hexifier_resp : entity work.hexifier
+         generic map (
+            G_DATA_NIBBLES => 34
+         )
+         port map (
+            s_data_i => resp_data,
+            m_data_o => resp_hex
+         );
+
+      i_serializer_resp : entity work.serializer
+         generic map (
+            G_DATA_SIZE_IN  => 288,
+            G_DATA_SIZE_OUT => 8
+         )
+         port map (
+            clk_i     => clk_i,
+            rst_i     => rst_i,
+            s_valid_i => resp_valid_ser,
+            s_ready_o => resp_ready_ser,
+            s_data_i  => resp_hex & X"0D0A",
+            m_valid_o => ser_valid_resp,
+            m_ready_i => ser_ready_resp,
+            m_data_o  => ser_data_resp
+         ); -- i_serializer
+
+
+      -----------------------------------------------------
+      -- Merge output streams from the two serializers
+      -----------------------------------------------------
+
+      i_merginator : entity work.merginator
+         generic map (
+            G_DATA_SIZE => 8
+         )
+         port map (
+            clk_i      => clk_i,
+            rst_i      => rst_i,
+            s1_valid_i => ser_valid_resp,
+            s1_ready_o => ser_ready_resp,
+            s1_data_i  => ser_data_resp,
+            s2_valid_i => ser_valid_cmd,
+            s2_ready_o => ser_ready_cmd,
+            s2_data_i  => ser_data_cmd,
+            m_valid_o  => uart_valid_o,
+            m_ready_i  => uart_ready_i,
+            m_data_o   => uart_data_o
+         ); -- i_merginator
+
+
+   else generate
+
+      cmd_ready_o <= cmd_ready_cmd;
+      cmd_valid_cmd <= cmd_valid_i;
+
+      resp_valid_o <= resp_valid_cmd;
+      resp_ready_cmd <= resp_ready_i;
+
+   end generate gen_uart;
 
 end architecture synthesis;
 

@@ -86,7 +86,8 @@ architecture synthesis of sdcard_cmd is
 
 begin
 
-   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' and sd_cmd_in_i = '1' else
+   cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' and
+                  (sd_cmd_in_i = '1' or sd_cmd_in_i = 'H') else
                   '0';
 
    fsm_proc : process (clk_i)

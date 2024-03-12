@@ -2,6 +2,8 @@
 -- This closely mimics the MEGA65 top level file, except that
 -- clocks are generated directly, instead of via MMCM.
 --
+-- Run for 2000 us.
+--
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 library ieee;
@@ -27,18 +29,8 @@ architecture simulation of tb is
 
    -- SDCard device interface
    signal sd_clk            : std_logic;
-   signal sd_cmd_in         : std_logic;
-   signal sd_cmd_out        : std_logic;
-   signal sd_cmd_oe         : std_logic;
-   signal sd_dat_in         : std_logic_vector(3 downto 0);
-   signal sd_dat_out        : std_logic_vector(3 downto 0);
-   signal sd_dat_oe         : std_logic;
-
-   -- Tristate
-   signal sd_cd             : std_logic;
-   signal sdClk             : std_logic;
-   signal cmd               : std_logic;
-   signal dat               : std_logic_vector(3 downto 0);
+   signal sd_cmd            : std_logic;
+   signal sd_dat            : std_logic_vector(3 downto 0);
 
    component sdModel is
       port (
@@ -47,8 +39,6 @@ architecture simulation of tb is
          dat   : inout std_logic_vector(3 downto 0)
       );
    end component sdModel;
-
-   signal uart_tx           : std_logic;
 
 begin
 
@@ -86,7 +76,10 @@ begin
    -- Instantiate SDCard controller
    ---------------------------------------------------------
 
-   i_sdcard : entity work.sdcard
+   sdcard_wrapper_inst : entity work.sdcard_wrapper
+      generic map (
+         G_UART => false
+      )
       port map (
          avm_clk_i           => avm_clk,
          avm_rst_i           => avm_rst,
@@ -98,39 +91,29 @@ begin
          avm_readdata_o      => avm_readdata,
          avm_readdatavalid_o => avm_readdatavalid,
          avm_waitrequest_o   => avm_waitrequest,
-         sd_cd_i             => sd_cd,
+         uart_valid_o        => open,
+         uart_ready_i        => '1',
+         uart_data_o         => open,
+         -- Interface to MEGA65 I/O ports
+         sd_cd_i             => '0',
          sd_clk_o            => sd_clk,
-         sd_cmd_in_i         => sd_cmd_in,
-         sd_cmd_out_o        => sd_cmd_out,
-         sd_cmd_oe_o         => sd_cmd_oe,
-         sd_dat_in_i         => sd_dat_in,
-         sd_dat_out_o        => sd_dat_out,
-         sd_dat_oe_o         => sd_dat_oe,
-         uart_tx_o           => uart_tx
-      ); -- i_sdcard
+         sd_cmd_io           => sd_cmd,
+         sd_dat_io           => sd_dat
+      ); -- sdcard_wrapper_inst
 
-
-   ---------------------------------------------------------
-   -- Connect I/O buffers
-   ---------------------------------------------------------
-
-   sdClk     <= sd_clk;
-   sd_cmd_in <= cmd;
-   sd_dat_in <= dat;
-   cmd <= sd_cmd_out when sd_cmd_oe = '1' else 'Z';
-   dat <= sd_dat_out when sd_dat_oe = '1' else (others => 'Z');
+   sd_cmd <= 'H';
+   sd_dat <= (others => 'H');
 
 
    ---------------------------------------------------------
    -- Instantiate SDCard simulation model
    ---------------------------------------------------------
 
-   sd_cd <= '0';
    i_sdModel : sdModel
       port map (
-         sdClk => sdClk,
-         cmd   => cmd,
-         dat   => dat
+         sdClk => sd_clk,
+         cmd   => sd_cmd,
+         dat   => sd_dat
       ); -- i_sdModel
 
 end architecture simulation;

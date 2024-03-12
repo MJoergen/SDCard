@@ -29,6 +29,9 @@ library work;
    use work.sdcard_globals.all;
 
 entity sdcard_wrapper is
+   generic (
+      G_UART : boolean := true
+   );
    port (
       -- Avalon Memory Map
       avm_clk_i           : in    std_logic; -- 50 Mhz
@@ -128,6 +131,9 @@ begin
    ----------------------------------
 
    sdcard_cmd_logger_inst : entity work.sdcard_cmd_logger
+      generic map (
+         G_UART => G_UART
+      )
       port map (
          clk_i          => avm_clk_i,
          rst_i          => avm_rst_i,
