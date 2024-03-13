@@ -13,18 +13,17 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000000 us"></ZoomStartTime>
-      <ZoomEndTime time="2,001.000001 us"></ZoomEndTime>
-      <Cursor1Time time="0.020000 us"></Cursor1Time>
+      <ZoomEndTime time="5,001.000001 us"></ZoomEndTime>
+      <Cursor1Time time="5,001.000000 us"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="232"></NameColumnWidth>
-      <ValueColumnWidth column_width="92"></ValueColumnWidth>
+      <NameColumnWidth column_width="464"></NameColumnWidth>
+      <ValueColumnWidth column_width="198"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="4" />
+   <WVObjectSize size="6" />
    <wvobject type="group" fp_name="group417">
       <obj_property name="label">tb</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb/avm_clk">
          <obj_property name="ElementShortName">avm_clk</obj_property>
          <obj_property name="ObjectShortName">avm_clk</obj_property>
@@ -76,99 +75,7 @@
       <wvobject type="array" fp_name="/tb/sd_dat">
          <obj_property name="ElementShortName">sd_dat[3:0]</obj_property>
          <obj_property name="ObjectShortName">sd_dat[3:0]</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject type="group" fp_name="group64">
-      <obj_property name="label">sdModel</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="array" fp_name="/tb/i_sdModel/state">
-         <obj_property name="ElementShortName">state[9:0]</obj_property>
-         <obj_property name="ObjectShortName">state[9:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/oeCmd">
-         <obj_property name="ElementShortName">oeCmd</obj_property>
-         <obj_property name="ObjectShortName">oeCmd</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/cmdOut">
-         <obj_property name="ElementShortName">cmdOut</obj_property>
-         <obj_property name="ObjectShortName">cmdOut</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/inCmd">
-         <obj_property name="ElementShortName">inCmd[46:0]</obj_property>
-         <obj_property name="ObjectShortName">inCmd[46:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/cmdRead">
-         <obj_property name="ElementShortName">cmdRead[5:0]</obj_property>
-         <obj_property name="ObjectShortName">cmdRead[5:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/ValidCmd">
-         <obj_property name="ElementShortName">ValidCmd</obj_property>
-         <obj_property name="ObjectShortName">ValidCmd</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/outDelayCnt">
-         <obj_property name="ElementShortName">outDelayCnt[2:0]</obj_property>
-         <obj_property name="ObjectShortName">outDelayCnt[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/inValidCmd">
-         <obj_property name="ElementShortName">inValidCmd</obj_property>
-         <obj_property name="ObjectShortName">inValidCmd</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/response_S">
-         <obj_property name="ElementShortName">response_S[7:0]</obj_property>
-         <obj_property name="ObjectShortName">response_S[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/crcCnt">
-         <obj_property name="ElementShortName">crcCnt[2:0]</obj_property>
-         <obj_property name="ObjectShortName">crcCnt[2:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crcDat_en">
-         <obj_property name="ElementShortName">crcDat_en</obj_property>
-         <obj_property name="ObjectShortName">crcDat_en</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/crcDat_in">
-         <obj_property name="ElementShortName">crcDat_in[3:0]</obj_property>
-         <obj_property name="ObjectShortName">crcDat_in[3:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/crcDat_out">
-         <obj_property name="ElementShortName">crcDat_out[3:0][15:0]</obj_property>
-         <obj_property name="ObjectShortName">crcDat_out[3:0][15:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crcDat_rst">
-         <obj_property name="ElementShortName">crcDat_rst</obj_property>
-         <obj_property name="ObjectShortName">crcDat_rst</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crcEn">
-         <obj_property name="ElementShortName">crcEn</obj_property>
-         <obj_property name="ObjectShortName">crcEn</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crcIn">
-         <obj_property name="ElementShortName">crcIn</obj_property>
-         <obj_property name="ObjectShortName">crcIn</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/crcOut">
-         <obj_property name="ElementShortName">crcOut[6:0]</obj_property>
-         <obj_property name="ObjectShortName">crcOut[6:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/crcRst">
-         <obj_property name="ElementShortName">crcRst</obj_property>
-         <obj_property name="ObjectShortName">crcRst</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/response_CMD">
-         <obj_property name="ElementShortName">response_CMD[135:0]</obj_property>
-         <obj_property name="ObjectShortName">response_CMD[135:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/startUppCnt">
-         <obj_property name="ElementShortName">startUppCnt[5:0]</obj_property>
-         <obj_property name="ObjectShortName">startUppCnt[5:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb/i_sdModel/OCR">
-         <obj_property name="ElementShortName">OCR[31:0]</obj_property>
-         <obj_property name="ObjectShortName">OCR[31:0]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb/i_sdModel/Busy">
-         <obj_property name="ElementShortName">Busy</obj_property>
-         <obj_property name="ObjectShortName">Busy</obj_property>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group182">
@@ -294,6 +201,7 @@
    <wvobject type="group" fp_name="group420">
       <obj_property name="label">sdcard_ctrl</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_ctrl_inst/avm_clk_i">
          <obj_property name="ElementShortName">avm_clk_i</obj_property>
          <obj_property name="ObjectShortName">avm_clk_i</obj_property>
@@ -421,6 +329,486 @@
       <wvobject type="other" fp_name="/tb/sdcard_wrapper_inst/sdcard_ctrl_inst/C_INIT_COUNT_MAX">
          <obj_property name="ElementShortName">C_INIT_COUNT_MAX</obj_property>
          <obj_property name="ObjectShortName">C_INIT_COUNT_MAX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1167">
+      <obj_property name="label">sdcard_dat</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/clk_i">
+         <obj_property name="ElementShortName">clk_i</obj_property>
+         <obj_property name="ObjectShortName">clk_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rst_i">
+         <obj_property name="ElementShortName">rst_i</obj_property>
+         <obj_property name="ObjectShortName">rst_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/ready_o">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/tx_valid_i">
+         <obj_property name="ElementShortName">tx_valid_i</obj_property>
+         <obj_property name="ObjectShortName">tx_valid_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/tx_data_i">
+         <obj_property name="ElementShortName">tx_data_i[7:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_data_i[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_valid_o">
+         <obj_property name="ElementShortName">rx_valid_o</obj_property>
+         <obj_property name="ObjectShortName">rx_valid_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_data_o">
+         <obj_property name="ElementShortName">rx_data_o[7:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_data_o[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_crc_error_o">
+         <obj_property name="ElementShortName">rx_crc_error_o</obj_property>
+         <obj_property name="ObjectShortName">rx_crc_error_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/sd_clk_i">
+         <obj_property name="ElementShortName">sd_clk_i</obj_property>
+         <obj_property name="ObjectShortName">sd_clk_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/sd_dat_in_i">
+         <obj_property name="ElementShortName">sd_dat_in_i[3:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_in_i[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/sd_dat_out_o">
+         <obj_property name="ElementShortName">sd_dat_out_o[3:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_out_o[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/sd_dat_oe_n_o">
+         <obj_property name="ElementShortName">sd_dat_oe_n_o</obj_property>
+         <obj_property name="ObjectShortName">sd_dat_oe_n_o</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/sd_clk_d">
+         <obj_property name="ElementShortName">sd_clk_d</obj_property>
+         <obj_property name="ObjectShortName">sd_clk_d</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_count">
+         <obj_property name="ElementShortName">rx_count</obj_property>
+         <obj_property name="ObjectShortName">rx_count</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/crc0">
+         <obj_property name="ElementShortName">crc0[15:0]</obj_property>
+         <obj_property name="ObjectShortName">crc0[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/crc1">
+         <obj_property name="ElementShortName">crc1[15:0]</obj_property>
+         <obj_property name="ObjectShortName">crc1[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/crc2">
+         <obj_property name="ElementShortName">crc2[15:0]</obj_property>
+         <obj_property name="ObjectShortName">crc2[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/crc3">
+         <obj_property name="ElementShortName">crc3[15:0]</obj_property>
+         <obj_property name="ObjectShortName">crc3[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_crc0">
+         <obj_property name="ElementShortName">rx_crc0[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_crc0[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_crc1">
+         <obj_property name="ElementShortName">rx_crc1[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_crc1[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_crc2">
+         <obj_property name="ElementShortName">rx_crc2[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_crc2[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_crc3">
+         <obj_property name="ElementShortName">rx_crc3[15:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_crc3[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_msb_data">
+         <obj_property name="ElementShortName">rx_msb_data[3:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_msb_data[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/rx_msb_valid">
+         <obj_property name="ElementShortName">rx_msb_valid</obj_property>
+         <obj_property name="ObjectShortName">rx_msb_valid</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/state">
+         <obj_property name="ElementShortName">state</obj_property>
+         <obj_property name="ObjectShortName">state</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/sdcard_wrapper_inst/sdcard_dat_inst/C_RX_COUNT_MAX">
+         <obj_property name="ElementShortName">C_RX_COUNT_MAX</obj_property>
+         <obj_property name="ObjectShortName">C_RX_COUNT_MAX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1639">
+      <obj_property name="label">mdl_sdio</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/sd_clk">
+         <obj_property name="ElementShortName">sd_clk</obj_property>
+         <obj_property name="ObjectShortName">sd_clk</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/sd_cmd">
+         <obj_property name="ElementShortName">sd_cmd</obj_property>
+         <obj_property name="ObjectShortName">sd_cmd</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/sd_dat">
+         <obj_property name="ElementShortName">sd_dat[3:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cfg_ddr">
+         <obj_property name="ElementShortName">cfg_ddr</obj_property>
+         <obj_property name="ObjectShortName">cfg_ddr</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/cfg_width">
+         <obj_property name="ElementShortName">cfg_width[1:0]</obj_property>
+         <obj_property name="ObjectShortName">cfg_width[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/ign_dat">
+         <obj_property name="ElementShortName">ign_dat[3:0]</obj_property>
+         <obj_property name="ObjectShortName">ign_dat[3:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cmd_valid">
+         <obj_property name="ElementShortName">cmd_valid</obj_property>
+         <obj_property name="ObjectShortName">cmd_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cmd_ds">
+         <obj_property name="ElementShortName">cmd_ds</obj_property>
+         <obj_property name="ObjectShortName">cmd_ds</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/cmd">
+         <obj_property name="ElementShortName">cmd[5:0]</obj_property>
+         <obj_property name="ObjectShortName">cmd[5:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/cmd_arg">
+         <obj_property name="ElementShortName">cmd_arg[31:0]</obj_property>
+         <obj_property name="ObjectShortName">cmd_arg[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/reply_valid">
+         <obj_property name="ElementShortName">reply_valid</obj_property>
+         <obj_property name="ObjectShortName">reply_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/reply_type">
+         <obj_property name="ElementShortName">reply_type</obj_property>
+         <obj_property name="ObjectShortName">reply_type</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/reply_crc">
+         <obj_property name="ElementShortName">reply_crc</obj_property>
+         <obj_property name="ObjectShortName">reply_crc</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/reply_busy">
+         <obj_property name="ElementShortName">reply_busy</obj_property>
+         <obj_property name="ObjectShortName">reply_busy</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/reply">
+         <obj_property name="ElementShortName">reply[5:0]</obj_property>
+         <obj_property name="ObjectShortName">reply[5:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/reply_data">
+         <obj_property name="ElementShortName">reply_data[119:0]</obj_property>
+         <obj_property name="ObjectShortName">reply_data[119:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/CID">
+         <obj_property name="ElementShortName">CID[119:0]</obj_property>
+         <obj_property name="ObjectShortName">CID[119:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/ocr">
+         <obj_property name="ElementShortName">ocr[31:0]</obj_property>
+         <obj_property name="ObjectShortName">ocr[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/power_up_busy">
+         <obj_property name="ElementShortName">power_up_busy</obj_property>
+         <obj_property name="ObjectShortName">power_up_busy</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cmd_alt">
+         <obj_property name="ElementShortName">cmd_alt</obj_property>
+         <obj_property name="ObjectShortName">cmd_alt</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cmd8_sent">
+         <obj_property name="ElementShortName">cmd8_sent</obj_property>
+         <obj_property name="ObjectShortName">cmd8_sent</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/card_reset">
+         <obj_property name="ElementShortName">card_reset</obj_property>
+         <obj_property name="ObjectShortName">card_reset</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/host_supports_hcs">
+         <obj_property name="ElementShortName">host_supports_hcs</obj_property>
+         <obj_property name="ObjectShortName">host_supports_hcs</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/r_1p8v_request">
+         <obj_property name="ElementShortName">r_1p8v_request</obj_property>
+         <obj_property name="ObjectShortName">r_1p8v_request</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/r_1p8v">
+         <obj_property name="ElementShortName">r_1p8v</obj_property>
+         <obj_property name="ObjectShortName">r_1p8v</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/RCA">
+         <obj_property name="ElementShortName">RCA[15:0]</obj_property>
+         <obj_property name="ObjectShortName">RCA[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/R1">
+         <obj_property name="ElementShortName">R1[31:0]</obj_property>
+         <obj_property name="ObjectShortName">R1[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/drive_cmd">
+         <obj_property name="ElementShortName">drive_cmd</obj_property>
+         <obj_property name="ObjectShortName">drive_cmd</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/card_selected">
+         <obj_property name="ElementShortName">card_selected</obj_property>
+         <obj_property name="ObjectShortName">card_selected</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/cmd_collision">
+         <obj_property name="ElementShortName">cmd_collision</obj_property>
+         <obj_property name="ObjectShortName">cmd_collision</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/read_en">
+         <obj_property name="ElementShortName">read_en</obj_property>
+         <obj_property name="ObjectShortName">read_en</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/pending_read">
+         <obj_property name="ElementShortName">pending_read</obj_property>
+         <obj_property name="ObjectShortName">pending_read</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/rx_valid">
+         <obj_property name="ElementShortName">rx_valid</obj_property>
+         <obj_property name="ObjectShortName">rx_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/rx_last">
+         <obj_property name="ElementShortName">rx_last</obj_property>
+         <obj_property name="ObjectShortName">rx_last</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/rx_good">
+         <obj_property name="ElementShortName">rx_good</obj_property>
+         <obj_property name="ObjectShortName">rx_good</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/rx_err">
+         <obj_property name="ElementShortName">rx_err</obj_property>
+         <obj_property name="ObjectShortName">rx_err</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/rx_data">
+         <obj_property name="ElementShortName">rx_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/read_ik">
+         <obj_property name="ElementShortName">read_ik[31:0]</obj_property>
+         <obj_property name="ObjectShortName">read_ik[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/write_en">
+         <obj_property name="ElementShortName">write_en</obj_property>
+         <obj_property name="ObjectShortName">write_en</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tx_valid">
+         <obj_property name="ElementShortName">tx_valid</obj_property>
+         <obj_property name="ObjectShortName">tx_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tx_last">
+         <obj_property name="ElementShortName">tx_last</obj_property>
+         <obj_property name="ObjectShortName">tx_last</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/pending_write">
+         <obj_property name="ElementShortName">pending_write</obj_property>
+         <obj_property name="ObjectShortName">pending_write</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tx_data">
+         <obj_property name="ElementShortName">tx_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tx_ready">
+         <obj_property name="ElementShortName">tx_ready</obj_property>
+         <obj_property name="ObjectShortName">tx_ready</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tx_ds">
+         <obj_property name="ElementShortName">tx_ds</obj_property>
+         <obj_property name="ObjectShortName">tx_ds</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tx_addr">
+         <obj_property name="ElementShortName">tx_addr[6:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_addr[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/mem_buf">
+         <obj_property name="ElementShortName">mem_buf[0:127][31:0]</obj_property>
+         <obj_property name="ObjectShortName">mem_buf[0:127][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/rx_addr">
+         <obj_property name="ElementShortName">rx_addr[6:0]</obj_property>
+         <obj_property name="ObjectShortName">rx_addr[6:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/read_posn">
+         <obj_property name="ElementShortName">read_posn[15:0]</obj_property>
+         <obj_property name="ObjectShortName">read_posn[15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/write_ik">
+         <obj_property name="ElementShortName">write_ik[31:0]</obj_property>
+         <obj_property name="ObjectShortName">write_ik[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/OPT_DUAL_VOLTAGE">
+         <obj_property name="ElementShortName">OPT_DUAL_VOLTAGE</obj_property>
+         <obj_property name="ObjectShortName">OPT_DUAL_VOLTAGE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/OPT_HIGH_CAPACITY">
+         <obj_property name="ElementShortName">OPT_HIGH_CAPACITY</obj_property>
+         <obj_property name="ObjectShortName">OPT_HIGH_CAPACITY</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/LGMEMSZ">
+         <obj_property name="ElementShortName">LGMEMSZ[31:0]</obj_property>
+         <obj_property name="ObjectShortName">LGMEMSZ[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/MEMSZ">
+         <obj_property name="ElementShortName">MEMSZ[31:0]</obj_property>
+         <obj_property name="ObjectShortName">MEMSZ[31:0]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group170">
+      <obj_property name="label">mdl_sdtx</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/sd_clk">
+         <obj_property name="ElementShortName">sd_clk</obj_property>
+         <obj_property name="ObjectShortName">sd_clk</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/sd_dat">
+         <obj_property name="ElementShortName">sd_dat[7:0]</obj_property>
+         <obj_property name="ObjectShortName">sd_dat[7:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/sd_ds">
+         <obj_property name="ElementShortName">sd_ds</obj_property>
+         <obj_property name="ObjectShortName">sd_ds</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_en">
+         <obj_property name="ElementShortName">i_en</obj_property>
+         <obj_property name="ObjectShortName">i_en</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_width">
+         <obj_property name="ElementShortName">i_width[1:0]</obj_property>
+         <obj_property name="ObjectShortName">i_width[1:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_ddr">
+         <obj_property name="ElementShortName">i_ddr</obj_property>
+         <obj_property name="ObjectShortName">i_ddr</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_valid">
+         <obj_property name="ElementShortName">i_valid</obj_property>
+         <obj_property name="ObjectShortName">i_valid</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/o_ready">
+         <obj_property name="ElementShortName">o_ready</obj_property>
+         <obj_property name="ObjectShortName">o_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_data">
+         <obj_property name="ElementShortName">i_data[31:0]</obj_property>
+         <obj_property name="ObjectShortName">i_data[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/i_last">
+         <obj_property name="ElementShortName">i_last</obj_property>
+         <obj_property name="ObjectShortName">i_last</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/crc">
+         <obj_property name="ElementShortName">crc[15:0][15:0]</obj_property>
+         <obj_property name="ObjectShortName">crc[15:0][15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/tx_sreg">
+         <obj_property name="ElementShortName">tx_sreg[47:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_sreg[47:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/r_count">
+         <obj_property name="ElementShortName">r_count[5:0]</obj_property>
+         <obj_property name="ObjectShortName">r_count[5:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/r_crc">
+         <obj_property name="ElementShortName">r_crc</obj_property>
+         <obj_property name="ObjectShortName">r_crc</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/r_active">
+         <obj_property name="ElementShortName">r_active</obj_property>
+         <obj_property name="ObjectShortName">r_active</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/ds">
+         <obj_property name="ElementShortName">ds</obj_property>
+         <obj_property name="ObjectShortName">ds</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/r_ready">
+         <obj_property name="ElementShortName">r_ready</obj_property>
+         <obj_property name="ObjectShortName">r_ready</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[0].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[0].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[0].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[0].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[0].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[0].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[1].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[1].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[1].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[1].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[1].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[1].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[2].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[2].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[2].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[2].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[2].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[2].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[3].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[3].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[3].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[3].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[3].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[3].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[4].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[4].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[4].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[4].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[4].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[4].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[5].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[5].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[5].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[5].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[5].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[5].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[6].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[6].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[6].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[6].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[6].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[6].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[7].pedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[7].pedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[7].pedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/\GEN_CRC[7].nedge_crc ">
+         <obj_property name="ElementShortName">\GEN_CRC[7].nedge_crc [15:0]</obj_property>
+         <obj_property name="ObjectShortName">\GEN_CRC[7].nedge_crc [15:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb/i_mdl_sdio/tb_sdtx/unused">
+         <obj_property name="ElementShortName">unused</obj_property>
+         <obj_property name="ObjectShortName">unused</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/tb/i_mdl_sdio/tb_sdtx/FF_HOLD">
+         <obj_property name="ElementShortName">FF_HOLD</obj_property>
+         <obj_property name="ObjectShortName">FF_HOLD</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/NCRC">
+         <obj_property name="ElementShortName">NCRC[31:0]</obj_property>
+         <obj_property name="ObjectShortName">NCRC[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb/i_mdl_sdio/tb_sdtx/CRC_POLYNOMIAL">
+         <obj_property name="ElementShortName">CRC_POLYNOMIAL[15:0]</obj_property>
+         <obj_property name="ObjectShortName">CRC_POLYNOMIAL[15:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

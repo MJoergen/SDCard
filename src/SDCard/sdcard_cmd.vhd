@@ -163,7 +163,7 @@ begin
 
                when GET_RESPONSE_ST =>
                   if resp_count > 8 then
-                     crc <= new_crc(crc, sd_cmd_in_i);
+                     crc <= new_crc(crc, to_01(sd_cmd_in_i));
                   end if;
 
                   -- This is an ugly hack because the CRC of the R3 (CID) does not cover the first eight bits.
@@ -172,7 +172,7 @@ begin
                   end if;
 
                   if resp_count > 0 then
-                     resp_data  <= resp_data(142 downto 0) & sd_cmd_in_i;
+                     resp_data  <= resp_data(142 downto 0) & to_01(sd_cmd_in_i);
                      resp_count <= resp_count - 1;
                   else
                      if resp_data(7 downto 0) = crc & "1" or resp_data(7 downto 0) = X"FF" then
