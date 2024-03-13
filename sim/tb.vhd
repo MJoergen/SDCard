@@ -33,6 +33,11 @@ architecture simulation of tb is
    signal sd_dat            : std_logic_vector(3 downto 0);
 
    component mdl_sdio is
+      generic (
+         OPT_DUAL_VOLTAGE  : std_logic_vector(0 downto 0);
+         OPT_HIGH_CAPACITY : std_logic_vector(0 downto 0);
+         LGMEMSZ           : natural
+      );
       port (
          sd_clk : in    std_logic;
          sd_cmd : inout std_logic;
@@ -110,6 +115,11 @@ begin
    ---------------------------------------------------------
 
    i_mdl_sdio : mdl_sdio
+      generic map (
+         OPT_DUAL_VOLTAGE  => "0",
+         OPT_HIGH_CAPACITY => "1",
+         LGMEMSZ           => 16
+      )
       port map (
          sd_clk => sd_clk,
          sd_cmd => sd_cmd,

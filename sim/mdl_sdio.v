@@ -75,7 +75,10 @@ module  mdl_sdio #(
         reg     [5:0]   reply;
         reg     [119:0] reply_data;
 
+        reg     [3:0]   card_state;
+
         reg     [119:0] CID;
+        reg     [119:0] CSD;
         reg     [31:0]  ocr;
         reg             power_up_busy, cmd_alt, cmd8_sent, card_reset,
                         host_supports_hcs, r_1p8v_request, r_1p8v;
@@ -194,6 +197,7 @@ module  mdl_sdio #(
                 reply_type  = 1'b0;
                 reply = 6'h0;
                 reply_data = {(120){1'b0}};
+                card_state = 4'd0; // idle
 
                 CID[119:112] = $random;         // MFGR ID
                 CID[111: 96] = "GT";            // OED/ Application ID
@@ -203,6 +207,11 @@ module  mdl_sdio #(
                 CID[ 15: 12] = 4'h0; // Reserved
                 CID[ 11:  0] = $random; // Manufacturing code
                 // CRC not included in our version
+
+                CSD = $random;
+                // Initialize memory
+                for(write_ik=0; write_ik<MEMSZ/4; write_ik=write_ik+1)
+                        mem[write_ik] = write_ik;
         end
 
         always @(*)
@@ -228,6 +237,7 @@ module  mdl_sdio #(
 
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd6;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1};
                         end end
                         // }}}
@@ -255,6 +265,7 @@ module  mdl_sdio #(
                                 // power_up_busy <= #(5*2*48*10000) 1'b0;
                                 // or ... 5 command/reply cycles at 1MHz
                                 power_up_busy <= #(5*2*48*1000) 1'b0;
+                                card_state <= #(5*2*48*1000) 4'd1; // ready
                         end end
                         // }}}
                 { 1'b?, 6'd0 }: begin // CMD0: Go idle
@@ -264,6 +275,7 @@ module  mdl_sdio #(
                         ocr[7]  <= 1'b0;
                         cmd8_sent <= 1'b0;
                         card_reset <= 1;
+                        card_state <= 4'd0; // idle
 
                         pending_read <= 1'b0;
                         read_en <= 1'b0;
@@ -283,9 +295,10 @@ module  mdl_sdio #(
                         begin
                                 reply_valid <= #7 1'b1;
                                 reply_type <= 1'b1;
-                                reply <= 6'd2;
+                                reply <= 6'd63;
                                 reply_data <= CID;
                                 drive_cmd <= 1'b0;
+                                card_state <= 4'd2; // ident
                         end end
                         // }}}
                 { 1'b?, 6'd3 }: begin // CMD3: SEND_RELATIVE_ADDR
@@ -298,8 +311,9 @@ module  mdl_sdio #(
 
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd3;
-                                reply_data <= { {(120-32){1'b0}}, RCA, 16'h0 };
+                                reply_data <= { {(120-32){1'b0}}, RCA, 16'h0520 };
                                 drive_cmd <= 1'b1;
+                                card_state <= 4'd3; // stby
 
                                 card_selected <= 1'b0;
                         end end
@@ -309,9 +323,18 @@ module  mdl_sdio #(
                         // {{{
                         card_selected <= (cmd_arg[31:16] == RCA);
                         reply_valid <= #7 (cmd_arg[31:16] == RCA);
-                        reply <= 6'd2;
+                        reply <= 6'd7;
+                        R1 = {19'b0, card_state, 9'h100};
                         reply_data <= { {(120-32){1'b0}}, R1};
+
+                        if (card_state == 4'd4 || cmd_arg[31:16] == 0)
+                        begin
+                            card_state <= 4'd3; // stby
                         end
+                        else if (card_state == 4'd3 && cmd_arg[31:16] == RCA)
+                        begin
+                            card_state <= 4'd4; // tran
+                        end end
                         // }}}
                 { 1'b?, 6'd8 }: begin // CMD8: SEND_IF_COND
                         // {{{
@@ -331,6 +354,16 @@ module  mdl_sdio #(
                                 cmd8_sent <= 1'b1;
                         end end
                         // }}}
+                { 1'b?, 6'd9 }: begin // CMD9: SEND_CSD
+                        // {{{
+                        if (!power_up_busy)
+                        begin
+                                reply_valid <= #7 (cmd_arg[31:16] == RCA);
+                                reply_type <= 1'b1;
+                                reply <= 6'd63;
+                                reply_data <= CSD;
+                        end end
+                        // }}}
                 { 1'b?, 6'd11 }: begin // CMD11: Voltage switch
                         // {{{
                         if (r_1p8v_request && OPT_DUAL_VOLTAGE && !r_1p8v && !power_up_busy)
@@ -347,6 +380,7 @@ module  mdl_sdio #(
                         begin
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd12;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1 };
                                 stop_transmission <= 1'b1;
                                 multi_block <= 1'b0;
@@ -363,6 +397,7 @@ module  mdl_sdio #(
                                 // write_en <= 1'b1;
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd19;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1};
 
                                 if (host_supports_hcs)
@@ -382,6 +417,7 @@ module  mdl_sdio #(
                                 // write_en <= 1'b1;
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd19;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1};
 
                                 if (host_supports_hcs)
@@ -398,6 +434,7 @@ module  mdl_sdio #(
                         begin
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd24;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1};
 
                                 pending_read <= 1'b1;
@@ -416,6 +453,7 @@ module  mdl_sdio #(
                         begin
                                 reply_valid <= #7 1'b1;
                                 reply <= 6'd25;
+                                R1 = {19'b0, card_state, 9'h120};
                                 reply_data <= { {(120-32){1'b0}}, R1};
 
                                 pending_read <= 1'b1;
@@ -432,7 +470,7 @@ module  mdl_sdio #(
                         // {{{
                         reply_valid <= #7 card_selected;
                         reply <= 6'd55;
-                        reply_data <= { {(120-32){1'b0}}, 32'h0120 };
+                        reply_data <= { {(120-32){1'b0}}, 19'd0, card_state, 9'h120 };
                         cmd_alt <= 1'b1;
                         end
                         // }}}
