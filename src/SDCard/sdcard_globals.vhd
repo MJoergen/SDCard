@@ -169,21 +169,34 @@ package sdcard_globals is
    subtype  r_csd_file_format           is natural range  11 downto  10;            -- File format
    subtype  r_csd_crc                   is natural range   7 downto   1;            -- CRC
 
-   -- Response R3 and ACMD41
-   constant C_OCR_27X                      : natural                        := 15;
-   constant C_OCR_28X                      : natural                        := 16;
-   constant C_OCR_29X                      : natural                        := 17;
-   constant C_OCR_30X                      : natural                        := 18;
-   constant C_OCR_31X                      : natural                        := 19;
-   constant C_OCR_32X                      : natural                        := 20;
-   constant C_OCR_33X                      : natural                        := 21;
-   constant C_OCR_34X                      : natural                        := 22;
-   constant C_OCR_35X                      : natural                        := 23;
-   constant C_OCR_S18A                     : natural                        := 24;  -- Switching to 1.8V Accepted
-   constant C_OCR_CO2T                     : natural                        := 27;  -- Over 2TB support Status
-   constant C_OCR_UHSII                    : natural                        := 29;  -- UHS-II Card Status
-   constant C_OCR_CCS                      : natural                        := 30;  -- Card Capacity Status
-   constant C_OCR_BUSY                     : natural                        := 31;  -- Card power up status bit
+   -- ACMD41
+   constant C_ACMD41_OCR_27X               : natural                        := 15;
+   constant C_ACMD41_OCR_28X               : natural                        := 16;
+   constant C_ACMD41_OCR_29X               : natural                        := 17;
+   constant C_ACMD41_OCR_30X               : natural                        := 18;
+   constant C_ACMD41_OCR_31X               : natural                        := 19;
+   constant C_ACMD41_OCR_32X               : natural                        := 20;
+   constant C_ACMD41_OCR_33X               : natural                        := 21;
+   constant C_ACMD41_OCR_34X               : natural                        := 22;
+   constant C_ACMD41_OCR_35X               : natural                        := 23;
+   constant C_ACMD41_S18R                  : natural                        := 24;  -- Switching to 1.8V Request
+   constant C_ACMD41_XPC                   : natural                        := 28;  -- SDXC Power Control
+   constant C_ACMD41_HCS                   : natural                        := 30;  -- Host Capacity Support
+
+   -- Response R3
+   constant C_R3_OCR_27X                   : natural                        := 15;
+   constant C_R3_OCR_28X                   : natural                        := 16;
+   constant C_R3_OCR_29X                   : natural                        := 17;
+   constant C_R3_OCR_30X                   : natural                        := 18;
+   constant C_R3_OCR_31X                   : natural                        := 19;
+   constant C_R3_OCR_32X                   : natural                        := 20;
+   constant C_R3_OCR_33X                   : natural                        := 21;
+   constant C_R3_OCR_34X                   : natural                        := 22;
+   constant C_R3_OCR_35X                   : natural                        := 23;
+   constant C_R3_S18A                      : natural                        := 24;  -- Switching to 1.8V Accepted
+   constant C_R3_UHSII                     : natural                        := 29;  -- UHS-II Card Status
+   constant C_R3_CCS                       : natural                        := 30;  -- Card Capacity Status
+   constant C_R3_BUSY                      : natural                        := 31;  -- Card power up status bit
 
    -- Response R6
    subtype  r_r6_rca                    is natural range  31 downto  16;            -- RCA

@@ -120,7 +120,7 @@ begin
             G_DATA_NIBBLES => 10
          )
          port map (
-            s_data_i => std_logic_vector(to_unsigned(cmd_index_i,8)) & cmd_data_i,
+            s_data_i => "01" & std_logic_vector(to_unsigned(cmd_index_i,6)) & cmd_data_i,
             m_data_o => cmd_hex
          );
 

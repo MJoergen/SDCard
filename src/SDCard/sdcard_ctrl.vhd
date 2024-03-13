@@ -63,6 +63,9 @@ architecture synthesis of sdcard_ctrl is
    -- Number of attempts at initiliazing card (ACMD41)
    constant C_INIT_COUNT_MAX : natural                 := 100; -- Approximately one second
 
+   -- An arbitrary 8-bit pattern
+   constant C_CMD8_CHECK : std_logic_vector(7 downto 0) := X"5B";
+
    signal   clk_counter : std_logic_vector(6 downto 0) := (others => '0');
    signal   init_count  : natural range 0 to C_INIT_COUNT_MAX;
 
@@ -260,7 +263,7 @@ begin
                   cmd_data_o(R_CMD8_1_2V)  <= "0";
                   cmd_data_o(R_CMD8_PCIE)  <= "0";
                   cmd_data_o(R_CMD8_VHS)   <= C_CMD8_VHS_27_36;
-                  cmd_data_o(R_CMD8_CHECK) <= X"AA";
+                  cmd_data_o(R_CMD8_CHECK) <= C_CMD8_CHECK;
                   cmd_resp_o               <= C_RESP_R7_LEN;
                   cmd_valid_o              <= '1';
                   state                    <= SEND_IF_COND_ST;
@@ -273,7 +276,7 @@ begin
                   if resp_timeout_i = '0' and resp_error_i = '0' and
                      resp_data_i(R_CMD_INDEX) = std_logic_vector(to_unsigned(C_CMD_SEND_IF_COND, 8)) and
                      resp_data_i(R_CMD8_VHS)    = C_CMD8_VHS_27_36 and
-                     resp_data_i(R_CMD8_CHECK)  = X"AA"  then
+                     resp_data_i(R_CMD8_CHECK)  = C_CMD8_CHECK  then
                      -- Valid response means card is Ver 2.X
                      card_ver2             <= '1';
 
@@ -311,9 +314,10 @@ begin
                      resp_data_i(C_CARD_STAT_APP_CMD)        = '1' then
                      cmd_index_o           <= C_ACMD_SD_SEND_OP_COND;
                      cmd_data_o            <= (others => '0');
-                     cmd_data_o(C_OCR_33X) <= '1';
+                     cmd_data_o(C_ACMD41_OCR_33X) <= '1';
                      if card_ver2 = '1' then
-                        cmd_data_o(C_OCR_CCS) <= '1';
+                        cmd_data_o(C_ACMD41_HCS) <= '1';
+                        cmd_data_o(C_ACMD41_XPC) <= '1';
                      end if;
                      cmd_resp_o  <= C_RESP_R3_LEN;
                      cmd_valid_o <= '1';
@@ -330,10 +334,10 @@ begin
                   if resp_timeout_i = '0' and resp_error_i = '0' and
                      resp_data_i(R_CMD_INDEX) = X"3F" then
                      -- Wait for BUSY bit to be set (de-asserted)
-                     if resp_data_i(C_OCR_BUSY) = '1' then
+                     if resp_data_i(C_R3_BUSY) = '1' then
                         -- Card Capacity Status
                         if card_ver2 = '1' then
-                           card_ccs <= resp_data_i(C_OCR_CCS);
+                           card_ccs <= resp_data_i(C_R3_CCS);
                         end if;
 
                         cmd_index_o <= C_CMD_ALL_SEND_CID;
