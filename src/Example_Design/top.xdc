@@ -24,13 +24,22 @@ set_property -dict {PACKAGE_PIN M13  IOSTANDARD LVCMOS33}            [get_ports 
 create_clock -period 10.000 -name clk [get_ports sys_clk_i]
 
 ## Micro SD Connector (external slot at back of the cover)
-set_property -dict {PACKAGE_PIN K1 IOSTANDARD LVCMOS33} [get_ports sd_cd_i]
-set_property -dict {PACKAGE_PIN G2 IOSTANDARD LVCMOS33} [get_ports sd_clk_o]
-set_property -dict {PACKAGE_PIN J2 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_cmd_io]
-set_property -dict {PACKAGE_PIN H2 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[0]]
-set_property -dict {PACKAGE_PIN H3 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[1]]
-set_property -dict {PACKAGE_PIN J1 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[2]]
-set_property -dict {PACKAGE_PIN K2 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[3]]
+set_property -dict {PACKAGE_PIN K1  IOSTANDARD LVCMOS33}             [get_ports sd_cd_i]
+set_property -dict {PACKAGE_PIN G2  IOSTANDARD LVCMOS33}             [get_ports sd_clk_o]
+set_property -dict {PACKAGE_PIN J2  IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_cmd_io]
+set_property -dict {PACKAGE_PIN H2  IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[0]]
+set_property -dict {PACKAGE_PIN H3  IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[1]]
+set_property -dict {PACKAGE_PIN J1  IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[2]]
+set_property -dict {PACKAGE_PIN K2  IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[3]]
+
+## SD Connector (this is the slot at the bottom side of the case under the cover)
+#set_property -dict {PACKAGE_PIN D17 IOSTANDARD LVCMOS33}             [get_ports sd_cd_i]
+#set_property -dict {PACKAGE_PIN B17 IOSTANDARD LVCMOS33}             [get_ports sd_clk_o]
+#set_property -dict {PACKAGE_PIN B16 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_cmd_io]
+#set_property -dict {PACKAGE_PIN B18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[0]]
+#set_property -dict {PACKAGE_PIN C18 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[1]]
+#set_property -dict {PACKAGE_PIN C19 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[2]]
+#set_property -dict {PACKAGE_PIN B15 IOSTANDARD LVCMOS33 PULLUP true} [get_ports sd_dat_io[3]]
 
 ## MEGA65 smart keyboard controller
 set_property -dict {PACKAGE_PIN A14 IOSTANDARD LVCMOS33} [get_ports kb_io0_o]

@@ -23,7 +23,7 @@
 
 library ieee;
    use ieee.std_logic_1164.all;
-   use ieee.numeric_std.all;
+   use ieee.numeric_std_unsigned.all;
 
 library work;
    use work.sdcard_globals.all;
@@ -77,6 +77,15 @@ architecture synthesis of sdcard_wrapper is
    signal sd_dat_out_reg  : std_logic_vector(3 downto 0);
    signal sd_dat_oe_n_reg : std_logic;
 
+   -- These signals are references in the XDC file, and must therefore not be optimized or
+   -- altered in any way.
+   attribute dont_touch : string;
+   attribute dont_touch of sd_clk_reg      : signal is "true";
+   attribute dont_touch of sd_cmd_out_reg  : signal is "true";
+   attribute dont_touch of sd_cmd_oe_n_reg : signal is "true";
+   attribute dont_touch of sd_dat_out_reg  : signal is "true";
+   attribute dont_touch of sd_dat_oe_n_reg : signal is "true";
+
    signal cmd_valid       : std_logic;
    signal cmd_ready       : std_logic;
    signal cmd_index       : natural range 0 to 63;
@@ -90,7 +99,8 @@ architecture synthesis of sdcard_wrapper is
    signal resp_error      : std_logic;
    signal dat_ready       : std_logic;
 
-   signal count_low       : natural range 0 to 16383;
+   signal sd_clk_d        : std_logic;
+   signal count_low       : std_logic_vector(7 downto 0);
 
 begin
 
@@ -181,10 +191,14 @@ begin
    count_low_proc : process (avm_clk_i)
    begin
       if rising_edge(avm_clk_i) then
-         if sd_cmd_in = '0' then
-            count_low <= count_low + 1;
-         else
-            count_low <= 0;
+         sd_clk_d <= sd_clk;
+
+         if sd_clk_d = '0' and sd_clk = '1' then
+            if sd_cmd_in = '0' then
+               count_low <= count_low + 1;
+            else
+               count_low <= (others => '0');
+            end if;
          end if;
       end if;
    end process count_low_proc;
