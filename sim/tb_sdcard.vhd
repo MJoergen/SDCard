@@ -23,8 +23,8 @@ architecture simulation of tb_sdcard is
    signal avm_crc_error     : std_logic;
    signal avm_last_state    : std_logic_vector(7 downto 0);
    signal sd_clk            : std_logic;
-   signal sd_cmd            : std_logic;
-   signal sd_dat            : std_logic_vector(3 downto 0);
+   signal sd_cmd            : std_logic := 'H';
+   signal sd_dat            : std_logic_vector(3 downto 0) := (others => 'H');
 
    signal mem_addr     : std_logic_vector(31 downto 0);
    signal mem_data_out : std_logic_vector(7 downto 0);
@@ -53,6 +53,9 @@ begin
       wait until rising_edge(avm_clk);
       wait until rising_edge(avm_clk);
 
+      wait until avm_waitrequest = '0';
+
+      wait for 1 us;
       report "Test finished";
       test_running <= '0';
       wait;
@@ -89,6 +92,9 @@ begin
          uart_ready_i        => '1',
          uart_data_o         => open
       ); -- sdcard_wrapper_inst
+
+   sd_cmd <= 'H';
+   sd_dat <= (others => 'H');
 
 
    ---------------------------------------------------------

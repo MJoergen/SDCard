@@ -42,7 +42,24 @@ end entity sdcard_cmd;
 
 architecture synthesis of sdcard_cmd is
 
-   constant C_IDLE_MAX     : natural := 400; -- Idle for 1 ms after power-on.
+   constant C_SIM : boolean          :=
+      -- synthesis translate_off
+      not
+      -- synthesis translate_on
+      false;
+
+   pure function cond_expr(c: boolean; t, f: integer) return integer is
+   begin
+      if c then
+         return t;
+      else
+         return f;
+      end if;
+   end function cond_expr;
+
+   constant C_IDLE_MAX     : natural :=
+      cond_expr(C_SIM, 1, 400);  -- Idle for 1 ms after power-on.
+
    constant C_COOLDOWN_MAX : natural := 5;   -- Wait a few clock cycles before next command.
 
    type     state_type is (
@@ -87,7 +104,7 @@ architecture synthesis of sdcard_cmd is
 begin
 
    cmd_ready_o <= '1' when state = IDLE_ST and sd_clk_d = '0' and sd_clk_i = '1' and
-                  (sd_cmd_in_i = '1' or sd_cmd_in_i = 'H') else
+                           (sd_cmd_in_i = '1' or sd_cmd_in_i = 'H') else
                   '0';
 
    fsm_proc : process (clk_i)

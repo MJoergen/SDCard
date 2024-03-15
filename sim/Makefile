@@ -27,7 +27,7 @@ sim: $(SRC)
 
 questa: $(SRC)
 	vcom -2008 $(SRC)
-	vsim $(TB)
+	vsim -do vsim.do
 
 show: $(WAVE)
 	gtkwave $(WAVE) $(SAVE)
