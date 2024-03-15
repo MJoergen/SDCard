@@ -1,10 +1,20 @@
+SRC += ../src/Example_Design/duplicator.vhd
+SRC += ../src/Example_Design/hexifier.vhd
+SRC += ../src/Example_Design/serializer.vhd
+SRC += ../src/Example_Design/merginator.vhd
+SRC += ../src/Example_Design/sdcard_cmd_logger.vhd
 SRC += ../src/SDCard/sdcard_globals.vhd
 SRC += ../src/SDCard/sdcard_cmd.vhd
+SRC += ../src/SDCard/sdcard_dat.vhd
+SRC += ../src/SDCard/sdcard_ctrl.vhd
+SRC += ../src/SDCard/sdcard_wrapper.vhd
 SRC += sdcard_sim.vhd
-SRC += tb_cmd.vhd
+#SRC += tb_cmd.vhd
+#SRC += tb_sdcard.vhd
 
 
-DUT ?= cmd
+#DUT ?= cmd
+DUT ?= sdcard
 
 
 TB = tb_$(DUT)
@@ -13,9 +23,7 @@ WAVE = $(TB).ghw
 SAVE = $(TB).gtkw
 
 sim: $(SRC)
-	ghdl -i --std=08 --work=work $(SRC)
-	ghdl -m --std=08 -fexplicit $(TB)
-	ghdl -r --std=08 $(TB) $(GENERIC) --assert-level=error --wave=$(WAVE) --stop-time=200us
+	ghdl -c --std=08 $(SRC) -r $(TB) $(GENERIC) --assert-level=error --wave=$(WAVE) --stop-time=200us
 
 questa: $(SRC)
 	vcom -2008 $(SRC)

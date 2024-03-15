@@ -100,12 +100,12 @@ architecture synthesis of sdcard_ctrl is
    signal   state : state_type                         := INIT_ST;
 
    pure function state_to_slv (
-      state : state_type
+      state_v : state_type
    ) return std_logic_vector is
    begin
       null;
 
-      case state is
+      case state_v is
 
          when INIT_ST =>
             return X"00";
@@ -157,7 +157,7 @@ architecture synthesis of sdcard_ctrl is
 
       end case;
 
-      null;
+      return "XXXXXXXX";
    end function state_to_slv;
 
 begin
