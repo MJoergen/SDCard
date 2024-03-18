@@ -23,7 +23,8 @@ WAVE = $(TB).ghw
 SAVE = $(TB).gtkw
 
 sim: $(SRC)
-	ghdl -c --std=08 $(SRC) -r $(TB) $(GENERIC) --assert-level=error --wave=$(WAVE) --stop-time=200us
+	ghdl -c --std=08 $(SRC) -e $(TB)
+	ghdl -r --std=08 $(TB) $(GENERIC) --assert-level=error --wave=$(WAVE) --stop-time=200us
 
 questa: $(SRC)
 	vcom -2008 $(SRC)
