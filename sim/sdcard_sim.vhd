@@ -36,7 +36,7 @@ architecture simulation of sdcard_sim is
    signal   card_csd    : unsigned(119 downto 0)                   := X"400E00325B59000076B27F800A4040";
    signal   card_rca    : unsigned( 15 downto 0)                   := X"AAAA";
 
-   subtype  r_card_status_state is natural range 12 downto 9;
+   subtype  R_CARD_STATUS_STATE is natural range 12 downto 9;
    constant C_CARD_STATUS_STATE_IDLE  : unsigned(3 downto 0)       := "0000";
    constant C_CARD_STATUS_STATE_READY : unsigned(3 downto 0)       := "0001";
    constant C_CARD_STATUS_STATE_IDENT : unsigned(3 downto 0)       := "0010";
@@ -69,12 +69,15 @@ architecture simulation of sdcard_sim is
    constant C_CARD_STAT_APP_CMD            : unsigned(31 downto 0) := X"00000020";
    constant C_CARD_STAT_AKE_SEQ_ERROR      : unsigned(31 downto 0) := X"00000008";
 
-   constant C_CMD_GO_IDLE            : unsigned(7 downto 0)        := X"00"; -- CMD0
-   constant C_CMD_ALL_SEND_CID       : unsigned(7 downto 0)        := X"02"; -- CMD2
-   constant C_CMD_SEND_RELATIVE_ADDR : unsigned(7 downto 0)        := X"03"; -- CMD3
-   constant C_CMD_SEND_IF_COND       : unsigned(7 downto 0)        := X"08"; -- CMD8
-   constant C_CMD_APP_CMD            : unsigned(7 downto 0)        := X"37"; -- CMD55
-   constant C_CMD_SD_SEND_OP_COND    : unsigned(7 downto 0)        := X"29"; -- ACMD41
+   constant C_CMD_GO_IDLE              : unsigned(7 downto 0)        := X"00"; -- CMD0
+   constant C_CMD_ALL_SEND_CID         : unsigned(7 downto 0)        := X"02"; -- CMD2
+   constant C_CMD_SEND_RELATIVE_ADDR   : unsigned(7 downto 0)        := X"03"; -- CMD3
+   constant C_CMD_SELECT_DESELECT_CARD : unsigned(7 downto 0)        := X"07"; -- CMD7
+   constant C_CMD_SEND_IF_COND         : unsigned(7 downto 0)        := X"08"; -- CMD8
+   constant C_CMD_SEND_CSD             : unsigned(7 downto 0)        := X"09"; -- CMD9
+   constant C_CMD_APP_CMD              : unsigned(7 downto 0)        := X"37"; -- CMD55
+   constant C_CMD_SET_BUS_WIDTH        : unsigned(7 downto 0)        := X"06"; -- ACMD6
+   constant C_CMD_SD_SEND_OP_COND      : unsigned(7 downto 0)        := X"29"; -- ACMD41
 
    pure function calc_crc (
       arg : unsigned
@@ -172,27 +175,58 @@ begin
                   -- R2
                   resp_data      <= X"3F" & append_crc(card_cid);
                   resp_bit_count <= 136;
+                  card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_IDENT;
 
                -- CMD3
                when C_CMD_SEND_RELATIVE_ADDR =>
                   -- R6
-                  resp_v                      := cmd(47 downto 8);
-                  resp_v(R_CARD_STATUS_STATE) := card_status(r_card_status_state);
+                  resp_v                      := "00" & cmd(45 downto 8) or (X"00" & C_CARD_STAT_READY_FOR_DATA);
+                  resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
                   resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_STBY;
+
+               -- CMD7
+               when C_CMD_SELECT_DESELECT_CARD =>
+                  -- R1b
+                  resp_v                      := "00" & cmd(45 downto 8) or (X"00" & C_CARD_STAT_READY_FOR_DATA);
+                  resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
+                  resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  if card_status(R_CARD_STATUS_STATE) = C_CARD_STATUS_STATE_STBY then
+                     card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_TRAN;
+                  elsif card_status(R_CARD_STATUS_STATE) = C_CARD_STATUS_STATE_TRAN then
+                     card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_STBY;
+                  end if;
+
 
                -- CMD8
                when C_CMD_SEND_IF_COND =>
                   -- R7
                   resp_data <= append_crc(C_CMD_SEND_IF_COND & cmd(39 downto 8)) & C_RESP_PADDING;
 
+               -- CMD9
+               when C_CMD_SEND_CSD =>
+                  -- R2
+                  resp_data      <= X"3F" & append_crc(card_csd);
+                  resp_bit_count <= 136;
+
                -- CMD55
                when C_CMD_APP_CMD =>
                   -- R1
                   resp_v                      := C_CMD_APP_CMD &
                                                  (C_CARD_STAT_READY_FOR_DATA or C_CARD_STAT_APP_CMD);
-                  resp_v(R_CARD_STATUS_STATE) := card_status(r_card_status_state);
+                  resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
                   resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
                   card_status                 <= card_status or C_CARD_STAT_APP_CMD;
+
+               -- ACMD6
+               when C_CMD_SET_BUS_WIDTH =>
+                  if (card_status and C_CARD_STAT_APP_CMD) /= 0 then
+                     -- R1
+                     resp_v                      := "00" & cmd(45 downto 8)
+                        or X"00" & (C_CARD_STAT_READY_FOR_DATA or C_CARD_STAT_APP_CMD);
+                     resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
+                     resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  end if;
 
                -- ACMD41
                when C_CMD_SD_SEND_OP_COND =>
