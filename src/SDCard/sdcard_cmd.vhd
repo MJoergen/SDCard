@@ -128,6 +128,7 @@ begin
 
                when IDLE_ST =>
                   if cmd_valid_i = '1' and cmd_ready_o = '1' then
+                     report "Sending command 0x" & to_hstring(to_unsigned(cmd_index_i, 8) & unsigned(cmd_data_i));
                      resp_timeout_o <= '0';
                      resp_error_o   <= '0';
                      send_data      <= "01" & std_logic_vector(to_unsigned(cmd_index_i, 6)) & cmd_data_i;
