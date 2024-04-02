@@ -56,7 +56,7 @@ architecture synthesis of sdcard_dat is
    signal   rx_msb_valid : std_logic;
 
    -- This calculates the 16-bit CRC using the polynomial x^16 + x^12 + x^5 + x^0.
-   -- See this link: http://www.ghsi.de/pages/subpages/Online%20CRC%20Calculation/indexDetails.php?Polynom=10001001&Message=7700000000
+   -- See this link: http://www.ghsi.de/pages/subpages/Online%20CRC%20Calculation/indexDetails.php?Polynom=10001000000100001&Message=AB
 
    pure function new_crc (
       cur_crc : std_logic_vector;

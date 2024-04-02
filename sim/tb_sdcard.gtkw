@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Apr  2 09:49:38 2024
+[*] Tue Apr  2 12:23:50 2024
 [*]
 [dumpfile] "/home/mike/git/MJoergen/SDCard/sim/tb_sdcard.ghw"
-[dumpfile_mtime] "Tue Apr  2 09:49:05 2024"
-[dumpfile_size] 4856804
+[dumpfile_mtime] "Tue Apr  2 12:22:07 2024"
+[dumpfile_size] 5337005
 [savefile] "/home/mike/git/MJoergen/SDCard/sim/tb_sdcard.gtkw"
-[timestart] 3047514800000
+[timestart] 3490219000000
 [size] 1538 1002
 [pos] -1 -1
-*-26.582180 3047760000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-28.426630 3491740000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_sdcard.
 [treeopen] top.tb_sdcard.sdcard_sim_inst.
@@ -18,7 +18,7 @@
 [signals_width] 270
 [sst_expanded] 1
 [sst_vpaned_height] 281
-@c00200
+@800200
 -tb_sdcard
 @28
 top.tb_sdcard.test_running
@@ -41,15 +41,16 @@ top.tb_sdcard.avm_init_error
 top.tb_sdcard.avm_crc_error
 top.tb_sdcard.sd_clk
 top.tb_sdcard.sd_cmd
-@22
+@800022
 #{top.tb_sdcard.sd_dat[3:0]} top.tb_sdcard.sd_dat[3] top.tb_sdcard.sd_dat[2] top.tb_sdcard.sd_dat[1] top.tb_sdcard.sd_dat[0]
 @28
-top.tb_sdcard.mem_we
-@22
-#{top.tb_sdcard.mem_addr[31:0]} top.tb_sdcard.mem_addr[31] top.tb_sdcard.mem_addr[30] top.tb_sdcard.mem_addr[29] top.tb_sdcard.mem_addr[28] top.tb_sdcard.mem_addr[27] top.tb_sdcard.mem_addr[26] top.tb_sdcard.mem_addr[25] top.tb_sdcard.mem_addr[24] top.tb_sdcard.mem_addr[23] top.tb_sdcard.mem_addr[22] top.tb_sdcard.mem_addr[21] top.tb_sdcard.mem_addr[20] top.tb_sdcard.mem_addr[19] top.tb_sdcard.mem_addr[18] top.tb_sdcard.mem_addr[17] top.tb_sdcard.mem_addr[16] top.tb_sdcard.mem_addr[15] top.tb_sdcard.mem_addr[14] top.tb_sdcard.mem_addr[13] top.tb_sdcard.mem_addr[12] top.tb_sdcard.mem_addr[11] top.tb_sdcard.mem_addr[10] top.tb_sdcard.mem_addr[9] top.tb_sdcard.mem_addr[8] top.tb_sdcard.mem_addr[7] top.tb_sdcard.mem_addr[6] top.tb_sdcard.mem_addr[5] top.tb_sdcard.mem_addr[4] top.tb_sdcard.mem_addr[3] top.tb_sdcard.mem_addr[2] top.tb_sdcard.mem_addr[1] top.tb_sdcard.mem_addr[0]
-#{top.tb_sdcard.mem_data_out[7:0]} top.tb_sdcard.mem_data_out[7] top.tb_sdcard.mem_data_out[6] top.tb_sdcard.mem_data_out[5] top.tb_sdcard.mem_data_out[4] top.tb_sdcard.mem_data_out[3] top.tb_sdcard.mem_data_out[2] top.tb_sdcard.mem_data_out[1] top.tb_sdcard.mem_data_out[0]
-#{top.tb_sdcard.mem_data_in[7:0]} top.tb_sdcard.mem_data_in[7] top.tb_sdcard.mem_data_in[6] top.tb_sdcard.mem_data_in[5] top.tb_sdcard.mem_data_in[4] top.tb_sdcard.mem_data_in[3] top.tb_sdcard.mem_data_in[2] top.tb_sdcard.mem_data_in[1] top.tb_sdcard.mem_data_in[0]
-@1401200
+top.tb_sdcard.sd_dat[3]
+top.tb_sdcard.sd_dat[2]
+top.tb_sdcard.sd_dat[1]
+top.tb_sdcard.sd_dat[0]
+@1001200
+-group_end
+@1000200
 -tb_sdcard
 @c00200
 -sdcard_ctrl
@@ -104,7 +105,7 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_ctrl_inst.state
 @1401200
 -Internal
 -sdcard_ctrl
-@800200
+@c00200
 -sdcard_sim
 @22
 #{top.tb_sdcard.sdcard_sim_inst.card_cid[119:0]} top.tb_sdcard.sdcard_sim_inst.card_cid[119] top.tb_sdcard.sdcard_sim_inst.card_cid[118] top.tb_sdcard.sdcard_sim_inst.card_cid[117] top.tb_sdcard.sdcard_sim_inst.card_cid[116] top.tb_sdcard.sdcard_sim_inst.card_cid[115] top.tb_sdcard.sdcard_sim_inst.card_cid[114] top.tb_sdcard.sdcard_sim_inst.card_cid[113] top.tb_sdcard.sdcard_sim_inst.card_cid[112] top.tb_sdcard.sdcard_sim_inst.card_cid[111] top.tb_sdcard.sdcard_sim_inst.card_cid[110] top.tb_sdcard.sdcard_sim_inst.card_cid[109] top.tb_sdcard.sdcard_sim_inst.card_cid[108] top.tb_sdcard.sdcard_sim_inst.card_cid[107] top.tb_sdcard.sdcard_sim_inst.card_cid[106] top.tb_sdcard.sdcard_sim_inst.card_cid[105] top.tb_sdcard.sdcard_sim_inst.card_cid[104] top.tb_sdcard.sdcard_sim_inst.card_cid[103] top.tb_sdcard.sdcard_sim_inst.card_cid[102] top.tb_sdcard.sdcard_sim_inst.card_cid[101] top.tb_sdcard.sdcard_sim_inst.card_cid[100] top.tb_sdcard.sdcard_sim_inst.card_cid[99] top.tb_sdcard.sdcard_sim_inst.card_cid[98] top.tb_sdcard.sdcard_sim_inst.card_cid[97] top.tb_sdcard.sdcard_sim_inst.card_cid[96] top.tb_sdcard.sdcard_sim_inst.card_cid[95] top.tb_sdcard.sdcard_sim_inst.card_cid[94] top.tb_sdcard.sdcard_sim_inst.card_cid[93] top.tb_sdcard.sdcard_sim_inst.card_cid[92] top.tb_sdcard.sdcard_sim_inst.card_cid[91] top.tb_sdcard.sdcard_sim_inst.card_cid[90] top.tb_sdcard.sdcard_sim_inst.card_cid[89] top.tb_sdcard.sdcard_sim_inst.card_cid[88] top.tb_sdcard.sdcard_sim_inst.card_cid[87] top.tb_sdcard.sdcard_sim_inst.card_cid[86] top.tb_sdcard.sdcard_sim_inst.card_cid[85] top.tb_sdcard.sdcard_sim_inst.card_cid[84] top.tb_sdcard.sdcard_sim_inst.card_cid[83] top.tb_sdcard.sdcard_sim_inst.card_cid[82] top.tb_sdcard.sdcard_sim_inst.card_cid[81] top.tb_sdcard.sdcard_sim_inst.card_cid[80] top.tb_sdcard.sdcard_sim_inst.card_cid[79] top.tb_sdcard.sdcard_sim_inst.card_cid[78] top.tb_sdcard.sdcard_sim_inst.card_cid[77] top.tb_sdcard.sdcard_sim_inst.card_cid[76] top.tb_sdcard.sdcard_sim_inst.card_cid[75] top.tb_sdcard.sdcard_sim_inst.card_cid[74] top.tb_sdcard.sdcard_sim_inst.card_cid[73] top.tb_sdcard.sdcard_sim_inst.card_cid[72] top.tb_sdcard.sdcard_sim_inst.card_cid[71] top.tb_sdcard.sdcard_sim_inst.card_cid[70] top.tb_sdcard.sdcard_sim_inst.card_cid[69] top.tb_sdcard.sdcard_sim_inst.card_cid[68] top.tb_sdcard.sdcard_sim_inst.card_cid[67] top.tb_sdcard.sdcard_sim_inst.card_cid[66] top.tb_sdcard.sdcard_sim_inst.card_cid[65] top.tb_sdcard.sdcard_sim_inst.card_cid[64] top.tb_sdcard.sdcard_sim_inst.card_cid[63] top.tb_sdcard.sdcard_sim_inst.card_cid[62] top.tb_sdcard.sdcard_sim_inst.card_cid[61] top.tb_sdcard.sdcard_sim_inst.card_cid[60] top.tb_sdcard.sdcard_sim_inst.card_cid[59] top.tb_sdcard.sdcard_sim_inst.card_cid[58] top.tb_sdcard.sdcard_sim_inst.card_cid[57] top.tb_sdcard.sdcard_sim_inst.card_cid[56] top.tb_sdcard.sdcard_sim_inst.card_cid[55] top.tb_sdcard.sdcard_sim_inst.card_cid[54] top.tb_sdcard.sdcard_sim_inst.card_cid[53] top.tb_sdcard.sdcard_sim_inst.card_cid[52] top.tb_sdcard.sdcard_sim_inst.card_cid[51] top.tb_sdcard.sdcard_sim_inst.card_cid[50] top.tb_sdcard.sdcard_sim_inst.card_cid[49] top.tb_sdcard.sdcard_sim_inst.card_cid[48] top.tb_sdcard.sdcard_sim_inst.card_cid[47] top.tb_sdcard.sdcard_sim_inst.card_cid[46] top.tb_sdcard.sdcard_sim_inst.card_cid[45] top.tb_sdcard.sdcard_sim_inst.card_cid[44] top.tb_sdcard.sdcard_sim_inst.card_cid[43] top.tb_sdcard.sdcard_sim_inst.card_cid[42] top.tb_sdcard.sdcard_sim_inst.card_cid[41] top.tb_sdcard.sdcard_sim_inst.card_cid[40] top.tb_sdcard.sdcard_sim_inst.card_cid[39] top.tb_sdcard.sdcard_sim_inst.card_cid[38] top.tb_sdcard.sdcard_sim_inst.card_cid[37] top.tb_sdcard.sdcard_sim_inst.card_cid[36] top.tb_sdcard.sdcard_sim_inst.card_cid[35] top.tb_sdcard.sdcard_sim_inst.card_cid[34] top.tb_sdcard.sdcard_sim_inst.card_cid[33] top.tb_sdcard.sdcard_sim_inst.card_cid[32] top.tb_sdcard.sdcard_sim_inst.card_cid[31] top.tb_sdcard.sdcard_sim_inst.card_cid[30] top.tb_sdcard.sdcard_sim_inst.card_cid[29] top.tb_sdcard.sdcard_sim_inst.card_cid[28] top.tb_sdcard.sdcard_sim_inst.card_cid[27] top.tb_sdcard.sdcard_sim_inst.card_cid[26] top.tb_sdcard.sdcard_sim_inst.card_cid[25] top.tb_sdcard.sdcard_sim_inst.card_cid[24] top.tb_sdcard.sdcard_sim_inst.card_cid[23] top.tb_sdcard.sdcard_sim_inst.card_cid[22] top.tb_sdcard.sdcard_sim_inst.card_cid[21] top.tb_sdcard.sdcard_sim_inst.card_cid[20] top.tb_sdcard.sdcard_sim_inst.card_cid[19] top.tb_sdcard.sdcard_sim_inst.card_cid[18] top.tb_sdcard.sdcard_sim_inst.card_cid[17] top.tb_sdcard.sdcard_sim_inst.card_cid[16] top.tb_sdcard.sdcard_sim_inst.card_cid[15] top.tb_sdcard.sdcard_sim_inst.card_cid[14] top.tb_sdcard.sdcard_sim_inst.card_cid[13] top.tb_sdcard.sdcard_sim_inst.card_cid[12] top.tb_sdcard.sdcard_sim_inst.card_cid[11] top.tb_sdcard.sdcard_sim_inst.card_cid[10] top.tb_sdcard.sdcard_sim_inst.card_cid[9] top.tb_sdcard.sdcard_sim_inst.card_cid[8] top.tb_sdcard.sdcard_sim_inst.card_cid[7] top.tb_sdcard.sdcard_sim_inst.card_cid[6] top.tb_sdcard.sdcard_sim_inst.card_cid[5] top.tb_sdcard.sdcard_sim_inst.card_cid[4] top.tb_sdcard.sdcard_sim_inst.card_cid[3] top.tb_sdcard.sdcard_sim_inst.card_cid[2] top.tb_sdcard.sdcard_sim_inst.card_cid[1] top.tb_sdcard.sdcard_sim_inst.card_cid[0]
@@ -117,13 +118,12 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_ctrl_inst.state
 top.tb_sdcard.sdcard_sim_inst.cmd_bit_count
 top.tb_sdcard.sdcard_sim_inst.cmd_receiving
 top.tb_sdcard.sdcard_sim_inst.cmd_valid
+top.tb_sdcard.sdcard_sim_inst.crc_count
 @22
-#{top.tb_sdcard.sdcard_sim_inst.mem_addr_o[31:0]} top.tb_sdcard.sdcard_sim_inst.mem_addr_o[31] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[30] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[29] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[28] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[27] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[26] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[25] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[24] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[23] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[22] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[21] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[20] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[19] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[18] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[17] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[16] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[15] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[14] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[13] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[12] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[11] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[10] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[9] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[8] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[7] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[6] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[5] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[4] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[3] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[2] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[1] top.tb_sdcard.sdcard_sim_inst.mem_addr_o[0]
-#{top.tb_sdcard.sdcard_sim_inst.mem_data_i[7:0]} top.tb_sdcard.sdcard_sim_inst.mem_data_i[7] top.tb_sdcard.sdcard_sim_inst.mem_data_i[6] top.tb_sdcard.sdcard_sim_inst.mem_data_i[5] top.tb_sdcard.sdcard_sim_inst.mem_data_i[4] top.tb_sdcard.sdcard_sim_inst.mem_data_i[3] top.tb_sdcard.sdcard_sim_inst.mem_data_i[2] top.tb_sdcard.sdcard_sim_inst.mem_data_i[1] top.tb_sdcard.sdcard_sim_inst.mem_data_i[0]
-#{top.tb_sdcard.sdcard_sim_inst.mem_data_o[7:0]} top.tb_sdcard.sdcard_sim_inst.mem_data_o[7] top.tb_sdcard.sdcard_sim_inst.mem_data_o[6] top.tb_sdcard.sdcard_sim_inst.mem_data_o[5] top.tb_sdcard.sdcard_sim_inst.mem_data_o[4] top.tb_sdcard.sdcard_sim_inst.mem_data_o[3] top.tb_sdcard.sdcard_sim_inst.mem_data_o[2] top.tb_sdcard.sdcard_sim_inst.mem_data_o[1] top.tb_sdcard.sdcard_sim_inst.mem_data_o[0]
-@28
-top.tb_sdcard.sdcard_sim_inst.mem_we_o
-@22
+#{top.tb_sdcard.sdcard_sim_inst.dat_crc[0][15:0]} top.tb_sdcard.sdcard_sim_inst.dat_crc[0][15] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][14] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][13] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][12] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][11] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][10] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][9] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][8] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][7] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][6] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][5] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][4] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][3] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][2] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][1] top.tb_sdcard.sdcard_sim_inst.dat_crc[0][0]
+#{top.tb_sdcard.sdcard_sim_inst.dat_crc[1][15:0]} top.tb_sdcard.sdcard_sim_inst.dat_crc[1][15] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][14] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][13] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][12] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][11] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][10] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][9] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][8] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][7] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][6] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][5] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][4] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][3] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][2] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][1] top.tb_sdcard.sdcard_sim_inst.dat_crc[1][0]
+#{top.tb_sdcard.sdcard_sim_inst.dat_crc[2][15:0]} top.tb_sdcard.sdcard_sim_inst.dat_crc[2][15] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][14] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][13] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][12] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][11] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][10] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][9] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][8] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][7] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][6] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][5] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][4] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][3] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][2] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][1] top.tb_sdcard.sdcard_sim_inst.dat_crc[2][0]
+#{top.tb_sdcard.sdcard_sim_inst.dat_crc[3][15:0]} top.tb_sdcard.sdcard_sim_inst.dat_crc[3][15] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][14] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][13] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][12] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][11] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][10] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][9] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][8] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][7] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][6] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][5] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][4] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][3] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][2] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][1] top.tb_sdcard.sdcard_sim_inst.dat_crc[3][0]
 #{top.tb_sdcard.sdcard_sim_inst.reader_addr[31:0]} top.tb_sdcard.sdcard_sim_inst.reader_addr[31] top.tb_sdcard.sdcard_sim_inst.reader_addr[30] top.tb_sdcard.sdcard_sim_inst.reader_addr[29] top.tb_sdcard.sdcard_sim_inst.reader_addr[28] top.tb_sdcard.sdcard_sim_inst.reader_addr[27] top.tb_sdcard.sdcard_sim_inst.reader_addr[26] top.tb_sdcard.sdcard_sim_inst.reader_addr[25] top.tb_sdcard.sdcard_sim_inst.reader_addr[24] top.tb_sdcard.sdcard_sim_inst.reader_addr[23] top.tb_sdcard.sdcard_sim_inst.reader_addr[22] top.tb_sdcard.sdcard_sim_inst.reader_addr[21] top.tb_sdcard.sdcard_sim_inst.reader_addr[20] top.tb_sdcard.sdcard_sim_inst.reader_addr[19] top.tb_sdcard.sdcard_sim_inst.reader_addr[18] top.tb_sdcard.sdcard_sim_inst.reader_addr[17] top.tb_sdcard.sdcard_sim_inst.reader_addr[16] top.tb_sdcard.sdcard_sim_inst.reader_addr[15] top.tb_sdcard.sdcard_sim_inst.reader_addr[14] top.tb_sdcard.sdcard_sim_inst.reader_addr[13] top.tb_sdcard.sdcard_sim_inst.reader_addr[12] top.tb_sdcard.sdcard_sim_inst.reader_addr[11] top.tb_sdcard.sdcard_sim_inst.reader_addr[10] top.tb_sdcard.sdcard_sim_inst.reader_addr[9] top.tb_sdcard.sdcard_sim_inst.reader_addr[8] top.tb_sdcard.sdcard_sim_inst.reader_addr[7] top.tb_sdcard.sdcard_sim_inst.reader_addr[6] top.tb_sdcard.sdcard_sim_inst.reader_addr[5] top.tb_sdcard.sdcard_sim_inst.reader_addr[4] top.tb_sdcard.sdcard_sim_inst.reader_addr[3] top.tb_sdcard.sdcard_sim_inst.reader_addr[2] top.tb_sdcard.sdcard_sim_inst.reader_addr[1] top.tb_sdcard.sdcard_sim_inst.reader_addr[0]
 @420
 top.tb_sdcard.sdcard_sim_inst.reader_state
@@ -136,7 +136,7 @@ top.tb_sdcard.sdcard_sim_inst.sd_clk_i
 top.tb_sdcard.sdcard_sim_inst.sd_cmd_io
 @22
 #{top.tb_sdcard.sdcard_sim_inst.sd_dat_io[3:0]} top.tb_sdcard.sdcard_sim_inst.sd_dat_io[3] top.tb_sdcard.sdcard_sim_inst.sd_dat_io[2] top.tb_sdcard.sdcard_sim_inst.sd_dat_io[1] top.tb_sdcard.sdcard_sim_inst.sd_dat_io[0]
-@1000200
+@1401200
 -sdcard_sim
 [pattern_trace] 1
 [pattern_trace] 0

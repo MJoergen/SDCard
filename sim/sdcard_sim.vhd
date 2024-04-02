@@ -75,44 +75,53 @@ architecture simulation of sdcard_sim is
    constant C_CMD_SET_BUS_WIDTH        : unsigned(7 downto 0)            := X"06"; -- ACMD6
    constant C_CMD_SD_SEND_OP_COND      : unsigned(7 downto 0)            := X"29"; -- ACMD41
 
-   pure function calc_crc (
-      arg : unsigned
-   ) return unsigned is
-      constant C_POLYNOMIAL : unsigned(6 downto 0) := "0001001";
-      variable crc_v        : unsigned(6 downto 0);
+   constant C_CRC_POLYNOMIAL_CMD : std_logic_vector(6 downto 0) := "0001001";
+   constant C_CRC_POLYNOMIAL_DAT : std_logic_vector(15 downto 0) := X"1021";
+   constant C_CRC_ZERO_CMD       : std_logic_vector(6 downto 0) := "0000000";
+
+   type dat_crc_type is array (natural range <>) of std_logic_vector(15 downto 0);
+   signal dat_crc : dat_crc_type(3 downto 0);
+
+   pure function update_crc (
+      arg  : std_logic_vector;
+      poly : std_logic_vector;
+      crc  : std_logic_vector
+   ) return std_logic_vector is
+      variable crc_v : std_logic_vector(poly'left downto 0);
    begin
-      crc_v := (others => '0');
+      crc_v := crc;
 
       for i in arg'range loop
-         if to_01(arg(i)) /= crc_v(6) then
-            crc_v := (crc_v(5 downto 0) & "0") xor C_POLYNOMIAL;
+         if to_01(arg(i)) /= crc_v(crc_v'left) then
+            crc_v := (crc_v(crc_v'left-1 downto 0) & "0") xor poly;
          else
-            crc_v := (crc_v(5 downto 0) & "0");
+            crc_v := (crc_v(crc_v'left-1 downto 0) & "0");
          end if;
       end loop;
 
       return crc_v;
-   end function calc_crc;
+   end function update_crc;
 
-   pure function crc_valid (
+   pure function cmd_crc_valid (
       arg : unsigned
    ) return boolean is
    begin
-      return arg(7 downto 0) = calc_crc(arg(arg'left downto 8)) & "1";
-   end function crc_valid;
+      return std_logic_vector(arg(7 downto 0)) = update_crc(std_logic_vector(arg(arg'left downto 8)), C_CRC_POLYNOMIAL_CMD, C_CRC_ZERO_CMD) & "1";
+   end function cmd_crc_valid;
 
-   pure function append_crc (
+   pure function append_cmd_crc (
       arg : unsigned
    ) return unsigned is
    begin
-      return arg & calc_crc(arg) & "1";
-   end function append_crc;
+      return arg & unsigned(update_crc(std_logic_vector(arg), C_CRC_POLYNOMIAL_CMD, C_CRC_ZERO_CMD)) & "1";
+   end function append_cmd_crc;
 
-   type     reader_state_type is (IDLE_ST, WAIT_ST, READ_ST, SEND_ST);
+   type     reader_state_type is (IDLE_ST, WAIT_ST, READ_ST, SEND_ST, SEND_CRC_ST);
    signal   reader_state        : reader_state_type                      := IDLE_ST;
    constant C_READER_WAITER_MAX : natural                                := 10000;
    signal   reader_waiter       : natural range 0 to C_READER_WAITER_MAX := 0;
    signal   reader_addr         : unsigned(31 downto 0);
+   signal   crc_count           : natural range 0 to 16;
 
    type     ram_type is array (natural range <>) of std_logic_vector(7 downto 0);
 
@@ -149,7 +158,7 @@ begin
                cmd           <= cmd(46 downto 0) & to_01(sd_cmd_io);
                cmd_bit_count <= cmd_bit_count + 1;
             else
-               if crc_valid(cmd) and to_01(cmd(47 downto 46)) = "01" then
+               if cmd_crc_valid(cmd) and to_01(cmd(47 downto 46)) = "01" then
                   cmd_valid <= true;
                end if;
                cmd_receiving <= false;
@@ -159,6 +168,7 @@ begin
    end process cmd_proc;
 
    reader_proc : process (sd_clk_i)
+      variable dat_v : std_logic_vector(3 downto 0);
    begin
       if rising_edge(sd_clk_i) then
          sd_dat_io <= (others => 'H');
@@ -178,19 +188,40 @@ begin
                else
                   reader_state <= READ_ST;
                   sd_dat_io    <= (others => '0');
+                  dat_crc      <= (others => (others => '0'));
                end if;
 
             when READ_ST =>
-               sd_dat_io <= ram(to_integer(reader_addr(14 downto 0)))(7 downto 4);
+               dat_v := ram(to_integer(reader_addr(14 downto 0)))(7 downto 4);
+               sd_dat_io <= dat_v;
+               for i in 0 to 3 loop
+                  dat_crc(i) <= update_crc("" & dat_v(i), C_CRC_POLYNOMIAL_DAT, dat_crc(i));
+               end loop;
                reader_state <= SEND_ST;
 
             when SEND_ST =>
-               sd_dat_io <= ram(to_integer(reader_addr(14 downto 0)))(3 downto 0);
+               dat_v := ram(to_integer(reader_addr(14 downto 0)))(3 downto 0);
+               sd_dat_io <= dat_v;
+               for i in 0 to 3 loop
+                  dat_crc(i) <= update_crc("" & dat_v(i), C_CRC_POLYNOMIAL_DAT, dat_crc(i));
+               end loop;
                if reader_addr(8 downto 0) = "111111111" then
-                  reader_state <= IDLE_ST;
+                  crc_count <= 16;
+                  reader_state <= SEND_CRC_ST;
                else
                   reader_addr  <= reader_addr  + 1;
                   reader_state <= READ_ST;
+               end if;
+
+            when SEND_CRC_ST =>
+               if crc_count > 0 then
+                  for i in 0 to 3 loop
+                     sd_dat_io(i) <= dat_crc(i)(15);
+                     dat_crc(i) <= dat_crc(i)(14 downto 0) & "0";
+                  end loop;
+                  crc_count <= crc_count - 1;
+               else
+                  reader_state <= IDLE_ST;
                end if;
 
          end case;
@@ -226,7 +257,7 @@ begin
                -- CMD2
                when C_CMD_ALL_SEND_CID =>
                   -- R2
-                  resp_data                        <= X"3F" & append_crc(card_cid);
+                  resp_data                        <= X"3F" & append_cmd_crc(card_cid);
                   resp_bit_count                   <= 136;
                   card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_IDENT;
 
@@ -235,7 +266,7 @@ begin
                   -- R6
                   resp_v                           := "00" & cmd(45 downto 8) or (X"00" & C_CARD_STAT_READY_FOR_DATA);
                   resp_v(R_CARD_STATUS_STATE)      := card_status(R_CARD_STATUS_STATE);
-                  resp_data                        <= append_crc(resp_v) & C_RESP_PADDING;
+                  resp_data                        <= append_cmd_crc(resp_v) & C_RESP_PADDING;
                   card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_STBY;
 
                -- CMD7
@@ -243,7 +274,7 @@ begin
                   -- R1b
                   resp_v                      := "00" & cmd(45 downto 8) or (X"00" & C_CARD_STAT_READY_FOR_DATA);
                   resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
-                  resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  resp_data                   <= append_cmd_crc(resp_v) & C_RESP_PADDING;
                   if card_status(R_CARD_STATUS_STATE) = C_CARD_STATUS_STATE_STBY then
                      card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_TRAN;
                   elsif card_status(R_CARD_STATUS_STATE) = C_CARD_STATUS_STATE_TRAN then
@@ -254,12 +285,12 @@ begin
                -- CMD8
                when C_CMD_SEND_IF_COND =>
                   -- R7
-                  resp_data <= append_crc(C_CMD_SEND_IF_COND & cmd(39 downto 8)) & C_RESP_PADDING;
+                  resp_data <= append_cmd_crc(C_CMD_SEND_IF_COND & cmd(39 downto 8)) & C_RESP_PADDING;
 
                -- CMD9
                when C_CMD_SEND_CSD =>
                   -- R2
-                  resp_data      <= X"3F" & append_crc(card_csd);
+                  resp_data      <= X"3F" & append_cmd_crc(card_csd);
                   resp_bit_count <= 136;
 
                -- CMD17
@@ -267,7 +298,7 @@ begin
                   -- R1
                   resp_v                      := "00" & cmd(45 downto 8);
                   resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
-                  resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  resp_data                   <= append_cmd_crc(resp_v) & C_RESP_PADDING;
 
                -- CMD55
                when C_CMD_APP_CMD =>
@@ -275,7 +306,7 @@ begin
                   resp_v                      := C_CMD_APP_CMD &
                                                  (C_CARD_STAT_READY_FOR_DATA or C_CARD_STAT_APP_CMD);
                   resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
-                  resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                  resp_data                   <= append_cmd_crc(resp_v) & C_RESP_PADDING;
                   card_status                 <= card_status or C_CARD_STAT_APP_CMD;
 
                -- ACMD6
@@ -285,7 +316,7 @@ begin
                      resp_v                      := "00" & cmd(45 downto 8)
                                                     or X"00" & (C_CARD_STAT_READY_FOR_DATA or C_CARD_STAT_APP_CMD);
                      resp_v(R_CARD_STATUS_STATE) := card_status(R_CARD_STATUS_STATE);
-                     resp_data                   <= append_crc(resp_v) & C_RESP_PADDING;
+                     resp_data                   <= append_cmd_crc(resp_v) & C_RESP_PADDING;
                   end if;
 
                -- ACMD41
@@ -293,7 +324,7 @@ begin
                   if (card_status and C_CARD_STAT_APP_CMD) /= 0 then
                      -- R3
                      resp_v    := X"3F" & card_ocr;
-                     resp_data <= append_crc(resp_v) & C_RESP_PADDING;
+                     resp_data <= append_cmd_crc(resp_v) & C_RESP_PADDING;
                   end if;
 
                when others =>
