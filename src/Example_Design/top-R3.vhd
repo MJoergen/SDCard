@@ -2,7 +2,7 @@ library ieee;
    use ieee.std_logic_1164.all;
    use ieee.numeric_std.all;
 
-entity top is
+entity top_r3 is
    port (
       sys_clk_i  : in    std_logic;
       sys_rstn_i : in    std_logic;
@@ -16,9 +16,9 @@ entity top is
       uart_rx_i  : in    std_logic;
       uart_tx_o  : out   std_logic
    );
-end entity top;
+end entity top_r3;
 
-architecture synthesis of top is
+architecture synthesis of top_r3 is
 
    signal avm_clk           : std_logic;
    signal avm_rst           : std_logic;
