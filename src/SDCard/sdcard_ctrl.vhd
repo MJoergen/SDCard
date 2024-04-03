@@ -31,42 +31,41 @@ library work;
 entity sdcard_ctrl is
    port (
       -- Avalon Memory Map
-      avm_clk_i         : in    std_logic; -- 50 Mhz
-      avm_rst_i         : in    std_logic; -- Synchronous reset, active high
-      avm_write_i       : in    std_logic;
-      avm_read_i        : in    std_logic;
-      avm_address_i     : in    std_logic_vector(31 downto 0);
-      avm_writedata_i   : in    std_logic_vector(7 downto 0);
-      avm_burstcount_i  : in    std_logic_vector(15 downto 0);
-      avm_waitrequest_o : out   std_logic;
-      avm_init_error_o  : out   std_logic;
-      avm_last_state_o  : out   std_logic_vector(7 downto 0);
-
-      sd_clk_o          : out   std_logic;
-      cmd_valid_o       : out   std_logic;
-      cmd_ready_i       : in    std_logic;
-      cmd_index_o       : out   natural range 0 to 63;
-      cmd_data_o        : out   std_logic_vector(31 downto 0);
-      cmd_resp_o        : out   natural range 0 to 255;
-      cmd_timeout_o     : out   natural range 0 to 2 ** 24 - 1;
-      resp_valid_i      : in    std_logic;
-      resp_ready_o      : out   std_logic;
-      resp_data_i       : in    std_logic_vector(135 downto 0);
-      resp_timeout_i    : in    std_logic;
-      resp_error_i      : in    std_logic;
-      dat_ready_i       : in    std_logic
+      clk_i           : in    std_logic;                    -- 50 Mhz
+      rst_i           : in    std_logic;                    -- Synchronous reset, active high
+      ctrl_wr_i       : in    std_logic;
+      ctrl_wr_multi_i : in    std_logic;
+      ctrl_wr_erase_i : in    std_logic_vector(7 downto 0); -- for wr_multi_i only
+      ctrl_rd_i       : in    std_logic;
+      ctrl_rd_multi_i : in    std_logic;
+      ctrl_busy_o     : out   std_logic;
+      ctrl_lba_i      : in    std_logic_vector(31 downto 0);
+      ctrl_err_o      : out   std_logic_vector(7 downto 0);
+      sd_clk_o        : out   std_logic;
+      dat_rd_done_i   : in    std_logic;
+      cmd_valid_o     : out   std_logic;
+      cmd_ready_i     : in    std_logic;
+      cmd_index_o     : out   natural range 0 to 63;
+      cmd_data_o      : out   std_logic_vector(31 downto 0);
+      cmd_resp_o      : out   natural range 0 to 255;
+      cmd_timeout_o   : out   natural range 0 to 2 ** 24 - 1;
+      resp_valid_i    : in    std_logic;
+      resp_ready_o    : out   std_logic;
+      resp_data_i     : in    std_logic_vector(135 downto 0);
+      resp_timeout_i  : in    std_logic;
+      resp_error_i    : in    std_logic
    );
 end entity sdcard_ctrl;
 
 architecture synthesis of sdcard_ctrl is
 
    -- Number of attempts at initiliazing card (ACMD41)
-   constant C_INIT_COUNT_MAX : natural                 := 100; -- Approximately one second
+   constant C_INIT_COUNT_MAX : natural                  := 100; -- Approximately one second
 
    -- An arbitrary 8-bit pattern
    constant C_CMD8_CHECK : std_logic_vector(7 downto 0) := X"5B";
 
-   signal   clk_counter : std_logic_vector(6 downto 0) := (others => '0');
+   signal   clk_counter : std_logic_vector(6 downto 0)  := (others => '0');
    signal   init_count  : natural range 0 to C_INIT_COUNT_MAX;
 
    signal   card_ver2 : std_logic;
@@ -93,11 +92,10 @@ architecture synthesis of sdcard_ctrl is
       SET_BUS_WIDTH_ST,
       READY_ST,
       READ_SINGLE_BLOCK_ST,
-      WAITING_ST,
       READING_ST
    );
 
-   signal   state : state_type                         := INIT_ST;
+   signal   state : state_type                          := INIT_ST;
 
    pure function state_to_slv (
       state_v : state_type
@@ -149,11 +147,8 @@ architecture synthesis of sdcard_ctrl is
          when READ_SINGLE_BLOCK_ST =>
             return X"15";
 
-         when WAITING_ST =>
-            return X"16";
-
          when READING_ST =>
-            return X"17";
+            return X"16";
 
       end case;
 
@@ -162,23 +157,23 @@ architecture synthesis of sdcard_ctrl is
 
 begin
 
-   resp_ready_o      <= '1';
+   resp_ready_o <= '1';
 
    ----------------------------------
    -- Generate SD clock
    ----------------------------------
 
    -- Divide by 64
-   counter_proc : process (avm_clk_i)
+   counter_proc : process (clk_i)
    begin
-      if rising_edge(avm_clk_i) then
+      if rising_edge(clk_i) then
          clk_counter <= std_logic_vector(unsigned(clk_counter) + 1);
       end if;
    end process counter_proc;
 
-   out_proc : process (avm_clk_i)
+   out_proc : process (clk_i)
    begin
-      if rising_edge(avm_clk_i) then
+      if rising_edge(clk_i) then
 
          case state is
 
@@ -199,7 +194,6 @@ begin
 
             when READY_ST               |
                  READ_SINGLE_BLOCK_ST   |
-                 WAITING_ST             |
                  READING_ST =>
                sd_clk_o      <= clk_counter(0);  -- 50 MHz / 2 = 25 MHz
                cmd_timeout_o <= 12500000;        -- 1 second @ 12.5 MHz
@@ -216,41 +210,42 @@ begin
    -- State Machine shown in Figure 4-2, Page 62.
    -- Section 4.7.4 Detailed Command Description
 
-   avm_waitrequest_o <= '0' when state = READY_ST else
+   ctrl_busy_o       <= '0' when state = READY_ST else
                         '1';
 
-   fsm_proc : process (avm_clk_i)
+   fsm_proc : process (clk_i)
    begin
-      if rising_edge(avm_clk_i) then
+      if rising_edge(clk_i) then
          if state /= ERROR_ST then
-            avm_last_state_o <= state_to_slv(state);
+            ctrl_err_o <= state_to_slv(state);
          end if;
 
          if cmd_ready_i = '1' then
             cmd_valid_o <= '0';
          end if;
 
+
+
          case state is
 
             when INIT_ST =>
                if cmd_ready_i = '1' then
                   -- Initialize information about card
-                  card_ver2        <= '0';
-                  card_ccs         <= '0';
-                  card_cid         <= (others => '0');
-                  card_csd         <= (others => '0');
-                  card_rca         <= (others => '0');
-                  avm_init_error_o <= '0';
+                  card_ver2   <= '0';
+                  card_ccs    <= '0';
+                  card_cid    <= (others => '0');
+                  card_csd    <= (others => '0');
+                  card_rca    <= (others => '0');
 
                   -- Send CMD0 (see section 4.2.1)
                   -- This resets the SD Card
-                  cmd_index_o      <= C_CMD_GO_IDLE_STATE;
-                  cmd_data_o       <= (others => '0');
-                  cmd_resp_o       <= 0;
-                  cmd_valid_o      <= '1';
+                  cmd_index_o <= C_CMD_GO_IDLE_STATE;
+                  cmd_data_o  <= (others => '0');
+                  cmd_resp_o  <= 0;
+                  cmd_valid_o <= '1';
                   -- Retry count for ACMD41
-                  init_count       <= C_INIT_COUNT_MAX;
-                  state            <= GO_IDLE_STATE_ST;
+                  init_count  <= C_INIT_COUNT_MAX;
+                  state       <= GO_IDLE_STATE_ST;
                end if;
 
             when GO_IDLE_STATE_ST =>
@@ -312,8 +307,8 @@ begin
                      resp_data_i(R_CARD_STAT_CURRENT_STATE)  = C_CARD_STATE_IDLE and
                      resp_data_i(C_CARD_STAT_READY_FOR_DATA) = '1' and
                      resp_data_i(C_CARD_STAT_APP_CMD)        = '1' then
-                     cmd_index_o           <= C_ACMD_SD_SEND_OP_COND;
-                     cmd_data_o            <= (others => '0');
+                     cmd_index_o                  <= C_ACMD_SD_SEND_OP_COND;
+                     cmd_data_o                   <= (others => '0');
                      cmd_data_o(C_ACMD41_OCR_33X) <= '1';
                      if card_ver2 = '1' then
                         cmd_data_o(C_ACMD41_HCS) <= '1';
@@ -479,9 +474,9 @@ begin
                end if;
 
             when READY_ST =>
-               if avm_read_i = '1' then
+               if ctrl_rd_i = '1' then
                   cmd_index_o <= C_CMD_READ_SINGLE_BLOCK;
-                  cmd_data_o  <= avm_address_i;
+                  cmd_data_o  <= ctrl_lba_i;
                   cmd_resp_o  <= C_RESP_R1_LEN;
                   cmd_valid_o <= '1';
                   state       <= READ_SINGLE_BLOCK_ST;
@@ -492,34 +487,26 @@ begin
                if resp_valid_i = '1' then
                   -- Check response R1
                   if resp_timeout_i = '0' and resp_error_i = '0' then
-                     state <= WAITING_ST;
+                     state <= READING_ST;
                   else
                      state <= ERROR_ST;
                   end if;
                end if;
-               if dat_ready_i = '0' then
-                  state <= READING_ST;
-               end if;
-
-            when WAITING_ST =>
-               if dat_ready_i = '0' then
-                  state <= READING_ST;
-               end if;
 
             when READING_ST =>
-               if dat_ready_i = '1' then
-                  state <= READY_ST;
-               end if;
+               if dat_rd_done_i = '1' then
+                 state <= READY_ST;
+              end if;
 
             when ERROR_ST =>
-               avm_init_error_o <= '1';
+               null;
 
             when others =>
                null;
 
          end case;
 
-         if avm_rst_i = '1' then
+         if rst_i = '1' then
             state       <= INIT_ST;
             cmd_valid_o <= '0';
          end if;

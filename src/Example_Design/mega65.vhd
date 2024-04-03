@@ -7,27 +7,28 @@ entity mega65 is
       G_AVM_CLK_HZ : natural
    );
    port (
-      sys_clk_i           : in    std_logic;
+      sys_clk_i  : in    std_logic;
       -- Interface to SDCard controller
-      avm_clk_i           : in    std_logic;
-      avm_rst_i           : in    std_logic;
-      avm_write_o         : out   std_logic;
-      avm_read_o          : out   std_logic;
-      avm_address_o       : out   std_logic_vector(31 downto 0);
-      avm_writedata_o     : out   std_logic_vector(7 downto 0);
-      avm_burstcount_o    : out   std_logic_vector(15 downto 0);
-      avm_readdata_i      : in    std_logic_vector(7 downto 0);
-      avm_readdatavalid_i : in    std_logic;
-      avm_waitrequest_i   : in    std_logic;
-      uart_valid_i        : in    std_logic;
-      uart_ready_o        : out   std_logic;
-      uart_data_i         : in    std_logic_vector(7 downto 0);
+      clk_i      : in    std_logic;
+      rst_i      : in    std_logic;
+      wr_o       : out   std_logic;
+      wr_multi_o : out   std_logic;
+      wr_erase_o : out   std_logic_vector(7 downto 0); -- for wr_multi_i only
+      wr_data_o  : out   std_logic_vector(7 downto 0);
+      wr_valid_o : out   std_logic;
+      wr_ready_i : in    std_logic;
+      rd_o       : out   std_logic;
+      rd_multi_o : out   std_logic;
+      rd_data_i  : in    std_logic_vector(7 downto 0);
+      rd_valid_i : in    std_logic;
+      rd_ready_o : out   std_logic;
+      busy_i     : in    std_logic;
+      lba_o      : out   std_logic_vector(31 downto 0);
+      err_i      : in    std_logic_vector(7 downto 0);
       -- Interface to MEGA65 I/O ports
-      uart_rx_i           : in    std_logic;
-      uart_tx_o           : out   std_logic;
-      kb_io0_o            : out   std_logic;
-      kb_io1_o            : out   std_logic;
-      kb_io2_i            : in    std_logic
+      kb_io0_o   : out   std_logic;
+      kb_io1_o   : out   std_logic;
+      kb_io2_i   : in    std_logic
    );
 end entity mega65;
 
@@ -51,28 +52,23 @@ begin
 
    host_inst : entity work.host
       port map (
-         avm_clk_i           => avm_clk_i,
-         avm_rst_i           => avm_rst_i,
-         avm_write_o         => avm_write_o,
-         avm_read_o          => avm_read_o,
-         avm_address_o       => avm_address_o,
-         avm_writedata_o     => avm_writedata_o,
-         avm_burstcount_o    => avm_burstcount_o,
-         avm_readdata_i      => avm_readdata_i,
-         avm_readdatavalid_i => avm_readdatavalid_i,
-         avm_waitrequest_i   => avm_waitrequest_i
+         clk_i      => clk_i,
+         rst_i      => rst_i,
+         wr_o       => wr_o,
+         wr_multi_o => wr_multi_o,
+         wr_erase_o => wr_erase_o,
+         wr_data_o  => wr_data_o,
+         wr_valid_o => wr_valid_o,
+         wr_ready_i => wr_ready_i,
+         rd_o       => rd_o,
+         rd_multi_o => rd_multi_o,
+         rd_data_i  => rd_data_i,
+         rd_valid_i => rd_valid_i,
+         rd_ready_o => rd_ready_o,
+         busy_i     => busy_i,
+         lba_o      => lba_o,
+         err_i      => err_i
       ); -- host_inst
-
-   uart_inst : entity work.uart
-      port map (
-         clk_i      => avm_clk_i,
-         rst_i      => avm_rst_i,
-         uart_div_i => G_AVM_CLK_HZ / 115_200,
-         s_valid_i  => uart_valid_i,
-         s_ready_o  => uart_ready_o,
-         s_data_i   => uart_data_i,
-         uart_tx_o  => uart_tx_o
-      ); -- uart_inst
 
 end architecture synthesis;
 

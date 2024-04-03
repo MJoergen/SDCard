@@ -1,9 +1,4 @@
--- This block sends commands to the SDCard and receives responses.
--- Only one outstanding command is allowed at any time.
--- This module checks for timeout, and always generates a response, when a response is expected.
--- CRC generation is performed on all commands.
-
--- Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
+-- Created by Michael Jørgensen in 2024 (mjoergen.github.io/SDCard).
 
 library ieee;
    use ieee.std_logic_1164.all;
@@ -17,16 +12,14 @@ entity sdcard_dat is
       clk_i          : in    std_logic; -- 50 MHz
       rst_i          : in    std_logic;
 
-      ready_o        : out   std_logic;
+      dat_wr_data_i  : in    std_logic_vector(7 downto 0);
+      dat_wr_valid_i : in    std_logic;
+      dat_wr_ready_o : out   std_logic;
 
-      -- Command to send to SDCard
-      tx_valid_i     : in    std_logic;
-      tx_data_i      : in    std_logic_vector(7 downto 0);
-
-      -- Response received from SDCard
-      rx_valid_o     : out   std_logic;
-      rx_data_o      : out   std_logic_vector(7 downto 0);
-      rx_crc_error_o : out   std_logic;
+      dat_rd_data_o  : out   std_logic_vector(7 downto 0);
+      dat_rd_valid_o : out   std_logic;
+      dat_rd_ready_i : in    std_logic;
+      dat_rd_done_o  : out   std_logic;
 
       -- SDCard device interface
       sd_clk_i       : in    std_logic; -- 25 MHz or 400 kHz
@@ -73,45 +66,59 @@ architecture synthesis of sdcard_dat is
    type     state_type is (
       IDLE_ST,
       RX_ST,
-      ERROR_ST
+      FORWARD_ST
    );
 
    signal   state : state_type       := IDLE_ST;
 
+   type     sector_type is array (0 to 511) of std_logic_vector(7 downto 0);
+   signal   sector : sector_type;
+   signal   addr   : natural range 0 to 511;
+
 begin
 
-   ready_o <= '1' when state = IDLE_ST else
-              '0';
+   dat_wr_ready_o <= '1';
 
    fsm_proc : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         rx_valid_o <= '0';
+         dat_rd_done_o <= '0';
 
-         if sd_clk_d = '0' and sd_clk_i = '1' then -- Rising edge of sd_clk_i
+         if dat_rd_ready_i = '1' then
+            dat_rd_valid_o <= '0';
+         end if;
 
-            case state is
+         case state is
 
-               when IDLE_ST =>
+            when IDLE_ST =>
+               if sd_clk_d = '0' and sd_clk_i = '1' then
+                  -- Rising edge of sd_clk_i
                   if sd_dat_in_i = "0000" then
-                     rx_crc_error_o <= '0';
-                     rx_count       <= C_RX_COUNT_MAX;
-                     crc0           <= (others => '0');
-                     crc1           <= (others => '0');
-                     crc2           <= (others => '0');
-                     crc3           <= (others => '0');
-                     rx_msb_valid   <= '0';
-                     state          <= RX_ST;
+                     rx_count     <= C_RX_COUNT_MAX;
+                     crc0         <= (others => '0');
+                     crc1         <= (others => '0');
+                     crc2         <= (others => '0');
+                     crc3         <= (others => '0');
+                     rx_msb_valid <= '0';
+                     state        <= RX_ST;
+                     addr         <= 0;
                   end if;
+               end if;
 
-               when RX_ST =>
+            when RX_ST =>
+               if sd_clk_d = '0' and sd_clk_i = '1' then
+                  -- Rising edge of sd_clk_i
                   if rx_count > 16 then
                      if rx_msb_valid = '0' then
                         rx_msb_data  <= sd_dat_in_i;
                         rx_msb_valid <= '1';
                      else
-                        rx_data_o    <= rx_msb_data & sd_dat_in_i;
-                        rx_valid_o   <= '1';
+                        sector(addr) <= rx_msb_data & sd_dat_in_i;
+                        if addr < 511 then
+                           addr <= addr + 1;
+                        else
+                           addr <= 0;
+                        end if;
                         rx_msb_valid <= '0';
                      end if;
                      crc0 <= new_crc(crc0, sd_dat_in_i(0));
@@ -128,19 +135,29 @@ begin
                      rx_crc3  <= rx_crc3(14 downto 0) & sd_dat_in_i(3);
                   else
                      if rx_crc0 /= crc0 or rx_crc1 /= crc1 or rx_crc2 /= crc2 or rx_crc3 /= crc3 then
-                        state <= ERROR_ST;
-                     else
                         state <= IDLE_ST;
+                     else
+                        addr           <= 0;
+                        dat_rd_data_o  <= sector(0);
+                        dat_rd_valid_o <= '1';
+                        state          <= FORWARD_ST;
                      end if;
                   end if;
+               end if;
 
-               when ERROR_ST =>
-                  rx_crc_error_o <= '1';
-                  state          <= IDLE_ST;
+            when FORWARD_ST =>
+               if dat_rd_ready_i = '1' then
+                  if addr < 511 then
+                     dat_rd_data_o  <= sector(addr + 1);
+                     addr           <= addr + 1;
+                     dat_rd_valid_o <= '1';
+                  else
+                     dat_rd_done_o <= '1';
+                     state         <= IDLE_ST;
+                  end if;
+               end if;
 
-            end case;
-
-         end if;
+         end case;
 
          if rst_i = '1' then
             state <= IDLE_ST;
@@ -154,7 +171,7 @@ begin
       if rising_edge(clk_i) then
          sd_clk_d <= sd_clk_i;
          if sd_clk_d = '1' and sd_clk_i = '0' then -- Falling edge of sd_clk_i
-            sd_dat_out_o <= "1111";
+            sd_dat_out_o  <= "1111";
             sd_dat_oe_n_o <= '1';
          end if;
       end if;
