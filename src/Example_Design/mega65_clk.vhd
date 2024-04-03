@@ -1,4 +1,4 @@
--- This is the SD card clock synthesis.
+-- This is the HyperRAM clock synthesis.
 --
 -- Created by Michael Jørgensen in 2022 (mjoergen.github.io/HyperRAM).
 
@@ -11,16 +11,16 @@ use unisim.vcomponents.all;
 library xpm;
 use xpm.vcomponents.all;
 
-entity clk is
+entity mega65_clk is
    port (
-      sys_clk_i  : in  std_logic;   -- expects 100 MHz
-      sys_rstn_i : in  std_logic;   -- Asynchronous, asserted low
-      clk_o      : out std_logic;   -- 50 MHz
-      rst_o      : out std_logic
+      sys_clk_i : in  std_logic;   -- expects 100 MHz
+      sys_rst_i : in  std_logic;   -- Asynchronous, asserted low
+      vga_clk_o : out std_logic;   -- 74.25 MHz
+      vga_rst_o : out std_logic
    );
-end entity clk;
+end entity mega65_clk;
 
-architecture synthesis of clk is
+architecture synthesis of mega65_clk is
 
    signal mmcm_fb   : std_logic;
    signal mmcm_clk  : std_logic;
@@ -40,11 +40,11 @@ begin
          STARTUP_WAIT         => FALSE,
          CLKIN1_PERIOD        => 10.0,       -- INPUT @ 100 MHz
          REF_JITTER1          => 0.010,
-         DIVCLK_DIVIDE        => 1,
-         CLKFBOUT_MULT_F      => 10.000,
+         DIVCLK_DIVIDE        => 4,
+         CLKFBOUT_MULT_F      => 37.125,
          CLKFBOUT_PHASE       => 0.000,
          CLKFBOUT_USE_FINE_PS => FALSE,
-         CLKOUT0_DIVIDE_F     => 20.000,     -- 50 MHz
+         CLKOUT0_DIVIDE_F     => 12.500,     -- 74.25 MHz
          CLKOUT0_PHASE        => 0.000,
          CLKOUT0_DUTY_CYCLE   => 0.500,
          CLKOUT0_USE_FINE_PS  => FALSE
@@ -94,7 +94,7 @@ begin
    i_bufg_clk : BUFG
       port map (
          I => mmcm_clk,
-         O => clk_o
+         O => vga_clk_o
       ); -- i_bufg_clk
 
 
@@ -107,9 +107,9 @@ begin
          INIT_SYNC_FF => 1  -- Enable simulation init values
       )
       port map (
-         src_rst  => not (sys_rstn_i and locked),  -- 1-bit input: Source reset signal.
-         dest_clk => clk_o,                        -- 1-bit input: Destination clock.
-         dest_rst => rst_o                         -- 1-bit output: src_rst synchronized to the destination clock domain.
+         src_rst  => not (not sys_rst_i and locked),  -- 1-bit input: Source reset signal.
+         dest_clk => vga_clk_o,                       -- 1-bit input: Destination clock.
+         dest_rst => vga_rst_o                        -- 1-bit output: src_rst synchronized to the destination clock domain.
                                                    -- This output is registered.
       ); -- i_xpm_cdc_sync_rst_pixel
 
