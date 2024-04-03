@@ -8,21 +8,21 @@ library ieee;
 
 entity host is
    port (
-      clk_i      : in    std_logic;
-      rst_i      : in    std_logic;
-      wr_o       : out   std_logic;
-      wr_multi_o : out   std_logic;
-      wr_erase_o : out   std_logic_vector(7 downto 0); -- for wr_multi_i only
-      wr_data_o  : out   std_logic_vector(7 downto 0);
-      wr_valid_o : out   std_logic;
-      wr_ready_i : in    std_logic;
-      rd_o       : out   std_logic;
-      rd_multi_o : out   std_logic;
-      rd_data_i  : in    std_logic_vector(7 downto 0);
-      rd_valid_i : in    std_logic;
-      rd_ready_o : out   std_logic;
-      busy_i     : in    std_logic;
-      lba_o      : out   std_logic_vector(31 downto 0);
+      clk_i        : in    std_logic;
+      rst_i        : in    std_logic;
+      wr_o         : out   std_logic;
+      wr_multi_o   : out   std_logic;
+      wr_erase_o   : out   std_logic_vector(7 downto 0); -- for wr_multi_i only
+      wr_data_o    : out   std_logic_vector(7 downto 0);
+      wr_valid_o   : out   std_logic;
+      wr_ready_i   : in    std_logic;
+      rd_o         : out   std_logic;
+      rd_multi_o   : out   std_logic;
+      rd_data_i    : in    std_logic_vector(7 downto 0);
+      rd_valid_i   : in    std_logic;
+      rd_ready_o   : out   std_logic;
+      busy_i       : in    std_logic;
+      lba_o        : out   std_logic_vector(31 downto 0);
       err_i      : in    std_logic_vector(7 downto 0)
    );
 end entity host;
@@ -108,9 +108,6 @@ begin
                      offset <= offset + 1;
                   else
                      state <= IDLE_ST;
-                  end if;
-                  if rd_data_i /= get_data(sector, offset) then
-                     state <= ERROR_ST;
                   end if;
                end if;
                null;

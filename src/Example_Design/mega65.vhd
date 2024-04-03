@@ -33,6 +33,7 @@ entity mega65 is
       kb_io0_o       : out   std_logic;
       kb_io1_o       : out   std_logic;
       kb_io2_i       : in    std_logic;
+      uart_tx_o      : out   std_logic;
       vga_red_o      : out   std_logic_vector(7 downto 0);
       vga_green_o    : out   std_logic_vector(7 downto 0);
       vga_blue_o     : out   std_logic_vector(7 downto 0);
@@ -51,9 +52,15 @@ architecture synthesis of mega65 is
    constant C_VIDEO_MODE : video_modes_t := C_VIDEO_MODE_1280_720_60;
    constant C_FONT_FILE  : string        := "font8x8.txt";
 
+   signal   uart_valid : std_logic;
+   signal   uart_ready : std_logic;
+   signal   uart_data  : std_logic_vector(7 downto 0);
+
    signal   vga_clk    : std_logic;
    signal   vga_rst    : std_logic;
    signal   vga_digits : std_logic_vector(31 downto 0);
+
+   signal   lba_hex   : std_logic_vector(63 downto 0);
 
 begin
 
@@ -81,23 +88,59 @@ begin
 
    host_inst : entity work.host
       port map (
+         clk_i        => clk_i,
+         rst_i        => rst_i,
+         wr_o         => wr_o,
+         wr_multi_o   => wr_multi_o,
+         wr_erase_o   => wr_erase_o,
+         wr_data_o    => wr_data_o,
+         wr_valid_o   => wr_valid_o,
+         wr_ready_i   => wr_ready_i,
+         rd_o         => rd_o,
+         rd_multi_o   => rd_multi_o,
+         rd_data_i    => rd_data_i,
+         rd_valid_i   => rd_valid_i,
+         rd_ready_o   => rd_ready_o,
+         busy_i       => busy_i,
+         lba_o        => lba_o,
+         err_i        => err_i
+      ); -- host_inst
+
+   hexifier_inst : entity work.hexifier
+      generic map (
+         G_DATA_NIBBLES => 8
+      )
+      port map (
+         s_data_i => lba_o,
+         m_data_o => lba_hex
+      ); -- hexifier_inst
+
+   serializer_inst : entity work.serializer
+      generic map (
+         G_DATA_SIZE_IN  => 80,
+         G_DATA_SIZE_OUT => 8
+      )
+      port map (
+         clk_i     => clk_i,
+         rst_i     => rst_i,
+         s_valid_i => wr_o or rd_o,
+         s_ready_o => open,
+         s_data_i  => lba_hex & X"0D0A",
+         m_valid_o => uart_valid,
+         m_ready_i => uart_ready,
+         m_data_o  => uart_data
+      ); -- serializer_inst
+
+   uart_inst : entity work.uart
+      port map (
          clk_i      => clk_i,
          rst_i      => rst_i,
-         wr_o       => wr_o,
-         wr_multi_o => wr_multi_o,
-         wr_erase_o => wr_erase_o,
-         wr_data_o  => wr_data_o,
-         wr_valid_o => wr_valid_o,
-         wr_ready_i => wr_ready_i,
-         rd_o       => rd_o,
-         rd_multi_o => rd_multi_o,
-         rd_data_i  => rd_data_i,
-         rd_valid_i => rd_valid_i,
-         rd_ready_o => rd_ready_o,
-         busy_i     => busy_i,
-         lba_o      => lba_o,
-         err_i      => err_i
-      ); -- host_inst
+         uart_div_i => G_AVM_CLK_HZ / 115_200,
+         s_valid_i  => uart_valid,
+         s_ready_o  => uart_ready,
+         s_data_i   => uart_data,
+         uart_tx_o  => uart_tx_o
+      ); -- uart_inst
 
    cdc_avm2vga_inst : component xpm_cdc_array_single
       generic map (

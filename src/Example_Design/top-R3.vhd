@@ -14,7 +14,7 @@ entity top_r3 is
       sd_cmd_io      : inout std_logic;
       sd_dat_io      : inout std_logic_vector(3 downto 0);
       uart_rx_i      : in    std_logic;
-      uart_tx_o      : out   std_logic := '1';
+      uart_tx_o      : out   std_logic;
       vga_red_o      : out   std_logic_vector(7 downto 0);
       vga_green_o    : out   std_logic_vector(7 downto 0);
       vga_blue_o     : out   std_logic_vector(7 downto 0);
@@ -93,6 +93,7 @@ begin
          kb_io0_o       => kb_io0_o,
          kb_io1_o       => kb_io1_o,
          kb_io2_i       => kb_io2_i,
+         uart_tx_o      => uart_tx_o,
          vga_red_o      => vga_red_o,
          vga_green_o    => vga_green_o,
          vga_blue_o     => vga_blue_o,
