@@ -51,7 +51,7 @@ architecture synthesis of sdcard_wrapper is
    signal sd_dat_out_reg  : std_logic_vector(3 downto 0);
    signal sd_dat_oe_n_reg : std_logic;
 
-   -- These signals are references in the XDC file, and must therefore not be optimized or
+   -- These signals are referenced in the XDC file, and must therefore not be optimized or
    -- altered in any way.
    attribute dont_touch : string;
    attribute dont_touch of sd_clk_reg      : signal is "true";
@@ -73,9 +73,6 @@ architecture synthesis of sdcard_wrapper is
    signal resp_error   : std_logic;
    signal dat_rd_done  : std_logic;
    signal dat_rd_error : std_logic;
-
-   signal sd_clk_d  : std_logic;
-   signal count_low : std_logic_vector(7 downto 0);
 
 begin
 
@@ -134,7 +131,7 @@ begin
          sd_cmd_in_i    => sd_cmd_in,
          sd_cmd_out_o   => sd_cmd_out,
          sd_cmd_oe_n_o  => sd_cmd_oe_n
-      ); -- sdcard_cmd_logger_inst
+      ); -- sdcard_cmd_inst
 
 
    ----------------------------------
@@ -158,21 +155,6 @@ begin
          sd_dat_out_o   => sd_dat_out,
          sd_dat_oe_n_o  => sd_dat_oe_n
       ); -- sdcard_dat_inst
-
-   count_low_proc : process (clk_i)
-   begin
-      if rising_edge(clk_i) then
-         sd_clk_d <= sd_clk;
-
-         if sd_clk_d = '0' and sd_clk = '1' then
-            if sd_cmd_in = '0' then
-               count_low <= count_low + 1;
-            else
-               count_low <= (others => '0');
-            end if;
-         end if;
-      end if;
-   end process count_low_proc;
 
 
    ---------------------------------------------------------
