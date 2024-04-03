@@ -4,17 +4,26 @@ library ieee;
 
 entity top_r3 is
    port (
-      sys_clk_i  : in    std_logic;
-      sys_rstn_i : in    std_logic;
-      kb_io0_o   : out   std_logic;
-      kb_io1_o   : out   std_logic;
-      kb_io2_i   : in    std_logic;
-      sd_cd_i    : in    std_logic;
-      sd_clk_o   : out   std_logic;
-      sd_cmd_io  : inout std_logic;
-      sd_dat_io  : inout std_logic_vector(3 downto 0);
-      uart_rx_i  : in    std_logic;
-      uart_tx_o  : out   std_logic := '1'
+      sys_clk_i      : in    std_logic;
+      sys_rstn_i     : in    std_logic;
+      kb_io0_o       : out   std_logic;
+      kb_io1_o       : out   std_logic;
+      kb_io2_i       : in    std_logic;
+      sd_cd_i        : in    std_logic;
+      sd_clk_o       : out   std_logic;
+      sd_cmd_io      : inout std_logic;
+      sd_dat_io      : inout std_logic_vector(3 downto 0);
+      uart_rx_i      : in    std_logic;
+      uart_tx_o      : out   std_logic := '1';
+      vga_red_o      : out   std_logic_vector(7 downto 0);
+      vga_green_o    : out   std_logic_vector(7 downto 0);
+      vga_blue_o     : out   std_logic_vector(7 downto 0);
+      vga_hs_o       : out   std_logic;
+      vga_vs_o       : out   std_logic;
+      vdac_clk_o     : out   std_logic;
+      vdac_sync_n_o  : out   std_logic;
+      vdac_blank_n_o : out   std_logic;
+      vdac_psave_n_o : out   std_logic
    );
 end entity top_r3;
 
@@ -61,28 +70,38 @@ begin
          G_AVM_CLK_HZ => 50_000_000
       )
       port map (
-         sys_clk_i  => sys_clk_i,
+         sys_clk_i      => sys_clk_i,
+         sys_rst_i      => not sys_rstn_i,
          -- Interface to SDCard controller
-         clk_i      => clk,
-         rst_i      => rst,
-         wr_o       => wr,
-         wr_multi_o => wr_multi,
-         wr_erase_o => wr_erase,
-         wr_data_o  => wr_data,
-         wr_valid_o => wr_valid,
-         wr_ready_i => wr_ready,
-         rd_o       => rd,
-         rd_multi_o => rd_multi,
-         rd_data_i  => rd_data,
-         rd_valid_i => rd_valid,
-         rd_ready_o => rd_ready,
-         busy_i     => busy,
-         lba_o      => lba,
-         err_i      => err,
+         clk_i          => clk,
+         rst_i          => rst,
+         wr_o           => wr,
+         wr_multi_o     => wr_multi,
+         wr_erase_o     => wr_erase,
+         wr_data_o      => wr_data,
+         wr_valid_o     => wr_valid,
+         wr_ready_i     => wr_ready,
+         rd_o           => rd,
+         rd_multi_o     => rd_multi,
+         rd_data_i      => rd_data,
+         rd_valid_i     => rd_valid,
+         rd_ready_o     => rd_ready,
+         busy_i         => busy,
+         lba_o          => lba,
+         err_i          => err,
          -- Interface to MEGA65 I/O ports
-         kb_io0_o   => kb_io0_o,
-         kb_io1_o   => kb_io1_o,
-         kb_io2_i   => kb_io2_i
+         kb_io0_o       => kb_io0_o,
+         kb_io1_o       => kb_io1_o,
+         kb_io2_i       => kb_io2_i,
+         vga_red_o      => vga_red_o,
+         vga_green_o    => vga_green_o,
+         vga_blue_o     => vga_blue_o,
+         vga_hs_o       => vga_hs_o,
+         vga_vs_o       => vga_vs_o,
+         vdac_clk_o     => vdac_clk_o,
+         vdac_sync_n_o  => vdac_sync_n_o,
+         vdac_blank_n_o => vdac_blank_n_o,
+         vdac_psave_n_o => vdac_psave_n_o
       ); -- mega65_inst
 
 

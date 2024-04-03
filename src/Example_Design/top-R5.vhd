@@ -4,17 +4,26 @@ library ieee;
 
 entity top_r5 is
    port (
-      sys_clk_i  : in    std_logic;
-      sys_rst_i  : in    std_logic;
-      kb_io0_o   : out   std_logic;
-      kb_io1_o   : out   std_logic;
-      kb_io2_i   : in    std_logic;
-      sd_cd_i    : in    std_logic;
-      sd_clk_o   : out   std_logic;
-      sd_cmd_io  : inout std_logic;
-      sd_dat_io  : inout std_logic_vector(3 downto 0);
-      uart_rx_i  : in    std_logic;
-      uart_tx_o  : out   std_logic
+      sys_clk_i      : in    std_logic;
+      sys_rst_i      : in    std_logic;
+      kb_io0_o       : out   std_logic;
+      kb_io1_o       : out   std_logic;
+      kb_io2_i       : in    std_logic;
+      sd_cd_i        : in    std_logic;
+      sd_clk_o       : out   std_logic;
+      sd_cmd_io      : inout std_logic;
+      sd_dat_io      : inout std_logic_vector(3 downto 0);
+      uart_rx_i      : in    std_logic;
+      uart_tx_o      : out   std_logic;
+      vga_red_o      : out   std_logic_vector(7 downto 0);
+      vga_green_o    : out   std_logic_vector(7 downto 0);
+      vga_blue_o     : out   std_logic_vector(7 downto 0);
+      vga_hs_o       : out   std_logic;
+      vga_vs_o       : out   std_logic;
+      vdac_clk_o     : out   std_logic;
+      vdac_sync_n_o  : out   std_logic;
+      vdac_blank_n_o : out   std_logic;
+      vdac_psave_n_o : out   std_logic
    );
 end entity top_r5;
 
@@ -31,9 +40,9 @@ architecture synthesis of top_r5 is
    signal avm_readdatavalid : std_logic;
    signal avm_waitrequest   : std_logic;
 
-   signal uart_valid        : std_logic;
-   signal uart_ready        : std_logic;
-   signal uart_data         : std_logic_vector(7 downto 0);
+   signal uart_valid : std_logic;
+   signal uart_ready : std_logic;
+   signal uart_data  : std_logic_vector(7 downto 0);
 
 begin
 
@@ -60,6 +69,7 @@ begin
       )
       port map (
          sys_clk_i           => sys_clk_i,
+         sys_rst_i           => sys_rst_i,
          -- Interface to SDCard controller
          avm_clk_i           => avm_clk,
          avm_rst_i           => avm_rst,
@@ -79,7 +89,16 @@ begin
          uart_tx_o           => uart_tx_o,
          kb_io0_o            => kb_io0_o,
          kb_io1_o            => kb_io1_o,
-         kb_io2_i            => kb_io2_i
+         kb_io2_i            => kb_io2_i,
+         vga_red_o           => vga_red_o,
+         vga_green_o         => vga_green_o,
+         vga_blue_o          => vga_blue_o,
+         vga_hs_o            => vga_hs_o,
+         vga_vs_o            => vga_vs_o,
+         vdac_clk_o          => vdac_clk_o,
+         vdac_sync_n_o       => vdac_sync_n_o,
+         vdac_blank_n_o      => vdac_blank_n_o,
+         vdac_psave_n_o      => vdac_psave_n_o
       ); -- mega65_inst
 
 
