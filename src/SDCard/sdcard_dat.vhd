@@ -20,6 +20,7 @@ entity sdcard_dat is
       dat_rd_valid_o : out   std_logic;
       dat_rd_ready_i : in    std_logic;
       dat_rd_done_o  : out   std_logic;
+      dat_rd_error_o : out   std_logic;
 
       -- SDCard device interface
       sd_clk_i       : in    std_logic; -- 25 MHz or 400 kHz
@@ -78,11 +79,13 @@ architecture synthesis of sdcard_dat is
 begin
 
    dat_wr_ready_o <= '1';
+   dat_rd_data_o  <= sector(addr);
 
    fsm_proc : process (clk_i)
    begin
       if rising_edge(clk_i) then
          dat_rd_done_o <= '0';
+         dat_rd_error_o <= '0';
 
          if dat_rd_ready_i = '1' then
             dat_rd_valid_o <= '0';
@@ -135,10 +138,10 @@ begin
                      rx_crc3  <= rx_crc3(14 downto 0) & sd_dat_in_i(3);
                   else
                      if rx_crc0 /= crc0 or rx_crc1 /= crc1 or rx_crc2 /= crc2 or rx_crc3 /= crc3 then
+                        dat_rd_error_o <= '1';
                         state <= IDLE_ST;
                      else
                         addr           <= 0;
-                        dat_rd_data_o  <= sector(0);
                         dat_rd_valid_o <= '1';
                         state          <= FORWARD_ST;
                      end if;
@@ -148,7 +151,6 @@ begin
             when FORWARD_ST =>
                if dat_rd_ready_i = '1' then
                   if addr < 511 then
-                     dat_rd_data_o  <= sector(addr + 1);
                      addr           <= addr + 1;
                      dat_rd_valid_o <= '1';
                   else

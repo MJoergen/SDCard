@@ -72,6 +72,7 @@ architecture synthesis of sdcard_wrapper is
    signal resp_timeout : std_logic;
    signal resp_error   : std_logic;
    signal dat_rd_done  : std_logic;
+   signal dat_rd_error : std_logic;
 
    signal sd_clk_d  : std_logic;
    signal count_low : std_logic_vector(7 downto 0);
@@ -151,6 +152,7 @@ begin
          dat_rd_valid_o => rd_valid_o,
          dat_rd_ready_i => rd_ready_i,
          dat_rd_done_o  => dat_rd_done,
+         dat_rd_error_o => dat_rd_error,
          sd_clk_i       => sd_clk,
          sd_dat_in_i    => sd_dat_in,
          sd_dat_out_o   => sd_dat_out,

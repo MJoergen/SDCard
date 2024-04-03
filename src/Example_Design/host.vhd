@@ -109,8 +109,12 @@ begin
                   else
                      state <= IDLE_ST;
                   end if;
+                  assert rd_data_i = get_data(sector, offset)
+                     report "Read error at sector=" & to_hstring(sector)
+                        & ", offset=" & to_string(offset)
+                        & ". Got=" & to_hstring(rd_data_i)
+                        & ", expected=" & to_hstring(get_data(sector, offset));
                end if;
-               null;
 
             when ERROR_ST =>
                null;
