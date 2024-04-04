@@ -107,6 +107,8 @@ begin
                            (sd_cmd_in_i = '1' or sd_cmd_in_i = 'H') else
                   '0';
 
+   resp_data_o  <= resp_data(143 downto 8);
+
    fsm_proc : process (clk_i)
    begin
       if rising_edge(clk_i) then
@@ -168,7 +170,7 @@ begin
 
                when WAIT_RESPONSE_ST =>
                   if sd_cmd_in_i = '0' then
-                     resp_data <= (others => '0');
+                     resp_data(0) <= '0';
                      state     <= GET_RESPONSE_ST;
                   elsif timeout_count > 0 then
                      timeout_count <= timeout_count - 1;
@@ -194,7 +196,6 @@ begin
                      resp_count <= resp_count - 1;
                   else
                      if resp_data(7 downto 0) = crc & "1" or resp_data(7 downto 0) = X"FF" then
-                        resp_data_o  <= resp_data(143 downto 8);
                         resp_valid_o <= '1';
                         report "Received response 0x" & to_hstring(resp_data(39 downto 8))
                                & " with valid CRC";

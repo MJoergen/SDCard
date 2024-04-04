@@ -9,16 +9,16 @@ entity random is
       rst_i      : in  std_logic;
       update_i   : in  std_logic;
       load_i     : in  std_logic;
-      load_val_i : in  std_logic_vector(21 downto 0);
-      output_o   : out std_logic_vector(21 downto 0)
+      load_val_i : in  std_logic_vector(31 downto 0);
+      output_o   : out std_logic_vector(31 downto 0)
    );
 end entity random;
 
 architecture synthesis of random is
 
-   signal output_1 : std_logic_vector(21 downto 0);
-   signal output_2 : std_logic_vector(21 downto 0);
-   signal output_2_reverse : std_logic_vector(21 downto 0);
+   signal output_1 : std_logic_vector(31 downto 0);
+   signal output_2 : std_logic_vector(31 downto 0);
+   signal output_2_reverse : std_logic_vector(31 downto 0);
 
 begin
 
@@ -28,8 +28,8 @@ begin
 
    i_lfsr_1 : entity work.lfsr
       generic map (
-         G_WIDTH => 22,
-         G_TAPS  => X"000000000020069E"
+         G_WIDTH => 32,
+         G_TAPS  => X"0000000080000EA6"
       )
       port map (
          clk_i      => clk_i,
@@ -42,8 +42,8 @@ begin
 
    i_lfsr_2 : entity work.lfsr
       generic map (
-         G_WIDTH => 22,
-         G_TAPS  => X"00000000002006A8"
+         G_WIDTH => 32,
+         G_TAPS  => X"0000000080000E74"
       )
       port map (
          clk_i      => clk_i,

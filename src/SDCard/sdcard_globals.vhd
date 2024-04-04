@@ -62,17 +62,17 @@ package sdcard_globals is
 
    -- Section 4.3.13, Page 105
    -- Response R7
-   subtype  r_cmd8_1_2v                 is natural range  13 downto  13;            -- PCIe 1.2V Support
-   subtype  r_cmd8_pcie                 is natural range  12 downto  12;            -- PCIe Availability
-   subtype  r_cmd8_vhs                  is natural range  11 downto   8;            -- Supply Voltage
-   subtype  r_cmd8_check                is natural range   7 downto   0;            -- Check pattern
+   subtype  R_CMD8_1_2V                 is natural range  13 downto  13;            -- PCIe 1.2V Support
+   subtype  R_CMD8_PCIE                 is natural range  12 downto  12;            -- PCIe Availability
+   subtype  R_CMD8_VHS                  is natural range  11 downto   8;            -- Supply Voltage
+   subtype  R_CMD8_CHECK                is natural range   7 downto   0;            -- Check pattern
    constant C_CMD8_VHS_27_36               : std_logic_vector(3 downto 0)   := "0001";
    constant C_CMD8_VHS_LOW                 : std_logic_vector(3 downto 0)   := "0010";
 
-   subtype  r_cmd_rca                   is natural range  31 downto  16;            -- RCA
+   subtype  R_CMD_RCA                   is natural range  31 downto  16;            -- RCA
    constant C_CMD_RCA_DEFAULT              : std_logic_vector(31 downto 16) := (others => '0');
 
-   subtype  r_acmd6_bus_width           is natural range   1 downto   0;
+   subtype  R_ACMD6_BUS_WIDTH           is natural range   1 downto   0;
    constant C_ACMD6_BUS_WIDTH_1            : std_logic_vector(1 downto 0)   := "00";
    constant C_ACMD6_BUS_WIDTH_4            : std_logic_vector(1 downto 0)   := "10";
 
@@ -89,7 +89,7 @@ package sdcard_globals is
 
    -- From Part1_Physical_Layer_Simplified_Specification_Ver8.00.pdf,
    -- Section 4.10.1 Card Status, Page 134
-   subtype  r_cmd_index                 is natural range 39 downto 32;
+   subtype  R_CMD_INDEX                 is natural range 39 downto 32;
    constant C_CARD_STAT_OUT_OF_RANGE       : natural                        := 31;
    constant C_CARD_STAT_ADDRESS_ERROR      : natural                        := 30;
    constant C_CARD_STAT_BLOCK_LEN_ERROR    : natural                        := 29;
@@ -107,7 +107,7 @@ package sdcard_globals is
    constant C_CARD_STAT_WP_ERASE_SKIP      : natural                        := 15;
    constant C_CARD_STAT_CARD_ECC_DISABED   : natural                        := 14;
    constant C_CARD_STAT_ERASE_RESET        : natural                        := 13;
-   subtype  r_card_stat_current_state     is natural range 12 downto 9;
+   subtype  R_CARD_STAT_CURRENT_STATE     is natural range 12 downto 9;
    constant C_CARD_STAT_READY_FOR_DATA     : natural                        := 8;
    constant C_CARD_STAT_FX_EVENT           : natural                        := 6;
    constant C_CARD_STAT_APP_CMD            : natural                        := 5;
@@ -128,46 +128,46 @@ package sdcard_globals is
    -- Section 5 Card Registers, Page 204
 
    -- Response R2
-   subtype  r_r2_cid                    is natural range 127 downto   0;
-   subtype  r_cid_mid                   is natural range 127 downto 120;            -- Manufacturer ID
-   subtype  r_cid_oid                   is natural range 119 downto 104;            -- OEM/Application ID
-   subtype  r_cid_pnm                   is natural range 103 downto  64;            -- Product name
-   subtype  r_cid_prv                   is natural range  63 downto  56;            -- Product revision
-   subtype  r_cid_psn                   is natural range  55 downto  24;            -- Product serial number
-   subtype  r_cid_mdt                   is natural range  19 downto   8;            -- Manufacturing date
-   subtype  r_cid_crc                   is natural range   7 downto   1;            -- CRC7 checksum
+   subtype  R_R2_CID                    is natural range 127 downto   0;
+   subtype  R_CID_MID                   is natural range 127 downto 120;            -- Manufacturer ID
+   subtype  R_CID_OID                   is natural range 119 downto 104;            -- OEM/Application ID
+   subtype  R_CID_PNM                   is natural range 103 downto  64;            -- Product name
+   subtype  R_CID_PRV                   is natural range  63 downto  56;            -- Product revision
+   subtype  R_CID_PSN                   is natural range  55 downto  24;            -- Product serial number
+   subtype  R_CID_MDT                   is natural range  19 downto   8;            -- Manufacturing date
+   subtype  R_CID_CRC                   is natural range   7 downto   1;            -- CRC7 checksum
 
    -- Response R2
-   subtype  r_r2_csd                    is natural range 127 downto   0;
-   subtype  r_csd_csd_structure         is natural range 127 downto 126;            -- CSD structure
-   subtype  r_csd_taac                  is natural range 119 downto 112;            -- data read access-time-1
-   subtype  r_csd_nsac                  is natural range 111 downto 104;            -- data read access-time-2
-   subtype  r_csd_tran_speed            is natural range 103 downto  96;            -- max. data transfer rate
-   subtype  r_csd_ccc                   is natural range  95 downto  84;            -- card command classes
-   subtype  r_csd_read_bl_len           is natural range  83 downto  80;            -- max. read data block length
-   subtype  r_csd_read_bl_partial       is natural range  79 downto  79;            -- partial blocks for read allowed
-   subtype  r_csd_write_blk_misalign    is natural range  78 downto  78;            -- write block misalignment
-   subtype  r_csd_read_blk_misalign     is natural range  77 downto  77;            -- read block misalignment
-   subtype  r_csd_dsr_imp               is natural range  76 downto  76;            -- DSR implemented
-   subtype  r_csd_c_size                is natural range  73 downto  62;            -- device size
-   subtype  r_csd_vdd_r_curr_min        is natural range  61 downto  59;            -- max. read current @ VDD min
-   subtype  r_csd_vdd_r_curr_max        is natural range  58 downto  56;            -- max. read current @ VDD max
-   subtype  r_csd_vdd_w_curr_min        is natural range  55 downto  53;            -- max. write current @ VDD min
-   subtype  r_csd_vdd_w_curr_max        is natural range  52 downto  50;            -- max. write current @ VDD max
-   subtype  r_csd_c_size_mult           is natural range  49 downto  47;            -- device size multiplier
-   subtype  r_csd_erase_blk_en          is natural range  46 downto  46;            -- erase single block enable
-   subtype  r_csd_sector_size           is natural range  45 downto  39;            -- erase sector size
-   subtype  r_csd_wp_grp_size           is natural range  38 downto  32;            -- write protect group size
-   subtype  r_csd_wp_grp_enable         is natural range  31 downto  31;            -- write protect group enable
-   subtype  r_csd_r2w_factor            is natural range  28 downto  26;            -- write speed factor
-   subtype  r_csd_write_bl_len          is natural range  25 downto  22;            -- max. write data block length
-   subtype  r_csd_write_bl_partial      is natural range  21 downto  21;            -- partial blocks for write allowed
-   subtype  r_csd_file_format_grp       is natural range  15 downto  15;            -- File format group
-   subtype  r_csd_copy                  is natural range  14 downto  14;            -- copy flag
-   subtype  r_csd_perm_write_protect    is natural range  13 downto  13;            -- permanent write protection
-   subtype  r_csd_tmp_write_protect     is natural range  12 downto  12;            -- temporary write protection
-   subtype  r_csd_file_format           is natural range  11 downto  10;            -- File format
-   subtype  r_csd_crc                   is natural range   7 downto   1;            -- CRC
+   subtype  R_R2_CSD                    is natural range 127 downto   0;
+   subtype  R_CSD_CSD_STRUCTURE         is natural range 127 downto 126;            -- CSD structure
+   subtype  R_CSD_TAAC                  is natural range 119 downto 112;            -- data read access-time-1
+   subtype  R_CSD_NSAC                  is natural range 111 downto 104;            -- data read access-time-2
+   subtype  R_CSD_TRAN_SPEED            is natural range 103 downto  96;            -- max. data transfer rate
+   subtype  R_CSD_CCC                   is natural range  95 downto  84;            -- card command classes
+   subtype  R_CSD_READ_BL_LEN           is natural range  83 downto  80;            -- max. read data block length
+   subtype  R_CSD_READ_BL_PARTIAL       is natural range  79 downto  79;            -- partial blocks for read allowed
+   subtype  R_CSD_WRITE_BLK_MISALIGN    is natural range  78 downto  78;            -- write block misalignment
+   subtype  R_CSD_READ_BLK_MISALIGN     is natural range  77 downto  77;            -- read block misalignment
+   subtype  R_CSD_DSR_IMP               is natural range  76 downto  76;            -- DSR implemented
+   subtype  R_CSD_C_SIZE                is natural range  73 downto  62;            -- device size
+   subtype  R_CSD_VDD_R_CURR_MIN        is natural range  61 downto  59;            -- max. read current @ VDD min
+   subtype  R_CSD_VDD_R_CURR_MAX        is natural range  58 downto  56;            -- max. read current @ VDD max
+   subtype  R_CSD_VDD_W_CURR_MIN        is natural range  55 downto  53;            -- max. write current @ VDD min
+   subtype  R_CSD_VDD_W_CURR_MAX        is natural range  52 downto  50;            -- max. write current @ VDD max
+   subtype  R_CSD_C_SIZE_MULT           is natural range  49 downto  47;            -- device size multiplier
+   subtype  R_CSD_ERASE_BLK_EN          is natural range  46 downto  46;            -- erase single block enable
+   subtype  R_CSD_SECTOR_SIZE           is natural range  45 downto  39;            -- erase sector size
+   subtype  R_CSD_WP_GRP_SIZE           is natural range  38 downto  32;            -- write protect group size
+   subtype  R_CSD_WP_GRP_ENABLE         is natural range  31 downto  31;            -- write protect group enable
+   subtype  R_CSD_R2W_FACTOR            is natural range  28 downto  26;            -- write speed factor
+   subtype  R_CSD_WRITE_BL_LEN          is natural range  25 downto  22;            -- max. write data block length
+   subtype  R_CSD_WRITE_BL_PARTIAL      is natural range  21 downto  21;            -- partial blocks for write allowed
+   subtype  R_CSD_FILE_FORMAT_GRP       is natural range  15 downto  15;            -- File format group
+   subtype  R_CSD_COPY                  is natural range  14 downto  14;            -- copy flag
+   subtype  R_CSD_PERM_WRITE_PROTECT    is natural range  13 downto  13;            -- permanent write protection
+   subtype  R_CSD_TMP_WRITE_PROTECT     is natural range  12 downto  12;            -- temporary write protection
+   subtype  R_CSD_FILE_FORMAT           is natural range  11 downto  10;            -- File format
+   subtype  R_CSD_CRC                   is natural range   7 downto   1;            -- CRC
 
    -- ACMD41
    constant C_ACMD41_OCR_27X               : natural                        := 15;
@@ -199,26 +199,26 @@ package sdcard_globals is
    constant C_R3_BUSY                      : natural                        := 31;  -- Card power up status bit
 
    -- Response R6
-   subtype  r_r6_rca                    is natural range  31 downto  16;            -- RCA
+   subtype  R_R6_RCA                    is natural range  31 downto  16;            -- RCA
    constant C_R6_STAT_COM_CRC_ERROR        : natural                        := 15;
    constant C_R6_STAT_ILLEGAL_COMMAND      : natural                        := 14;
    constant C_R6_STAT_ERROR                : natural                        := 13;
-   subtype  r_r6_stat_current_state     is natural range 12 downto 9;
+   subtype  R_R6_STAT_CURRENT_STATE     is natural range 12 downto 9;
    constant C_R6_STAT_READY_FOR_DATA       : natural                        := 8;
    constant C_R6_STAT_FX_EVENT             : natural                        := 6;
    constant C_R6_STAT_APP_CMD              : natural                        := 5;
    constant C_R6_STAT_AKE_SEQ_ERROR        : natural                        := 3;
 
-   subtype  r_scr_scr_structure         is natural range  63 downto  60;            -- SCR Structure
-   subtype  r_scr_sd_spec               is natural range  59 downto  56;            -- SD Memory Card - Spec. Version
-   subtype  r_scr_data_stat_after_erase is natural range  55 downto  55;            -- data_status_after erases
-   subtype  r_scr_sd_security           is natural range  54 downto  52;            -- CPRM Security Support
-   subtype  r_scr_sd_bus_widths         is natural range  51 downto  48;            -- DAT Bus widths supported
-   subtype  r_scr_sd_spec3              is natural range  47 downto  47;            -- Spec. Version 3.00 or higher
-   subtype  r_scr_ex_security           is natural range  46 downto  43;            -- Extended Security Support
-   subtype  r_scr_sd_spec4              is natural range  42 downto  42;            -- Spec. Version 4.00 or higher
-   subtype  r_scr_sd_specx              is natural range  41 downto  38;            -- Spec. Version 5.00 or higher
-   subtype  r_scr_cmd_support           is natural range  35 downto  32;            -- Command Support bits
+   subtype  R_SCR_SCR_STRUCTURE         is natural range  63 downto  60;            -- SCR Structure
+   subtype  R_SCR_SD_SPEC               is natural range  59 downto  56;            -- SD Memory Card - Spec. Version
+   subtype  R_SCR_DATA_STAT_AFTER_ERASE is natural range  55 downto  55;            -- data_status_after erases
+   subtype  R_SCR_SD_SECURITY           is natural range  54 downto  52;            -- CPRM Security Support
+   subtype  R_SCR_SD_BUS_WIDTHS         is natural range  51 downto  48;            -- DAT Bus widths supported
+   subtype  R_SCR_SD_SPEC3              is natural range  47 downto  47;            -- Spec. Version 3.00 or higher
+   subtype  R_SCR_EX_SECURITY           is natural range  46 downto  43;            -- Extended Security Support
+   subtype  R_SCR_SD_SPEC4              is natural range  42 downto  42;            -- Spec. Version 4.00 or higher
+   subtype  R_SCR_SD_SPECX              is natural range  41 downto  38;            -- Spec. Version 5.00 or higher
+   subtype  R_SCR_CMD_SUPPORT           is natural range  35 downto  32;            -- Command Support bits
 
 end package sdcard_globals;
 

@@ -40,7 +40,7 @@ begin
          end if;
 
          if rst_i = '1' then
-            lfsr_r <= (others => '1');
+            lfsr_r <= load_val_i;
          end if;
       end if;
    end process lfsr_proc;

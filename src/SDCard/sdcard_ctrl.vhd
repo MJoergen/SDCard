@@ -43,6 +43,9 @@ entity sdcard_ctrl is
       ctrl_err_o      : out   std_logic_vector(7 downto 0);
       sd_clk_o        : out   std_logic;
       dat_rd_done_i   : in    std_logic;
+      dat_rd_error_i  : in    std_logic;
+      dat_wr_en_o     : out   std_logic;
+      dat_wr_done_i   : in    std_logic;
       cmd_valid_o     : out   std_logic;
       cmd_ready_i     : in    std_logic;
       cmd_index_o     : out   natural range 0 to 63;
@@ -92,7 +95,9 @@ architecture synthesis of sdcard_ctrl is
       SET_BUS_WIDTH_ST,
       READY_ST,
       READ_SINGLE_BLOCK_ST,
-      READING_ST
+      READING_ST,
+      WRITE_BLOCK_ST,
+      WRITING_ST
    );
 
    signal   state : state_type                          := INIT_ST;
@@ -145,10 +150,16 @@ architecture synthesis of sdcard_ctrl is
             return X"14";
 
          when READ_SINGLE_BLOCK_ST =>
-            return X"15";
+            return X"20";
 
          when READING_ST =>
-            return X"16";
+            return X"21";
+
+         when WRITE_BLOCK_ST =>
+            return X"30";
+
+         when WRITING_ST =>
+            return X"31";
 
       end case;
 
@@ -158,6 +169,9 @@ architecture synthesis of sdcard_ctrl is
 begin
 
    resp_ready_o <= '1';
+
+   dat_wr_en_o  <= '1' when state = WRITING_ST else
+                   '0';
 
    ----------------------------------
    -- Generate SD clock
@@ -194,7 +208,9 @@ begin
 
             when READY_ST               |
                  READ_SINGLE_BLOCK_ST   |
-                 READING_ST =>
+                 READING_ST             |
+                 WRITE_BLOCK_ST         |
+                 WRITING_ST =>
                sd_clk_o      <= clk_counter(0);  -- 50 MHz / 2 = 25 MHz
                cmd_timeout_o <= 12500000;        -- 1 second @ 12.5 MHz
 
@@ -210,8 +226,8 @@ begin
    -- State Machine shown in Figure 4-2, Page 62.
    -- Section 4.7.4 Detailed Command Description
 
-   ctrl_busy_o       <= '0' when state = READY_ST else
-                        '1';
+   ctrl_busy_o  <= '0' when state = READY_ST else
+                   '1';
 
    fsm_proc : process (clk_i)
    begin
@@ -223,8 +239,6 @@ begin
          if cmd_ready_i = '1' then
             cmd_valid_o <= '0';
          end if;
-
-
 
          case state is
 
@@ -481,6 +495,13 @@ begin
                   cmd_valid_o <= '1';
                   state       <= READ_SINGLE_BLOCK_ST;
                end if;
+               if ctrl_wr_i = '1' then
+                  cmd_index_o <= C_CMD_WRITE_BLOCK;
+                  cmd_data_o  <= ctrl_lba_i;
+                  cmd_resp_o  <= C_RESP_R1_LEN;
+                  cmd_valid_o <= '1';
+                  state       <= WRITE_BLOCK_ST;
+               end if;
 
             when READ_SINGLE_BLOCK_ST =>
                -- We've sent CMD17, expecting response R1
@@ -495,8 +516,27 @@ begin
 
             when READING_ST =>
                if dat_rd_done_i = '1' then
-                 state <= READY_ST;
-              end if;
+                  state <= READY_ST;
+               end if;
+               if dat_rd_error_i = '1' then
+                  state <= READY_ST;
+               end if;
+
+            when WRITE_BLOCK_ST =>
+               -- We've sent CMD24, expecting response R1
+               if resp_valid_i = '1' then
+                  -- Check response R1
+                  if resp_timeout_i = '0' and resp_error_i = '0' then
+                     state <= WRITING_ST;
+                  else
+                     state <= ERROR_ST;
+                  end if;
+               end if;
+
+            when WRITING_ST =>
+               if dat_wr_done_i = '1' then
+                  state <= READY_ST;
+               end if;
 
             when ERROR_ST =>
                null;

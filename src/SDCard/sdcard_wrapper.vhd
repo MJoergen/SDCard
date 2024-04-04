@@ -73,6 +73,8 @@ architecture synthesis of sdcard_wrapper is
    signal resp_error   : std_logic;
    signal dat_rd_done  : std_logic;
    signal dat_rd_error : std_logic;
+   signal dat_wr_en    : std_logic;
+   signal dat_wr_done  : std_logic;
 
 begin
 
@@ -94,6 +96,9 @@ begin
          ctrl_err_o      => err_o,
          sd_clk_o        => sd_clk,
          dat_rd_done_i   => dat_rd_done,
+         dat_rd_error_i  => dat_rd_error,
+         dat_wr_en_o     => dat_wr_en,
+         dat_wr_done_i   => dat_wr_done,
          cmd_valid_o     => cmd_valid,
          cmd_ready_i     => cmd_ready,
          cmd_index_o     => cmd_index,
@@ -145,6 +150,8 @@ begin
          dat_wr_data_i  => wr_data_i,
          dat_wr_valid_i => wr_valid_i,
          dat_wr_ready_o => wr_ready_o,
+         dat_wr_en_i    => dat_wr_en,
+         dat_wr_done_o  => dat_wr_done,
          dat_rd_data_o  => rd_data_o,
          dat_rd_valid_o => rd_valid_o,
          dat_rd_ready_i => rd_ready_i,
