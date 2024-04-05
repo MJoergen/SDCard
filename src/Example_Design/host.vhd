@@ -10,6 +10,7 @@ entity host is
    port (
       clk_i      : in    std_logic;
       rst_i      : in    std_logic;
+      start_i    : in    std_logic;
       wr_o       : out   std_logic;
       wr_multi_o : out   std_logic;
       wr_erase_o : out   std_logic_vector(7 downto 0); -- for wr_multi_i only
@@ -31,6 +32,7 @@ architecture synthesis of host is
 
    type   state_type is (
       IDLE_ST,
+      READY_ST,
       WAIT_ST,
       WRITE_ST,
       READ_ST,
@@ -98,6 +100,11 @@ begin
          case state is
 
             when IDLE_ST =>
+               if start_i = '1' then
+                  state <= READY_ST;
+               end if;
+
+            when READY_ST =>
                sector <= lba_o;
                offset <= 0;
                if random_output(31) = '1' then
@@ -130,7 +137,7 @@ begin
 
             when WAIT_ST =>
                if busy_i = '0' then
-                  state <= IDLE_ST;
+                  state <= READY_ST;
                end if;
 
             when READ_ST =>
@@ -143,7 +150,7 @@ begin
                   if offset < 511 then
                      offset <= offset + 1;
                   else
-                     state <= IDLE_ST;
+                     state <= READY_ST;
                   end if;
                   assert rd_data_i = get_data(sector, offset)
                      report "Read error at sector=" & to_hstring(sector)

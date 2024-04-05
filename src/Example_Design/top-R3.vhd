@@ -93,6 +93,7 @@ begin
          kb_io0_o       => kb_io0_o,
          kb_io1_o       => kb_io1_o,
          kb_io2_i       => kb_io2_i,
+         uart_rx_i      => uart_rx_i,
          uart_tx_o      => uart_tx_o,
          vga_red_o      => vga_red_o,
          vga_green_o    => vga_green_o,

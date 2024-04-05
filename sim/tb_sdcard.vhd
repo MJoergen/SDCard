@@ -10,6 +10,7 @@ architecture simulation of tb_sdcard is
    signal test_running : std_logic                    := '1';
    signal clk          : std_logic                    := '1'; -- 50 Mhz
    signal rst          : std_logic                    := '1'; -- Synchronous reset, active high
+   signal start        : std_logic;
    signal wr           : std_logic;
    signal wr_multi     : std_logic;
    signal wr_erase     : std_logic_vector(7 downto 0);        -- for wr_multi_i only
@@ -37,6 +38,17 @@ begin
    clk    <= test_running and not clk after 10 ns;
    rst    <= '1', '0' after 100 ns;
 
+   start_proc : process
+   begin
+      start <= '0';
+      wait for 1000 ns;
+      wait until rising_edge(clk);
+      start <= '1';
+      wait until rising_edge(clk);
+      start <= '0';
+      wait;
+   end process start_proc;
+
 
    ---------------------------------------------------------
    -- Main test procedure
@@ -46,6 +58,7 @@ begin
       port map (
          clk_i      => clk,
          rst_i      => rst,
+         start_i    => start,
          wr_o       => wr,
          wr_multi_o => wr_multi,
          wr_erase_o => wr_erase,

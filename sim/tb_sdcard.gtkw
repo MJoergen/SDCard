@@ -1,19 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Apr  4 19:23:58 2024
+[*] Fri Apr  5 06:35:52 2024
 [*]
 [dumpfile] "/home/mike/git/MJoergen/SDCard/sim/tb_sdcard.ghw"
-[dumpfile_mtime] "Thu Apr  4 19:22:06 2024"
-[dumpfile_size] 9698451
+[dumpfile_mtime] "Fri Apr  5 06:34:57 2024"
+[dumpfile_size] 12271931
 [savefile] "/home/mike/git/MJoergen/SDCard/sim/tb_sdcard.gtkw"
-[timestart] 3091568000000
+[timestart] 0
 [size] 1538 1002
-[pos] -1770 -32
-*-29.223133 3093191000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-33.223133 600000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_sdcard.
 [treeopen] top.tb_sdcard.sdcard_sim_inst.reader_crc.
-[treeopen] top.tb_sdcard.sdcard_wrapper_inst.
 [treeopen] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.
 [sst_width] 249
 [signals_width] 307
@@ -163,7 +162,7 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_ctrl_inst.init_count
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_ctrl_inst.state
 @1401200
 -sdcard_ctrl
-@800200
+@c00200
 -sdcard_dat
 @28
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.clk_i
@@ -208,9 +207,7 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_count
 #{top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[15:0]} top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[15] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[14] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[13] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[12] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[11] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[10] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[9] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[8] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[7] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[6] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[5] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[4] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[3] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[2] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[1] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc0[0]
 #{top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[15:0]} top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[15] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[14] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[13] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[12] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[11] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[10] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[9] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[8] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[7] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[6] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[5] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[4] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[3] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[2] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[1] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc1[0]
 #{top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[15:0]} top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[15] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[14] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[13] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[12] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[11] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[10] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[9] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[8] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[7] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[6] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[5] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[4] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[3] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[2] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[1] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc2[0]
-@23
 #{top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[15:0]} top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[15] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[14] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[13] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[12] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[11] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[10] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[9] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[8] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[7] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[6] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[5] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[4] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[3] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[2] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[1] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_crc3[0]
-@22
 #{top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_data[3:0]} top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_data[3] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_data[2] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_data[1] top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_data[0]
 @28
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.tx_lsb_valid
@@ -223,7 +220,7 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.read_state
 @420
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.addr
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_dat_inst.write_state
-@1000200
+@1401200
 -sdcard_dat
 @c00200
 -sdcard_cmd
@@ -268,11 +265,14 @@ top.tb_sdcard.sdcard_wrapper_inst.sdcard_cmd_inst.state
 top.tb_sdcard.sdcard_wrapper_inst.sdcard_cmd_inst.timeout_count
 @1401200
 -sdcard_cmd
-@c00200
+@800200
 -host
 @28
 top.tb_sdcard.host_inst.clk_i
 top.tb_sdcard.host_inst.rst_i
+@29
+top.tb_sdcard.host_inst.start_i
+@28
 top.tb_sdcard.host_inst.wr_o
 top.tb_sdcard.host_inst.wr_multi_o
 @22
@@ -302,7 +302,7 @@ top.tb_sdcard.host_inst.fsm_update
 #{top.tb_sdcard.host_inst.sector[31:0]} top.tb_sdcard.host_inst.sector[31] top.tb_sdcard.host_inst.sector[30] top.tb_sdcard.host_inst.sector[29] top.tb_sdcard.host_inst.sector[28] top.tb_sdcard.host_inst.sector[27] top.tb_sdcard.host_inst.sector[26] top.tb_sdcard.host_inst.sector[25] top.tb_sdcard.host_inst.sector[24] top.tb_sdcard.host_inst.sector[23] top.tb_sdcard.host_inst.sector[22] top.tb_sdcard.host_inst.sector[21] top.tb_sdcard.host_inst.sector[20] top.tb_sdcard.host_inst.sector[19] top.tb_sdcard.host_inst.sector[18] top.tb_sdcard.host_inst.sector[17] top.tb_sdcard.host_inst.sector[16] top.tb_sdcard.host_inst.sector[15] top.tb_sdcard.host_inst.sector[14] top.tb_sdcard.host_inst.sector[13] top.tb_sdcard.host_inst.sector[12] top.tb_sdcard.host_inst.sector[11] top.tb_sdcard.host_inst.sector[10] top.tb_sdcard.host_inst.sector[9] top.tb_sdcard.host_inst.sector[8] top.tb_sdcard.host_inst.sector[7] top.tb_sdcard.host_inst.sector[6] top.tb_sdcard.host_inst.sector[5] top.tb_sdcard.host_inst.sector[4] top.tb_sdcard.host_inst.sector[3] top.tb_sdcard.host_inst.sector[2] top.tb_sdcard.host_inst.sector[1] top.tb_sdcard.host_inst.sector[0]
 @420
 top.tb_sdcard.host_inst.offset
-@1401200
+@1000200
 -host
 [pattern_trace] 1
 [pattern_trace] 0

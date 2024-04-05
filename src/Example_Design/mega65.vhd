@@ -33,6 +33,7 @@ entity mega65 is
       kb_io0_o       : out   std_logic;
       kb_io1_o       : out   std_logic;
       kb_io2_i       : in    std_logic;
+      uart_rx_i      : in    std_logic;
       uart_tx_o      : out   std_logic;
       vga_red_o      : out   std_logic_vector(7 downto 0);
       vga_green_o    : out   std_logic_vector(7 downto 0);
@@ -90,6 +91,7 @@ begin
       port map (
          clk_i        => clk_i,
          rst_i        => rst_i,
+         start_i      => not uart_rx_i,
          wr_o         => wr_o,
          wr_multi_o   => wr_multi_o,
          wr_erase_o   => wr_erase_o,
