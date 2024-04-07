@@ -41,7 +41,8 @@ begin
    start_proc : process
    begin
       start <= '0';
-      wait for 1000 ns;
+      wait until busy = '0';
+      wait for 10 us;
       wait until rising_edge(clk);
       start <= '1';
       wait until rising_edge(clk);

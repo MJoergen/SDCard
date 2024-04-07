@@ -128,29 +128,15 @@ architecture simulation of sdcard_sim is
    signal   reader_crc_count    : natural range 0 to 16;
    signal   reader_crc          : crc_type(3 downto 0);
 
-   type     writer_state_type is (IDLE_ST, WAIT_ST, MSB_ST, LSB_ST, CHECK_CRC_ST);
+   type     writer_state_type is (IDLE_ST, WAIT_ST, MSB_ST, LSB_ST, CHECK_CRC_ST, PROG_ST);
    signal   writer_state     : writer_state_type                          := IDLE_ST;
    signal   writer_addr      : unsigned(31 downto 0);
    signal   writer_buf       : ram_type(0 to 511);
    signal   writer_buf_addr  : natural range 0 to 511;
    signal   writer_crc       : crc_type(3 downto 0);
-   signal   writer_buf_done  : std_logic;
    signal   writer_crc_count : natural range 0 to 16;
 
-   pure function gen_ram_data return ram_type is
-      variable data_v : std_logic_vector(31 downto 0);
-      variable res_v  : ram_type(0 to 32767);
-   begin
-      --
-      for i in 0 to 32767 loop
-         data_v   := std_logic_vector(to_signed(i * (i - 512), 32));
-         res_v(i) := data_v(15 downto 8);
-      end loop;
-
-      return res_v;
-   end function;
-
-   signal   ram : ram_type(0 to 32767)                                   := gen_ram_data;
+   signal   ram : ram_type(0 to 32767)                                   := (others => (others => '0'));
 
 begin
 
@@ -183,7 +169,7 @@ begin
    writer_proc : process (sd_clk_i)
    begin
       if rising_edge(sd_clk_i) then
-         writer_buf_done <= '0';
+         sd_dat_io(0) <= 'Z';
 
          case writer_state is
 
@@ -214,6 +200,7 @@ begin
                   writer_buf_addr <= writer_buf_addr + 1;
                   writer_state    <= MSB_ST;
                else
+                  writer_buf_addr  <= 0;
                   writer_crc_count <= 16;
                   writer_state     <= CHECK_CRC_ST;
                end if;
@@ -223,10 +210,26 @@ begin
                end loop;
 
             when CHECK_CRC_ST =>
-               if writer_crc_count > 0 then
-                  writer_crc_count <= writer_crc_count    - 1;
+               if writer_crc_count > 1 then
+                  writer_crc_count <= writer_crc_count - 1;
                else
-                  writer_buf_done <= '1';
+                  writer_state <= PROG_ST;
+               end if;
+               for i in 0 to 3 loop
+                  if writer_crc(i)(15) /= sd_dat_io(i) then
+                     writer_state <= IDLE_ST;
+                  end if;
+                  writer_crc(i) <= writer_crc(i)(14 downto 0) & "0";
+               end loop;
+
+            when PROG_ST =>
+               sd_dat_io(0) <= '0';
+               ram(to_integer(writer_addr(14 downto 0))) <= writer_buf(writer_buf_addr);
+               if writer_buf_addr < 511 then
+                  writer_buf_addr <= writer_buf_addr + 1;
+                  writer_addr <= writer_addr + 1;
+               else
+                  writer_buf_addr  <= 0;
                   writer_state <= IDLE_ST;
                end if;
 
@@ -316,10 +319,8 @@ begin
             sd_cmd_io <= 'Z';
          end if;
 
-         if writer_buf_done = '1' then
-            if card_status(R_CARD_STATUS_STATE) = C_CARD_STATUS_STATE_PRG then
-               card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_TRAN;
-            end if;
+         if writer_state = PROG_ST then
+            card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_PRG;
          end if;
 
          if cmd_valid then
@@ -379,7 +380,6 @@ begin
                   resp_v                           := "00" & cmd(45 downto 8);
                   resp_v(R_CARD_STATUS_STATE)      := card_status(R_CARD_STATUS_STATE);
                   resp_data                        <= append_cmd_crc(resp_v) & C_RESP_PADDING;
-                  card_status(R_CARD_STATUS_STATE) <= C_CARD_STATUS_STATE_PRG;
 
                -- CMD17
                when C_CMD_READ_SINGLE_BLOCK =>

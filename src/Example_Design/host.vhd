@@ -32,8 +32,6 @@ architecture synthesis of host is
 
    type   state_type is (
       IDLE_ST,
-      READY_ST,
-      WAIT_ST,
       WRITE_ST,
       READ_ST,
       READING_ST,
@@ -43,42 +41,36 @@ architecture synthesis of host is
 
    signal state : state_type := IDLE_ST;
 
-   signal fsm_update    : std_logic;
-   signal random_output : std_logic_vector(31 downto 0);
-   signal sector        : std_logic_vector(31 downto 0);
-   signal offset        : natural range 0 to 511;
+   signal sector    : std_logic_vector(31 downto 0);
+   signal offset    : natural range 0 to 511;
+   signal seed      : unsigned(15 downto 0);
+   signal iteration : unsigned(15 downto 0);
 
 begin
-
-   -- Only update address once every read command
-   fsm_update <= (wr_o or rd_o) and not busy_i;
-
-   random_inst : entity work.random
-      port map (
-         clk_i      => clk_i,
-         rst_i      => rst_i,
-         update_i   => fsm_update,
-         load_i     => rst_i,
-         load_val_i => X"89ABCDEF",
-         output_o   => random_output
-      ); -- random_inst
-
-   lba_o      <= "0000" & not random_output(27 downto 0);
 
    rd_ready_o <= '1';
 
    fsm_proc : process (clk_i)
       --
 
+      pure function get_addr (
+         seed_v      : unsigned;
+         iteration_v : unsigned
+      ) return std_logic_vector is
+      begin
+         return std_logic_vector(seed_v * (seed_v - iteration_v));
+      end function get_addr;
+
       pure function get_data (
-         addr_v : std_logic_vector;
+         seed_v   : unsigned;
+         sector_v : std_logic_vector;
          offset_v : integer
       ) return std_logic_vector is
          variable data_v : std_logic_vector(31 downto 0);
-         variable i_v    : integer;
+         variable addr_v : integer;
       begin
-         i_v    := to_integer(unsigned(addr_v)) * 512 + offset_v;
-         data_v := std_logic_vector(to_signed(i_v * (i_v - 512), 32));
+         addr_v := to_integer(unsigned(sector_v)) * 512 + offset_v;
+         data_v := std_logic_vector(to_signed(addr_v * (addr_v - to_integer(seed_v)), 32));
          return data_v(15 downto 8);
       end function get_data;
 
@@ -100,48 +92,43 @@ begin
          case state is
 
             when IDLE_ST =>
-               if start_i = '1' then
-                  state <= READY_ST;
-               end if;
-
-            when READY_ST =>
-               sector <= lba_o;
-               offset <= 0;
-               if random_output(31) = '1' then
-                  wr_o  <= '1';
-                  state <= WRITE_ST;
-               else
-                  rd_o  <= '1';
-                  state <= READ_ST;
-               end if;
+               seed <= seed + 1;
 
             when WRITE_ST =>
-               if busy_i = '0' then
-                  wr_data_o  <= get_data(sector, 0);
+               sector <= get_addr(seed, iteration);
+               lba_o  <= get_addr(seed, iteration);
+               offset <= 1;
+               wr_o   <= '1';
+               if wr_o = '1' and busy_i = '0' then
+                  wr_o       <= '0';
+                  wr_data_o  <= get_data(seed, sector, 0);
                   wr_valid_o <= '1';
-                  offset     <= 1;
                   state      <= WRITING_ST;
                end if;
 
             when WRITING_ST =>
                if wr_ready_i = '1' then
-                  wr_data_o  <= get_data(sector, offset);
+                  wr_data_o  <= get_data(seed, sector, offset);
                   wr_valid_o <= '1';
                   if offset < 511 then
                      offset <= offset + 1;
                   else
-                     offset <= 0;
-                     state  <= WAIT_ST;
+                     offset    <= 0;
+                     state     <= READ_ST;
+                     iteration <= iteration + 1;
+                     if iteration = 0 then
+                        state <= WRITE_ST;
+                     end if;
                   end if;
                end if;
 
-            when WAIT_ST =>
-               if busy_i = '0' then
-                  state <= READY_ST;
-               end if;
-
             when READ_ST =>
-               if busy_i = '0' then
+               sector <= get_addr(seed, iteration - 2);
+               lba_o  <= get_addr(seed, iteration - 2);
+               offset <= 0;
+               rd_o   <= '1';
+               if rd_o = '1' and busy_i = '0' then
+                  rd_o  <= '0';
                   state <= READING_ST;
                end if;
 
@@ -150,19 +137,27 @@ begin
                   if offset < 511 then
                      offset <= offset + 1;
                   else
-                     state <= READY_ST;
+                     state <= WRITE_ST;
                   end if;
-                  assert rd_data_i = get_data(sector, offset)
+                  assert rd_data_i = get_data(seed, sector, offset)
                      report "Read error at sector=" & to_hstring(sector)
                             & ", offset=" & to_string(offset)
                             & ". Got=" & to_hstring(rd_data_i)
-                            & ", expected=" & to_hstring(get_data(sector, offset));
+                            & ", expected=" & to_hstring(get_data(seed, sector, offset));
+                  if rd_data_i /= get_data(seed, sector, offset) then
+                     state <= ERROR_ST;
+                  end if;
                end if;
 
             when ERROR_ST =>
                null;
 
          end case;
+
+         if start_i = '1' then
+            iteration <= (others => '0');
+            state     <= WRITE_ST;
+         end if;
 
          if rst_i = '1' then
             rd_o       <= '0';
@@ -172,6 +167,7 @@ begin
             wr_erase_o <= (others => '0');
             wr_valid_o <= '0';
             state      <= IDLE_ST;
+            seed       <= (others => '0');
          end if;
       end if;
    end process fsm_proc;

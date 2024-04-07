@@ -125,7 +125,7 @@ begin
       port map (
          clk_i     => clk_i,
          rst_i     => rst_i,
-         s_valid_i => wr_o or rd_o,
+         s_valid_i => (wr_o or rd_o) and not busy_i,
          s_ready_o => open,
          s_data_i  => lba_hex & X"0D0A",
          m_valid_o => uart_valid,

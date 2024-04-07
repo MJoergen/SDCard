@@ -100,7 +100,8 @@ architecture synthesis of sdcard_ctrl is
       WRITING_ST
    );
 
-   signal   state : state_type                          := INIT_ST;
+   signal   state   : state_type                        := INIT_ST;
+   signal   state_d : state_type                        := INIT_ST;
 
    pure function state_to_slv (
       state_v : state_type
@@ -232,9 +233,8 @@ begin
    fsm_proc : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         if state /= ERROR_ST then
-            ctrl_err_o <= state_to_slv(state);
-         end if;
+         ctrl_err_o <= (others => '0');
+         state_d    <= state;
 
          if cmd_ready_i = '1' then
             cmd_valid_o <= '0';
@@ -539,7 +539,8 @@ begin
                end if;
 
             when ERROR_ST =>
-               null;
+               state_d    <= state_d;
+               ctrl_err_o <= state_to_slv(state_d);
 
             when others =>
                null;

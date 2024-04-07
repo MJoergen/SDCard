@@ -88,13 +88,17 @@ architecture synthesis of sdcard_dat is
 
    type     write_state_type is (
       IDLE_ST,
-      TX_ST
+      TX_ST,
+      WAIT_ST
    );
    signal   write_state : write_state_type := IDLE_ST;
+   constant C_WRITE_DELAY_MAX : natural := 31;
+   signal   write_delay : natural range 0 to C_WRITE_DELAY_MAX;
 
 begin
 
-   dat_rd_data_o  <= sector(addr);
+   dat_rd_data_o  <= sector(addr) when read_state = FORWARD_ST else
+                     (others => '0');
 
    read_proc : process (clk_i)
    begin
@@ -109,7 +113,7 @@ begin
          case read_state is
 
             when IDLE_ST =>
-               if sd_clk_d = '0' and sd_clk_i = '1' and dat_wr_en_i = '0' then
+               if sd_clk_d = '0' and sd_clk_i = '1' and sd_dat_oe_n_o = '1' then
                   -- Rising edge of sd_clk_i
                   if sd_dat_in_i = "0000" then
                      rx_count     <= C_COUNT_MAX;
@@ -182,7 +186,7 @@ begin
       end if;
    end process read_proc;
 
-   dat_wr_ready_o <= '1' when sd_clk_d = '1' and sd_clk_i = '0' and write_state = TX_ST
+   dat_wr_ready_o <= '1' when sd_clk_d = '0' and sd_clk_i = '1' and write_state = TX_ST
                               and tx_lsb_valid = '0' and tx_count >= 16 else
                      '0';
 
@@ -192,13 +196,11 @@ begin
       if rising_edge(clk_i) then
          dat_wr_done_o <= '0';
          sd_clk_d      <= sd_clk_i;
-         sd_dat_out_o  <= "1111";
-         sd_dat_oe_n_o <= '1';
 
          case write_state is
 
             when IDLE_ST =>
-               if dat_wr_en_i = '1' then
+               if dat_wr_en_i = '1' and dat_wr_done_o = '0' then
                   tx_count     <= C_COUNT_MAX;
                   tx_lsb_data  <= "0000";
                   tx_lsb_valid <= '1';
@@ -210,47 +212,64 @@ begin
                end if;
 
             when TX_ST =>
-               if dat_wr_en_i = '0' then
-                  write_state <= IDLE_ST;
+               null;
+
+            when WAIT_ST =>
+               if sd_clk_d = '0' and sd_clk_i = '1' then
+                  sd_dat_out_o  <= "1111";
+                  sd_dat_oe_n_o <= '1';
+                  if write_delay = 0 then
+                     if to_01(sd_dat_in_i(0)) = '1' then
+                        dat_wr_done_o <= '1';
+                        write_state   <= IDLE_ST;
+                     end if;
+                  else
+                     write_delay <= write_delay - 1;
+                  end if;
                end if;
 
          end case;
 
-         if sd_clk_d = '1' and sd_clk_i = '0' and write_state = TX_ST then
-            if tx_lsb_valid = '0' and dat_wr_valid_i = '1' then
-               sd_dat_out_o  <= dat_wr_data_i(7 downto 4);
-               sd_dat_oe_n_o <= '0';
-               tx_lsb_data   <= dat_wr_data_i(3 downto 0);
-               tx_lsb_valid  <= '1';
-               tx_crc0       <= new_crc(tx_crc0, dat_wr_data_i(4));
-               tx_crc1       <= new_crc(tx_crc1, dat_wr_data_i(5));
-               tx_crc2       <= new_crc(tx_crc2, dat_wr_data_i(6));
-               tx_crc3       <= new_crc(tx_crc3, dat_wr_data_i(7));
-               tx_count      <= tx_count - 1;
-            end if;
+         if sd_clk_d = '0' and sd_clk_i = '1' then
+            sd_dat_out_o  <= "1111";
+            sd_dat_oe_n_o <= '1';
+            if write_state = TX_ST then
+               if tx_lsb_valid = '0' and dat_wr_valid_i = '1' then
+                  sd_dat_out_o  <= dat_wr_data_i(7 downto 4);
+                  sd_dat_oe_n_o <= '0';
+                  tx_lsb_data   <= dat_wr_data_i(3 downto 0);
+                  tx_lsb_valid  <= '1';
+                  tx_crc0       <= new_crc(tx_crc0, dat_wr_data_i(4));
+                  tx_crc1       <= new_crc(tx_crc1, dat_wr_data_i(5));
+                  tx_crc2       <= new_crc(tx_crc2, dat_wr_data_i(6));
+                  tx_crc3       <= new_crc(tx_crc3, dat_wr_data_i(7));
+                  tx_count      <= tx_count - 1;
+               end if;
 
-            if tx_lsb_valid = '1' then
-               sd_dat_out_o  <= tx_lsb_data;
-               sd_dat_oe_n_o <= '0';
-               tx_lsb_valid  <= '0';
-               tx_crc0       <= new_crc(tx_crc0, tx_lsb_data(0));
-               tx_crc1       <= new_crc(tx_crc1, tx_lsb_data(1));
-               tx_crc2       <= new_crc(tx_crc2, tx_lsb_data(2));
-               tx_crc3       <= new_crc(tx_crc3, tx_lsb_data(3));
-               tx_count      <= tx_count - 1;
-            end if;
+               if tx_lsb_valid = '1' then
+                  sd_dat_out_o  <= tx_lsb_data;
+                  sd_dat_oe_n_o <= '0';
+                  tx_lsb_valid  <= '0';
+                  tx_crc0       <= new_crc(tx_crc0, tx_lsb_data(0));
+                  tx_crc1       <= new_crc(tx_crc1, tx_lsb_data(1));
+                  tx_crc2       <= new_crc(tx_crc2, tx_lsb_data(2));
+                  tx_crc3       <= new_crc(tx_crc3, tx_lsb_data(3));
+                  tx_count      <= tx_count - 1;
+               end if;
 
-            if tx_count < 16 then
-               sd_dat_out_o  <= tx_crc3(15) & tx_crc2(15) & tx_crc1(15) & tx_crc0(15);
-               sd_dat_oe_n_o <= '0';
-               tx_crc0       <= tx_crc0(14 downto 0) & "0";
-               tx_crc1       <= tx_crc1(14 downto 0) & "0";
-               tx_crc2       <= tx_crc2(14 downto 0) & "0";
-               tx_crc3       <= tx_crc3(14 downto 0) & "0";
-               if tx_count = 0 then
-                  dat_wr_done_o <= '1';
-               else
-                  tx_count <= tx_count - 1;
+               if tx_count < 16 then
+                  sd_dat_out_o  <= tx_crc3(15) & tx_crc2(15) & tx_crc1(15) & tx_crc0(15);
+                  sd_dat_oe_n_o <= '0';
+                  tx_crc0       <= tx_crc0(14 downto 0) & "0";
+                  tx_crc1       <= tx_crc1(14 downto 0) & "0";
+                  tx_crc2       <= tx_crc2(14 downto 0) & "0";
+                  tx_crc3       <= tx_crc3(14 downto 0) & "0";
+                  if tx_count = 0 then
+                     write_delay <= C_WRITE_DELAY_MAX;
+                     write_state <= WAIT_ST;
+                  else
+                     tx_count <= tx_count - 1;
+                  end if;
                end if;
             end if;
          end if;

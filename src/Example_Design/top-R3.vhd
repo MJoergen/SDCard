@@ -55,7 +55,7 @@ begin
    clk_inst : entity work.clk
       port map (
          sys_clk_i  => sys_clk_i,
-         sys_rstn_i => sys_rstn_i and uart_rx_i,
+         sys_rstn_i => sys_rstn_i,
          clk_o      => clk,
          rst_o      => rst
       ); -- clk_inst
@@ -114,7 +114,7 @@ begin
    sdcard_wrapper_inst : entity work.sdcard_wrapper
       port map (
          clk_i      => clk,
-         rst_i      => rst,
+         rst_i      => rst or not uart_rx_i,
          wr_i       => wr,
          wr_multi_i => wr_multi,
          wr_erase_i => wr_erase,
