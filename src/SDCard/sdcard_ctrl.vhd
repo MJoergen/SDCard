@@ -63,7 +63,7 @@ end entity sdcard_ctrl;
 architecture synthesis of sdcard_ctrl is
 
    -- Number of attempts at initiliazing card (ACMD41)
-   constant C_INIT_COUNT_MAX : natural                  := 100; -- Approximately one second
+   constant C_INIT_COUNT_MAX : natural                  := 1000; -- Approximately one second
 
    -- An arbitrary 8-bit pattern
    constant C_CMD8_CHECK : std_logic_vector(7 downto 0) := X"5B";

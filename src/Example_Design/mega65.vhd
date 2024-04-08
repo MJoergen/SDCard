@@ -109,7 +109,7 @@ begin
          rd_data_i    => rd_data_i,
          rd_valid_i   => rd_valid_i,
          rd_ready_o   => rd_ready_o,
-         busy_i       => busy_i,
+         busy_i       => busy_i or not ser_ready,
          lba_o        => lba_o,
          iteration_o  => iteration,
          err_i        => err_i
