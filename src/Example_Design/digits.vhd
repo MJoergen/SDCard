@@ -46,7 +46,8 @@ architecture synthesis of digits is
 
    type txt_t is array (0 to 7*NUM_ROWS-1) of character;
    constant txt : txt_t := "ADDR-HI" &
-                           "ADDR-LO";
+                           "ADDR-LO" &
+                           "  ITERS";
 
    -- Stage 0
    signal black_0        : std_logic;

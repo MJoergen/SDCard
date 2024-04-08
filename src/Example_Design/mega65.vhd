@@ -59,9 +59,15 @@ architecture synthesis of mega65 is
 
    signal   vga_clk    : std_logic;
    signal   vga_rst    : std_logic;
-   signal   vga_digits : std_logic_vector(31 downto 0);
+   signal   vga_digits : std_logic_vector(47 downto 0);
+
+   signal   iteration : std_logic_vector(15 downto 0);
 
    signal   lba_hex   : std_logic_vector(63 downto 0);
+
+   signal   ser_ready : std_logic;
+   signal   host_wr   : std_logic;
+   signal   host_rd   : std_logic;
 
 begin
 
@@ -92,21 +98,25 @@ begin
          clk_i        => clk_i,
          rst_i        => rst_i,
          start_i      => not uart_rx_i,
-         wr_o         => wr_o,
+         wr_o         => host_wr,
          wr_multi_o   => wr_multi_o,
          wr_erase_o   => wr_erase_o,
          wr_data_o    => wr_data_o,
          wr_valid_o   => wr_valid_o,
          wr_ready_i   => wr_ready_i,
-         rd_o         => rd_o,
+         rd_o         => host_rd,
          rd_multi_o   => rd_multi_o,
          rd_data_i    => rd_data_i,
          rd_valid_i   => rd_valid_i,
          rd_ready_o   => rd_ready_o,
          busy_i       => busy_i,
          lba_o        => lba_o,
+         iteration_o  => iteration,
          err_i        => err_i
       ); -- host_inst
+
+   wr_o <= host_wr and ser_ready;
+   rd_o <= host_rd and ser_ready;
 
    hexifier_inst : entity work.hexifier
       generic map (
@@ -125,8 +135,8 @@ begin
       port map (
          clk_i     => clk_i,
          rst_i     => rst_i,
-         s_valid_i => (wr_o or rd_o) and not busy_i,
-         s_ready_o => open,
+         s_valid_i => (host_wr or host_rd) and not busy_i,
+         s_ready_o => ser_ready,
          s_data_i  => lba_hex & X"0D0A",
          m_valid_o => uart_valid,
          m_ready_i => uart_ready,
@@ -146,11 +156,11 @@ begin
 
    cdc_avm2vga_inst : component xpm_cdc_array_single
       generic map (
-         WIDTH => 32
+         WIDTH => 48
       )
       port map (
          src_clk  => clk_i,
-         src_in   => lba_o,
+         src_in   => lba_o & iteration,
          dest_clk => vga_clk,
          dest_out => vga_digits
       ); -- cdc_avm2vga_inst
@@ -159,7 +169,7 @@ begin
       generic map (
 
          G_FONT_FILE   => C_FONT_FILE,
-         G_DIGITS_SIZE => 32,
+         G_DIGITS_SIZE => 48,
          G_VIDEO_MODE  => C_VIDEO_MODE
       )
       port map (
