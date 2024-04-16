@@ -30,35 +30,16 @@ entity sdcard_wrapper is
 
       -- SDCard device interface
       sd_clk_o   : out   std_logic;
-      sd_cmd_io  : inout std_logic;
-      sd_dat_io  : inout std_logic_vector(3 downto 0)
+      sd_cmd_out_o  : out   std_logic;
+      sd_cmd_in_i   : in    std_logic;
+      sd_cmd_oe_n_o : out   std_logic;
+      sd_dat_out_o  : out   std_logic_vector(3 downto 0);
+      sd_dat_in_i   : in    std_logic_vector(3 downto 0);
+      sd_dat_oe_n_o : out   std_logic
    );
 end entity sdcard_wrapper;
 
 architecture synthesis of sdcard_wrapper is
-
-   signal sd_clk      : std_logic; -- 25 MHz or 400 kHz
-   signal sd_cmd_in   : std_logic;
-   signal sd_cmd_out  : std_logic;
-   signal sd_cmd_oe_n : std_logic;
-   signal sd_dat_in   : std_logic_vector(3 downto 0);
-   signal sd_dat_out  : std_logic_vector(3 downto 0);
-   signal sd_dat_oe_n : std_logic;
-
-   signal sd_clk_reg      : std_logic;
-   signal sd_cmd_out_reg  : std_logic;
-   signal sd_cmd_oe_n_reg : std_logic;
-   signal sd_dat_out_reg  : std_logic_vector(3 downto 0);
-   signal sd_dat_oe_n_reg : std_logic;
-
-   -- These signals are referenced in the XDC file, and must therefore not be optimized or
-   -- altered in any way.
-   attribute dont_touch : string;
-   attribute dont_touch of sd_clk_reg      : signal is "true";
-   attribute dont_touch of sd_cmd_out_reg  : signal is "true";
-   attribute dont_touch of sd_cmd_oe_n_reg : signal is "true";
-   attribute dont_touch of sd_dat_out_reg  : signal is "true";
-   attribute dont_touch of sd_dat_oe_n_reg : signal is "true";
 
    signal cmd_valid    : std_logic;
    signal cmd_ready    : std_logic;
@@ -94,7 +75,7 @@ begin
          ctrl_busy_o     => busy_o,
          ctrl_lba_i      => lba_i,
          ctrl_err_o      => err_o,
-         sd_clk_o        => sd_clk,
+         sd_clk_o        => sd_clk_o,
          dat_rd_done_i   => dat_rd_done,
          dat_rd_error_i  => dat_rd_error,
          dat_wr_en_o     => dat_wr_en,
@@ -132,10 +113,10 @@ begin
          resp_data_o    => resp_data,
          resp_timeout_o => resp_timeout,
          resp_error_o   => resp_error,
-         sd_clk_i       => sd_clk,
-         sd_cmd_in_i    => sd_cmd_in,
-         sd_cmd_out_o   => sd_cmd_out,
-         sd_cmd_oe_n_o  => sd_cmd_oe_n
+         sd_clk_i       => sd_clk_o,
+         sd_cmd_in_i    => sd_cmd_in_i,
+         sd_cmd_out_o   => sd_cmd_out_o,
+         sd_cmd_oe_n_o  => sd_cmd_oe_n_o
       ); -- sdcard_cmd_inst
 
 
@@ -157,35 +138,11 @@ begin
          dat_rd_ready_i => rd_ready_i,
          dat_rd_done_o  => dat_rd_done,
          dat_rd_error_o => dat_rd_error,
-         sd_clk_i       => sd_clk,
-         sd_dat_in_i    => sd_dat_in,
-         sd_dat_out_o   => sd_dat_out,
-         sd_dat_oe_n_o  => sd_dat_oe_n
+         sd_clk_i       => sd_clk_o,
+         sd_dat_in_i    => sd_dat_in_i,
+         sd_dat_out_o   => sd_dat_out_o,
+         sd_dat_oe_n_o  => sd_dat_oe_n_o
       ); -- sdcard_dat_inst
-
-
-   ---------------------------------------------------------
-   -- Connect I/O buffers
-   ---------------------------------------------------------
-
-   output_reg_proc : process (clk_i)
-   begin
-      if rising_edge(clk_i) then
-         sd_clk_reg      <= sd_clk;
-         sd_cmd_out_reg  <= sd_cmd_out;
-         sd_cmd_oe_n_reg <= sd_cmd_oe_n;
-         sd_dat_out_reg  <= sd_dat_out;
-         sd_dat_oe_n_reg <= sd_dat_oe_n;
-      end if;
-   end process output_reg_proc;
-
-   sd_clk_o  <= sd_clk_reg;
-   sd_cmd_in <= sd_cmd_io;
-   sd_dat_in <= sd_dat_io;
-   sd_cmd_io <= sd_cmd_out_reg when sd_cmd_oe_n_reg = '0' else
-                'Z';
-   sd_dat_io <= sd_dat_out_reg when sd_dat_oe_n_reg = '0' else
-                (others => 'Z');
 
 end architecture synthesis;
 

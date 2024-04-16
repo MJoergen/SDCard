@@ -25,9 +25,13 @@ architecture simulation of tb_sdcard is
    signal busy         : std_logic;
    signal lba          : std_logic_vector(31 downto 0);
    signal err          : std_logic_vector(7 downto 0);
-   signal sd_clk       : std_logic;
-   signal sd_cmd       : std_logic                    := 'H';
-   signal sd_dat       : std_logic_vector(3 downto 0) := (others => 'H');
+   signal sd_clk       : std_logic; -- 25 MHz or 400 kHz
+   signal sd_cmd       : std_logic;
+   signal sd_cmd_out   : std_logic;
+   signal sd_cmd_oe_n  : std_logic;
+   signal sd_dat       : std_logic_vector(3 downto 0);
+   signal sd_dat_out   : std_logic_vector(3 downto 0);
+   signal sd_dat_oe_n  : std_logic;
 
 begin
 
@@ -83,26 +87,35 @@ begin
 
    sdcard_wrapper_inst : entity work.sdcard_wrapper
       port map (
-         clk_i      => clk,
-         rst_i      => rst,
-         wr_i       => wr,
-         wr_multi_i => wr_multi,
-         wr_erase_i => wr_erase,
-         wr_data_i  => wr_data,
-         wr_valid_i => wr_valid,
-         wr_ready_o => wr_ready,
-         rd_i       => rd,
-         rd_multi_i => rd_multi,
-         rd_data_o  => rd_data,
-         rd_valid_o => rd_valid,
-         rd_ready_i => rd_ready,
-         busy_o     => busy,
-         lba_i      => lba,
-         err_o      => err,
-         sd_clk_o   => sd_clk,
-         sd_cmd_io  => sd_cmd,
-         sd_dat_io  => sd_dat
+         clk_i         => clk,
+         rst_i         => rst,
+         wr_i          => wr,
+         wr_multi_i    => wr_multi,
+         wr_erase_i    => wr_erase,
+         wr_data_i     => wr_data,
+         wr_valid_i    => wr_valid,
+         wr_ready_o    => wr_ready,
+         rd_i          => rd,
+         rd_multi_i    => rd_multi,
+         rd_data_o     => rd_data,
+         rd_valid_o    => rd_valid,
+         rd_ready_i    => rd_ready,
+         busy_o        => busy,
+         lba_i         => lba,
+         err_o         => err,
+         sd_clk_o      => sd_clk,
+         sd_cmd_in_i   => sd_cmd,
+         sd_cmd_out_o  => sd_cmd_out,
+         sd_cmd_oe_n_o => sd_cmd_oe_n,
+         sd_dat_in_i   => sd_dat,
+         sd_dat_out_o  => sd_dat_out,
+         sd_dat_oe_n_o => sd_dat_oe_n
       );
+
+   sd_cmd <= sd_cmd_out when sd_cmd_oe_n = '0' else
+             'Z';
+   sd_dat <= sd_dat_out when sd_dat_oe_n = '0' else
+             (others => 'Z');
 
    sd_cmd <= 'H';
    sd_dat <= (others => 'H');

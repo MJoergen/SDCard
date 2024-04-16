@@ -3,11 +3,6 @@
 # Created by Michael Jørgensen in 2022 (mjoergen.github.io/SDCard).
 
 
-# Place output registers close to I/O pads
-set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_clk_reg_reg ]
-set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_cmd_out_reg_reg ]
-set_property IOB TRUE [get_cells sdcard_wrapper_inst/sd_cmd_oe_n_reg_reg ]
-
 # Place KBD close to I/O pins
 startgroup
 create_pblock pblock_i_kbd

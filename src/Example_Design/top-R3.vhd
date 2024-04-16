@@ -29,22 +29,26 @@ end entity top_r3;
 
 architecture synthesis of top_r3 is
 
-   signal clk      : std_logic;
-   signal rst      : std_logic;
-   signal wr       : std_logic;
-   signal wr_multi : std_logic;
-   signal wr_erase : std_logic_vector(7 downto 0); -- for wr_multi_i only
-   signal wr_data  : std_logic_vector(7 downto 0);
-   signal wr_valid : std_logic;
-   signal wr_ready : std_logic;
-   signal rd       : std_logic;
-   signal rd_multi : std_logic;
-   signal rd_data  : std_logic_vector(7 downto 0);
-   signal rd_valid : std_logic;
-   signal rd_ready : std_logic;
-   signal busy     : std_logic;
-   signal lba      : std_logic_vector(31 downto 0);
-   signal err      : std_logic_vector(7 downto 0);
+   signal clk         : std_logic;
+   signal rst         : std_logic;
+   signal wr          : std_logic;
+   signal wr_multi    : std_logic;
+   signal wr_erase    : std_logic_vector(7 downto 0); -- for wr_multi_i only
+   signal wr_data     : std_logic_vector(7 downto 0);
+   signal wr_valid    : std_logic;
+   signal wr_ready    : std_logic;
+   signal rd          : std_logic;
+   signal rd_multi    : std_logic;
+   signal rd_data     : std_logic_vector(7 downto 0);
+   signal rd_valid    : std_logic;
+   signal rd_ready    : std_logic;
+   signal busy        : std_logic;
+   signal lba         : std_logic_vector(31 downto 0);
+   signal err         : std_logic_vector(7 downto 0);
+   signal sd_cmd_out  : std_logic;
+   signal sd_cmd_oe_n : std_logic;
+   signal sd_dat_out  : std_logic_vector(3 downto 0);
+   signal sd_dat_oe_n : std_logic;
 
 begin
 
@@ -113,27 +117,37 @@ begin
 
    sdcard_wrapper_inst : entity work.sdcard_wrapper
       port map (
-         clk_i      => clk,
-         rst_i      => rst or not uart_rx_i,
-         wr_i       => wr,
-         wr_multi_i => wr_multi,
-         wr_erase_i => wr_erase,
-         wr_data_i  => wr_data,
-         wr_valid_i => wr_valid,
-         wr_ready_o => wr_ready,
-         rd_i       => rd,
-         rd_multi_i => rd_multi,
-         rd_data_o  => rd_data,
-         rd_valid_o => rd_valid,
-         rd_ready_i => rd_ready,
-         busy_o     => busy,
-         lba_i      => lba,
-         err_o      => err,
+         clk_i         => clk,
+         rst_i         => rst or not uart_rx_i,
+         wr_i          => wr,
+         wr_multi_i    => wr_multi,
+         wr_erase_i    => wr_erase,
+         wr_data_i     => wr_data,
+         wr_valid_i    => wr_valid,
+         wr_ready_o    => wr_ready,
+         rd_i          => rd,
+         rd_multi_i    => rd_multi,
+         rd_data_o     => rd_data,
+         rd_valid_o    => rd_valid,
+         rd_ready_i    => rd_ready,
+         busy_o        => busy,
+         lba_i         => lba,
+         err_o         => err,
          -- Interface to MEGA65 I/O ports
-         sd_clk_o   => sd_clk_o,
-         sd_cmd_io  => sd_cmd_io,
-         sd_dat_io  => sd_dat_io
+         sd_clk_o      => sd_clk_o,
+         sd_cmd_in_i   => sd_cmd_io,
+         sd_cmd_out_o  => sd_cmd_out,
+         sd_cmd_oe_n_o => sd_cmd_oe_n,
+         sd_dat_in_i   => sd_dat_io,
+         sd_dat_out_o  => sd_dat_out,
+         sd_dat_oe_n_o => sd_dat_oe_n
       ); -- sdcard_wrapper_inst
+
+   sd_cmd_io <= sd_cmd_out when sd_cmd_oe_n = '0' else
+                'Z';
+   sd_dat_io <= sd_dat_out when sd_dat_oe_n = '0' else
+                (others => 'Z');
+
 
 end architecture synthesis;
 
